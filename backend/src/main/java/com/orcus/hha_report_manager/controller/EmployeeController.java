@@ -64,7 +64,7 @@ public class EmployeeController {
     public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) {
         try {
             Employee newEmployee = employeeRepository
-                    .save(new Employee(employee.getFirstName(), employee.getLastName(), employee.getDepartment(), employee.isDepartmentHead()));
+                    .save(new Employee(employee.getUsername(), employee.getFirstName(), employee.getLastName(), employee.getDepartment(), employee.isDepartmentHead()));
             return new ResponseEntity<>(newEmployee, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -77,6 +77,7 @@ public class EmployeeController {
 
         if (employeeData.isPresent()) {
             Employee employeeToChange = employeeData.get();
+            employeeToChange.setUsername(employee.getUsername());
             employeeToChange.setFirstName(employee.getFirstName());
             employeeToChange.setLastName(employee.getLastName());
             employeeToChange.setDepartment(employee.getDepartment());

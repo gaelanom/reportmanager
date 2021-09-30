@@ -10,6 +10,9 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @Column(name = "username", unique = true)
+    private String username;
+
     @Column(name = "firstname")
     private String firstName;
 
@@ -26,7 +29,9 @@ public class Employee {
 
     }
 
-    public Employee(String firstname, String lastname, String department, boolean isDepartmentHead) {
+
+    public Employee(String username, String firstname, String lastname, String department, boolean isDepartmentHead) {
+        this.username = username;
         this.firstName = firstname;
         this.lastName = lastname;
         this.department = department;
@@ -36,6 +41,10 @@ public class Employee {
     public long getId() {
         return id;
     }
+
+    public String getUsername() { return username; }
+
+    public void setUsername(String username) { this.username = username; }
 
     public String getFirstName() {
         return firstName;
@@ -67,6 +76,6 @@ public class Employee {
 
     @Override
     public String toString() {
-        return "Employee [id=" + id + ", first name=" + firstName + ", last name=" + lastName + ", department=" + department + ", department head=" + isDepartmentHead+ "]";
+        return "Employee [id=" + id + ", username=" + username + " , first name=" + firstName + ", last name=" + lastName + ", department=" + department + ", department head=" + isDepartmentHead+ "]";
     }
 }
