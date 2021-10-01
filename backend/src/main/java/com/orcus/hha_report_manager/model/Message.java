@@ -1,6 +1,9 @@
 package com.orcus.hha_report_manager.model;
 
+import org.apache.tomcat.jni.Local;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "messages")
@@ -22,6 +25,9 @@ public class Message {
     @Column(name = "department")
     private String department;
 
+    @Column(name = "timestamp")
+    private LocalDateTime timestamp;
+
     @Column(name = "content")
     private String content;
 
@@ -29,11 +35,12 @@ public class Message {
 
     }
 
-    public Message(String username, String firstname, String lastname, String department, String content) {
+    public Message(String username, String firstname, String lastname, String department, LocalDateTime timestamp, String content) {
         this.username = username;
         this.firstName = firstname;
         this.lastName = lastname;
         this.department = department;
+        this.timestamp = timestamp;
         this.content = content;
     }
 
@@ -65,12 +72,16 @@ public class Message {
 
     public void setDepartment(String department) { this.department = department; }
 
+    public LocalDateTime getTimestamp() { return this.timestamp; }
+
+    public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
+
     public String getContent() { return content; }
 
     public void setContent(String content) { this.content = content; }
 
     @Override
     public String toString() {
-        return "Message [id=" + id + ", username= " + username + ", first name=" + firstName + ", last name=" + lastName + ", department=" + department + ", content=" + content +"]";
+        return "Message [id=" + id + ", username= " + username + ", first name=" + firstName + ", last name=" + lastName + ", department=" + department + ", timestamp=" + timestamp + ", content=" + content +"]";
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -54,7 +55,7 @@ public class MessageController {
     public ResponseEntity<Message> createMessage(@RequestBody Message message) {
         try {
             Message newMessage = messageRepository
-                    .save(new Message(message.getUsername(), message.getFirstName(), message.getLastName(), message.getDepartment(), message.getContent()));
+                    .save(new Message(message.getUsername(), message.getFirstName(), message.getLastName(), message.getDepartment(), LocalDateTime.now(), message.getContent()));
             return new ResponseEntity<>(newMessage, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -65,12 +66,13 @@ public class MessageController {
     public ResponseEntity<Message> updateMessage(@PathVariable("id") long id, @RequestBody Message message) {
         Optional<Message> messageData = messageRepository.findById(id);
 
-        if (messageDataData.isPresent()) {
+        if (messageData.isPresent()) {
             Message messageToChange = messageData.get();
             messageToChange.setUsername(message.getUsername());
             messageToChange.setFirstName(message.getFirstName());
             messageToChange.setLastName(message.getLastName());
             messageToChange.setDepartment(message.getDepartment());
+            messageToChange.setTimestamp(LocalDateTime.now());
             messageToChange.setContent(message.getContent());
             return new ResponseEntity<>(messageRepository.save(messageToChange), HttpStatus.OK);
         } else {
@@ -99,17 +101,17 @@ public class MessageController {
 
     }
 
-    @GetMapping("/messages/departmentheads")
-    public ResponseEntity<List<Employee>> findByPublished() {
-        try {
-            List<Employee> employees = employeeRepository.findByIsDepartmentHead(true);
-
-            if (employees.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(employees, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+//    @GetMapping("/messages/departmentheads")
+//    public ResponseEntity<List<Employee>> findByPublished() {
+//        try {
+//            List<Employee> employees = employeeRepository.findByIsDepartmentHead(true);
+//
+//            if (employees.isEmpty()) {
+//                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//            }
+//            return new ResponseEntity<>(employees, HttpStatus.OK);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 }
