@@ -36,7 +36,7 @@ export default class Employees extends React.Component <any, any> {
         return (
             
             <ul>
-                {this.state.employees.map(function(d, idx){
+                {this.state.employees.map(function(d: any, idx: number){
                     return (<li key={idx}>ID: {d.id} Name: {d.firstName} LastName: {d.lastName} Department: {d.department} Department Head: {d.departmentHead}</li>)
                 })}
             </ul>
