@@ -5,28 +5,41 @@ import Home from './Components/Home/Home'
 import Login from './Components/Login/Login'
 import Employees from './Components/Employees/Employees'
 
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 
 function App() {
   return (
     <>
-                <Router>
-                    {/* <Navbar /> */}
-                    <Switch>
-                        <Route exact path="/">
-                          <Home />
-                        </Route>
+      <nav>
+        <ul>
+          <li>
+            <Link to="/">Home</Link>
+          </li>
+          <li>
+            <Link to="/login">Login</Link>
+          </li>
+          <li>
+            <Link to="/employees">Employees</Link>
+          </li>
+        </ul>
+      </nav>
+      <Router>
+        {/* <Navbar /> */}
+        <Switch>
+          <Route exact path="/">
+            <Home />
+          </Route>
 
-                        <Route path="/login">
-                          <Login />  
-                        </Route>
+          <Route path="/login">
+            <Login />
+          </Route>
 
-                        <Route path="/employees">
-                          <Employees />  
-                        </Route>
-                    </Switch>
-                </Router>
-            </>
+          <Route path="/employees">
+            <Employees />
+          </Route>
+        </Switch>
+      </Router>
+    </>
   );
 }
 
