@@ -73,12 +73,12 @@ public class MessageController {
     @PostMapping("/messages/{id}")
     public ResponseEntity<Message> replyToMessage(@PathVariable("id") long id, @RequestBody Reply reply) {
         Optional<Message> messageData = messageRepository.findById(id);
-
-        try {
-            replyRepository.save(new Reply(reply.getUsername(), reply.getFirstName(), reply.getLastName(), reply.getDepartment(), reply.getTimestamp(), reply.getContent()));
-            } catch (Exception e) {
-            return  new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        reply.setTimestamp(LocalDateTime.now());
+//        try {
+//            replyRepository.save(new Reply(reply.getUsername(), reply.getFirstName(), reply.getLastName(), reply.getDepartment(), reply.getTimestamp(), reply.getContent()));
+//            } catch (Exception e) {
+//            return  new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
         if (messageData.isPresent()) {
             Message parent = messageData.get();
             parent.getReplies().add(reply);
