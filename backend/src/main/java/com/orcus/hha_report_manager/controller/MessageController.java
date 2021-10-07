@@ -1,7 +1,9 @@
 package com.orcus.hha_report_manager.controller;
 
 import com.orcus.hha_report_manager.model.Message;
+import com.orcus.hha_report_manager.model.Reply;
 import com.orcus.hha_report_manager.repository.MessageRepository;
+import com.orcus.hha_report_manager.repository.ReplyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,15 +22,20 @@ public class MessageController {
     @Autowired
     MessageRepository messageRepository;
 
+    @Autowired
+    ReplyRepository replyRepository;
+
     @GetMapping("/messages")
-    public ResponseEntity<List<Message>> getAllMessages(@RequestParam(required = false) String department) {
+    public ResponseEntity<List<Message>> getAllMessages(@RequestParam(required = false) String department, String username) {
         try {
             List<Message> messages = new ArrayList<Message>();
 
-            if (department == null)
+            if (department == null && username == null)
                 messageRepository.findAll().forEach(messages::add);
-            else
+            else if (department != null)
                 messageRepository.findByDepartmentContains(department).forEach(messages::add);
+            else if (username != null)
+                messageRepository.findByUsername(username).forEach(messages::add);
 
             if (messages.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -51,6 +58,7 @@ public class MessageController {
         }
     }
 
+
     @PostMapping("/messages")
     public ResponseEntity<Message> createMessage(@RequestBody Message message) {
         try {
@@ -59,6 +67,24 @@ public class MessageController {
             return new ResponseEntity<>(newMessage, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/messages/{id}")
+    public ResponseEntity<Message> replyToMessage(@PathVariable("id") long id, @RequestBody Reply reply) {
+        Optional<Message> messageData = messageRepository.findById(id);
+
+        try {
+            replyRepository.save(new Reply(reply.getUsername(), reply.getFirstName(), reply.getLastName(), reply.getDepartment(), reply.getTimestamp(), reply.getContent()));
+            } catch (Exception e) {
+            return  new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        if (messageData.isPresent()) {
+            Message parent = messageData.get();
+            parent.getReplies().add(reply);
+            return new ResponseEntity<>(messageRepository.save(parent), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 

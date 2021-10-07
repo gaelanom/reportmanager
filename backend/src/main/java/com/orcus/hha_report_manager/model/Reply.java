@@ -1,15 +1,13 @@
 package com.orcus.hha_report_manager.model;
 
-import org.apache.tomcat.jni.Local;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "messages")
-public class Message {
+@Table(name = "replies")
+public class Reply {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -33,23 +31,18 @@ public class Message {
     @Column(name = "content")
     private String content;
 
-    @Column(name = "replies")
-    @OneToMany(targetEntity = Reply.class, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "message_id", referencedColumnName = "id")
-    private List<Reply> replies;
 
-    public Message() {
+    public Reply() {
 
     }
 
-    public Message(String username, String firstname, String lastname, String department, LocalDateTime timestamp, String content) {
+    public Reply(String username, String firstname, String lastname, String department, LocalDateTime timestamp, String content) {
         this.username = username;
         this.firstName = firstname;
         this.lastName = lastname;
         this.department = department;
         this.timestamp = timestamp;
         this.content = content;
-        this.replies = new ArrayList<Reply>();
     }
 
     public long getId() {
@@ -88,9 +81,6 @@ public class Message {
 
     public void setContent(String content) { this.content = content; }
 
-    //public void addReply(Reply reply) { replies.add(reply); }
-
-    public List<Reply> getReplies() { return this.replies; }
 
     @Override
     public String toString() {
