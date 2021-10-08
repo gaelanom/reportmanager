@@ -1,6 +1,6 @@
 import React from 'react';
-import axios from 'axios';
-
+import axios, { AxiosRequestConfig } from 'axios';
+import * as Dev from '../../Dev'
 
 type Employee = {
     firstName: string;
@@ -10,34 +10,42 @@ type Employee = {
     isDepartmentHead: boolean;
 }
 
-export default class Employees extends React.Component <any, any> {
+export default class Employees extends React.Component<any, {employees:Employee[]}> {
 
     constructor(props: any) {
         super(props)
 
         this.state = {
-          employees: []
+            employees: []
         };
-      }
+    }
 
     componentDidMount() {
-        axios.get('http://localhost:8080/api/employees')
-        .then(response => response.data)
-        .then(data => {
-            this.setState({
-                employees: data
+        const CONFIGS: AxiosRequestConfig<Employee[]> = {
+            headers: { 
+                'Authorization': 'Basic ' + window.btoa(Dev.USERNAME + ":" + Dev.PASSWORD) }
+        }
+
+        axios.get<Employee[]>('http://localhost:8080/api/employees', CONFIGS)
+            .then(response => response.data)
+            .then((data:Employee[]) => {
+                // Todo: server should not returns a login form on authentication failure.
+                if(!Array.isArray(data)){
+                    console.warn("Employees data is not array")
+                    return;
+                }
+                this.setState({
+                    employees: data
+                })
             })
-        })
+            .catch(reason => console.log(reason))
     }
 
     render() {
-        console.log(this.state.employees)
-
         return (
-            
             <ul>
-                {this.state.employees.map(function(d: any, idx: number){
-                    return (<li key={idx}>ID: {d.id} Name: {d.firstName} LastName: {d.lastName} Department: {d.department} Department Head: {d.departmentHead}</li>)
+                {this.state.employees.map(function (d: any, idx: number) {
+                    return (<li key={idx}>ID: {d.id} Name: {d.firstName} LastName: {d.lastName} Department: {d.department} Department Head: {d.departmentHead ? 'true' : 'false'}</li>)
                 })}
             </ul>
         )
