@@ -88,7 +88,7 @@ public class Message {
 
     public void setContent(String content) { this.content = content; }
 
-    //public void addReply(Reply reply) { replies.add(reply); }
+    public void addReply(Reply reply) { replies.add(reply); }
 
     public List<Reply> getReplies() { return this.replies; }
 

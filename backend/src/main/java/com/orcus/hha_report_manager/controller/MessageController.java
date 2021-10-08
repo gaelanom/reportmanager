@@ -126,18 +126,4 @@ public class MessageController {
         }
 
     }
-
-//    @GetMapping("/messages/departmentheads")
-//    public ResponseEntity<List<Employee>> findByPublished() {
-//        try {
-//            List<Employee> employees = employeeRepository.findByIsDepartmentHead(true);
-//
-//            if (employees.isEmpty()) {
-//                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//            }
-//            return new ResponseEntity<>(employees, HttpStatus.OK);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
 }
