@@ -25,17 +25,21 @@ public class Employee {
     @Column(name = "isDepartmentHead")
     private boolean isDepartmentHead;
 
+    @Column(name = "score")
+    private Integer score;
+
     public Employee() {
 
     }
 
 
-    public Employee(String username, String firstname, String lastname, String department, boolean isDepartmentHead) {
+    public Employee(String username, String firstname, String lastname, String department, boolean isDepartmentHead, Integer score) {
         this.username = username;
         this.firstName = firstname;
         this.lastName = lastname;
         this.department = department;
         this.isDepartmentHead = isDepartmentHead;
+        this.score = score;
     }
 
     public long getId() {
@@ -73,6 +77,10 @@ public class Employee {
     public void setDepartmentHead(boolean isDepartmentHead) {
         this.isDepartmentHead = isDepartmentHead;
     }
+
+    public void setScore(Integer score) { this.score = score; }
+
+    public Integer getScore() { return this.score; }
 
     @Override
     public String toString() {

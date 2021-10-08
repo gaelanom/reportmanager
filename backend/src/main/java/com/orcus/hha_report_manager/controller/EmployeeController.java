@@ -21,11 +21,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.orcus.hha_report_manager.model.Employee;
 import com.orcus.hha_report_manager.repository.EmployeeRepository;
 
+
 @CrossOrigin(origins = "http://localhost:8081")
 @RestController
 @RequestMapping("/api")
 public class EmployeeController {
 
+    private static final Integer INITIAL_SCORE = 0;
     @Autowired
     EmployeeRepository employeeRepository;
 
@@ -64,7 +66,7 @@ public class EmployeeController {
     public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) {
         try {
             Employee newEmployee = employeeRepository
-                    .save(new Employee(employee.getUsername(), employee.getFirstName(), employee.getLastName(), employee.getDepartment(), employee.isDepartmentHead()));
+                    .save(new Employee(employee.getUsername(), employee.getFirstName(), employee.getLastName(), employee.getDepartment(), employee.isDepartmentHead(), INITIAL_SCORE));
             return new ResponseEntity<>(newEmployee, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -82,6 +84,7 @@ public class EmployeeController {
             employeeToChange.setLastName(employee.getLastName());
             employeeToChange.setDepartment(employee.getDepartment());
             employeeToChange.setDepartmentHead(employee.isDepartmentHead());
+            employeeToChange.setScore(employee.getScore());
             return new ResponseEntity<>(employeeRepository.save(employeeToChange), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
