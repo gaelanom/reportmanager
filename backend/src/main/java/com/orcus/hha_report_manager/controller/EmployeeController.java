@@ -21,9 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.orcus.hha_report_manager.model.Employee;
 import com.orcus.hha_report_manager.repository.EmployeeRepository;
 
-@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "http://localhost:3000")
 public class EmployeeController {
 
     @Autowired
