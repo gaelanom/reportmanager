@@ -1,5 +1,8 @@
 package com.orcus.hha_report_manager.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 
 @Entity
@@ -10,6 +13,12 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @Column(name="username")
+    private String username;
+
+    @Column(name="password")
+    private String password;
+
     @Column(name = "firstname")
     private String firstName;
 
@@ -19,16 +28,18 @@ public class Employee {
     @Column(name = "department")
     private String department;
 
-    @Column(name = "isDepartmentHead")
+    @Column(name = "is_department_head")
     private boolean isDepartmentHead;
 
     public Employee() {
 
     }
 
-    public Employee(String firstname, String lastname, String department, boolean isDepartmentHead) {
+    public Employee(String username,String password ,String firstname, String lastname, String department, boolean isDepartmentHead) {
         this.firstName = firstname;
         this.lastName = lastname;
+        this.username = username;
+        this.password = password;
         this.department = department;
         this.isDepartmentHead = isDepartmentHead;
     }
@@ -63,6 +74,25 @@ public class Employee {
 
     public void setDepartmentHead(boolean isDepartmentHead) {
         this.isDepartmentHead = isDepartmentHead;
+    }
+
+    /**
+     * This method replaces the getter to "trick" Jackson from writing the password field into Json
+     * */
+    public String accessPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     @Override

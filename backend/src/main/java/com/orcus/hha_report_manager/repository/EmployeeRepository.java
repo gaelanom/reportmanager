@@ -10,4 +10,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     List<Employee> findByIsDepartmentHead(boolean isDepartmentHead);
 
     List<Employee> findByDepartmentContains(String title);
+
+    List<Employee> findByUsername(String username);
 }

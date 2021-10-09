@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +29,9 @@ public class EmployeeController {
 
     @Autowired
     EmployeeRepository employeeRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping("/employees")
     public ResponseEntity<List<Employee>> getAllEmployees(@RequestParam(required = false) String title) {
@@ -63,11 +67,15 @@ public class EmployeeController {
     @PostMapping("/employees")
     public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) {
         try {
-            Employee newEmployee = employeeRepository
-                    .save(new Employee(employee.getFirstName(), employee.getLastName(), employee.getDepartment(), employee.isDepartmentHead()));
+            if(employee.accessPassword() == null || employee.accessPassword().isEmpty())
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            employee.setPassword(passwordEncoder.encode(employee.accessPassword()));
+            Employee newEmployee = employeeRepository.save(employee);
             return new ResponseEntity<>(newEmployee, HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

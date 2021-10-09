@@ -3,6 +3,7 @@ package com.orcus.hha_report_manager.security.filters;
 import com.orcus.hha_report_manager.security.SignedJwt;
 import org.hibernate.annotations.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -48,6 +49,7 @@ public class JwtFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             //Todo: handle exceptions?
             e.printStackTrace();
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
         } finally {
             filterChain.doFilter(request, response);
         }
