@@ -4,6 +4,7 @@ import './App.css';
 import Home from './Components/Home/Home'
 import Login from './Components/Login/Login'
 import Employees from './Components/Employees/Employees'
+import Navbar from './Components/Navbar/Navbar'
 
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 
@@ -12,21 +13,9 @@ function App() {
     <>
 
       <Router>
-        {/* <Navbar /> */}
-        <nav>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/login">Login</Link>
-            </li>
-            <li>
-              <Link to="/employees">employees</Link>
-            </li>
-          </ul>
-        </nav>
+        <Navbar />
         <Switch>
+
           <Route exact path="/">
             <Home />
           </Route>
