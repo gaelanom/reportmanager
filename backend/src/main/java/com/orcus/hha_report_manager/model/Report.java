@@ -1,21 +1,47 @@
 package com.orcus.hha_report_manager.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "reports")
+@Table(name = "reports",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"month", "department"}))
 public class Report {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+
+    @Column(name = "department")
     private String department;
+
+    @Column(name = "month")
     private Month month;
+
+    @Column(name = "submitter")
+    private String submitterUsername;
+
+    @Column(name = "submitterFirstName")
+    private String submitterFirstName;
+
+    @Column(name = "submitterLastName")
+    private String submitterLastName;
+
+    @Column(name = "complete")
     private boolean complete;
+
+    @Column(name = "saved")
     private boolean saved;
+
+    @Column(name = "submitted")
     private boolean submitted;
+
+    @Column(name = "questions")
+    @OneToMany(targetEntity = Question.class, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "report_id", referencedColumnName = "id")
     private List<Question> questions;
 
 
@@ -59,6 +85,22 @@ public class Report {
         this.questions = questions;
     }
 
+    public Report(String department, Month month, String submitterUsername, String submitterFirstName, String submitterLastName, boolean complete, boolean saved, boolean submitted, List<Question> questions) {
+        this.department = department;
+        this.month = month;
+        this.submitterUsername = submitterUsername;
+        this.submitterFirstName = submitterFirstName;
+        this.submitterLastName = submitterLastName;
+        this.complete = complete;
+        this.saved = saved;
+        this.submitted = submitted;
+        this.questions = questions;
+    }
+
+    public long getId() {
+        return id;
+    }
+
     public String getDepartment() {
         return department;
     }
@@ -73,6 +115,30 @@ public class Report {
 
     public void setMonth(Month month) {
         this.month = month;
+    }
+
+    public String getSubmitterUsername() {
+        return submitterUsername;
+    }
+
+    public void setSubmitterUsername(String submitterUsername) {
+        this.submitterUsername = submitterUsername;
+    }
+
+    public String getSubmitterFirstName() {
+        return submitterFirstName;
+    }
+
+    public void setSubmitterFirstName(String submitterFirstName) {
+        this.submitterFirstName = submitterFirstName;
+    }
+
+    public String getSubmitterLastName() {
+        return submitterLastName;
+    }
+
+    public void setSubmitterLastName(String submitterLastName) {
+        this.submitterLastName = submitterLastName;
     }
 
     public boolean isComplete() {

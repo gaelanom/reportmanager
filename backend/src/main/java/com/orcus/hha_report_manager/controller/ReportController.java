@@ -1,6 +1,7 @@
 package com.orcus.hha_report_manager.controller;
 
 import com.orcus.hha_report_manager.model.Message;
+import com.orcus.hha_report_manager.model.Question;
 import com.orcus.hha_report_manager.model.Reply;
 import com.orcus.hha_report_manager.model.Report;
 import com.orcus.hha_report_manager.repository.MessageRepository;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,98 +33,95 @@ public class ReportController {
     @GetMapping("/reports")
     public ResponseEntity<List<Report>> getAllReports(@RequestParam(required = false) String department, String username) {
         try {
-            List<Message> messages = new ArrayList<Message>();
+            List<Report> reports = new ArrayList<Report>();
 
             if (department == null && username == null)
-                messageRepository.findAll().forEach(messages::add);
+                reportRepository.findAll().forEach(reports::add);
             else if (department != null)
-                messageRepository.findByDepartmentContains(department).forEach(messages::add);
+                reportRepository.findByDepartmentContains(department).forEach(reports::add);
             else if (username != null)
-                messageRepository.findByUsername(username).forEach(messages::add);
+                reportRepository.findBySubmitterUsername(username).forEach(reports::add);
 
-            if (messages.isEmpty()) {
+            if (reports.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
 
-            return new ResponseEntity<>(messages, HttpStatus.OK);
+            return new ResponseEntity<>(reports, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @GetMapping("/messages/{id}")
-    public ResponseEntity<Message> getMessageById(@PathVariable("id") long id) {
-        Optional<Message> messageData = messageRepository.findById(id);
+    @GetMapping("/reports/{id}")
+    public ResponseEntity<Report> getReportById(@PathVariable("id") long id) {
+        Optional<Report> reportData = reportRepository.findById(id);
 
-        if (messageData.isPresent()) {
-            return new ResponseEntity<>(messageData.get(), HttpStatus.OK);
+        if (reportData.isPresent()) {
+            return new ResponseEntity<>(reportData.get(), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
 
-    @PostMapping("/messages")
-    public ResponseEntity<Message> createMessage(@RequestBody Message message) {
+    @PostMapping("/reports")
+    public ResponseEntity<Report> createReport(@RequestBody Report report) {
         try {
-            Message newMessage = messageRepository
-                    .save(new Message(message.getUsername(), message.getFirstName(), message.getLastName(), message.getDepartment(), LocalDateTime.now(), message.getContent()));
-            return new ResponseEntity<>(newMessage, HttpStatus.CREATED);
+            Report newReport = reportRepository
+                    .save(new Report(report.getDepartment(), LocalDate.now().getMonth(), report.getSubmitterUsername(), report.getSubmitterFirstName(), report.getSubmitterLastName(), report.isComplete(), report.isSaved(), report.isSubmitted(), report.getQuestions()));
+            return new ResponseEntity<>(newReport, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @PostMapping("/messages/{id}")
-    public ResponseEntity<Message> replyToMessage(@PathVariable("id") long id, @RequestBody Reply reply) {
-        Optional<Message> messageData = messageRepository.findById(id);
-        reply.setTimestamp(LocalDateTime.now());
-//        try {
-//            replyRepository.save(new Reply(reply.getUsername(), reply.getFirstName(), reply.getLastName(), reply.getDepartment(), reply.getTimestamp(), reply.getContent()));
-//            } catch (Exception e) {
-//            return  new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-        if (messageData.isPresent()) {
-            Message parent = messageData.get();
-            parent.getReplies().add(reply);
-            return new ResponseEntity<>(messageRepository.save(parent), HttpStatus.OK);
+    @PostMapping("/reports/{id}")
+    public ResponseEntity<Report> addQuestionToReport(@PathVariable("id") long id, @RequestBody Question question) {
+        Optional<Report> reportData = reportRepository.findById(id);
+        if (reportData.isPresent()) {
+            Report report = reportData.get();
+            report.addQuestion(question);
+            return new ResponseEntity<>(reportRepository.save(report), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    @PutMapping("/messages/{id}")
-    public ResponseEntity<Message> updateMessage(@PathVariable("id") long id, @RequestBody Message message) {
-        Optional<Message> messageData = messageRepository.findById(id);
+    @PutMapping("/reports/{id}")
+    public ResponseEntity<Report> updateReportDetails(@PathVariable("id") long id, @RequestBody Report report) {
+        Optional<Report> reportData = reportRepository.findById(id);
 
-        if (messageData.isPresent()) {
-            Message messageToChange = messageData.get();
-            messageToChange.setUsername(message.getUsername());
-            messageToChange.setFirstName(message.getFirstName());
-            messageToChange.setLastName(message.getLastName());
-            messageToChange.setDepartment(message.getDepartment());
-            messageToChange.setTimestamp(LocalDateTime.now());
-            messageToChange.setContent(message.getContent());
-            return new ResponseEntity<>(messageRepository.save(messageToChange), HttpStatus.OK);
+        if (reportData.isPresent()) {
+            Report reportToChange = reportData.get();
+            reportToChange.setDepartment(report.getDepartment());
+            reportToChange.setMonth(report.getMonth());
+            reportToChange.setSubmitterUsername(report.getSubmitterUsername());
+            reportToChange.setSubmitterFirstName(report.getSubmitterFirstName());
+            reportToChange.setSubmitterLastName(report.getSubmitterLastName());
+            reportToChange.setComplete(report.isComplete());
+            reportToChange.setSaved(report.isSaved());
+            reportToChange.setSubmitted(report.isSubmitted());
+            reportToChange.setQuestions(report.getQuestions());
+            return new ResponseEntity<>(reportRepository.save(reportToChange), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    @DeleteMapping("/messages/{id}")
-    public ResponseEntity<HttpStatus> deleteMessage(@PathVariable("id") long id) {
+    @DeleteMapping("/reports/{id}")
+    public ResponseEntity<HttpStatus> deleteReport(@PathVariable("id") long id) {
         try {
-            messageRepository.deleteById(id);
+            reportRepository.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @DeleteMapping("/messages")
-    public ResponseEntity<HttpStatus> deleteAllMessages() {
+    @DeleteMapping("/reports")
+    public ResponseEntity<HttpStatus> deleteAllReports() {
         try {
-            messageRepository.deleteAll();
+            reportRepository.deleteAll();
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

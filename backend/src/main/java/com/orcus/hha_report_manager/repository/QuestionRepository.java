@@ -11,5 +11,5 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     List<Question> findByQuestionContains(String question);
 
-    List<Question> findByAnswerContains(String question);
+    //List<Question> findByAnswerContains(String answer);
 }

@@ -7,7 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ReportRepository extends JpaRepository<Report, Long> {
-    List<Employee> findByIsSubmitted(boolean submitted);
+    List<Report> findBySubmitted(boolean submitted);
 
-    List<Employee> findByDepartmentContains(String departmentName);
+    List<Report> findByDepartmentContains(String departmentName);
+
+    List<Report> findBySubmitterUsername(String username);
 }
