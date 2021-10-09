@@ -1,16 +1,19 @@
 package com.orcus.hha_report_manager.model;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "employees")
-public class Employee {
+@Table(name = "replies")
+public class Reply {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(name = "username", unique = true)
+    @Column(name = "username")
     private String username;
 
     @Column(name = "firstname")
@@ -22,24 +25,24 @@ public class Employee {
     @Column(name = "department")
     private String department;
 
-    @Column(name = "isDepartmentHead")
-    private boolean isDepartmentHead;
+    @Column(name = "timestamp")
+    private LocalDateTime timestamp;
 
-    @Column(name = "score")
-    private Integer score;
+    @Column(name = "content")
+    private String content;
 
-    public Employee() {
+
+    public Reply() {
 
     }
 
-
-    public Employee(String username, String firstname, String lastname, String department, boolean isDepartmentHead, Integer score) {
+    public Reply(String username, String firstname, String lastname, String department, LocalDateTime timestamp, String content) {
         this.username = username;
         this.firstName = firstname;
         this.lastName = lastname;
         this.department = department;
-        this.isDepartmentHead = isDepartmentHead;
-        this.score = score;
+        this.timestamp = timestamp;
+        this.content = content;
     }
 
     public long getId() {
@@ -70,20 +73,17 @@ public class Employee {
 
     public void setDepartment(String department) { this.department = department; }
 
-    public boolean isDepartmentHead() {
-        return isDepartmentHead;
-    }
+    public LocalDateTime getTimestamp() { return this.timestamp; }
 
-    public void setDepartmentHead(boolean isDepartmentHead) {
-        this.isDepartmentHead = isDepartmentHead;
-    }
+    public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
 
-    public void setScore(Integer score) { this.score = score; }
+    public String getContent() { return content; }
 
-    public Integer getScore() { return this.score; }
+    public void setContent(String content) { this.content = content; }
+
 
     @Override
     public String toString() {
-        return "Employee [id=" + id + ", username=" + username + " , first name=" + firstName + ", last name=" + lastName + ", department=" + department + ", department head=" + isDepartmentHead+ "]";
+        return "Message [id=" + id + ", username= " + username + ", first name=" + firstName + ", last name=" + lastName + ", department=" + department + ", timestamp=" + timestamp + ", content=" + content +"]";
     }
 }
