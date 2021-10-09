@@ -1,9 +1,12 @@
 package com.orcus.hha_report_manager.controller;
 
+import com.orcus.hha_report_manager.security.JWSHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,17 +17,21 @@ public class AuthenticationController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private UserDetailsService userDetailsService;
+
     @PostMapping("/authenticate")
     public AuthResponse authenticate(@RequestBody AuthRequest authRequest) throws Exception{
         try{
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+            //If users can't be found, throw exception.
+            var userDetails = userDetailsService.loadUserByUsername(authRequest.getUsername());
+            return new AuthResponse(JWSHelper.makeJwt(userDetails),"tbd");
         }catch (AuthenticationException e){
         //     Todo: throw 403 with message
+            throw  new Exception("Authentication failed");
         }
-
-        //Todo: auth passed. contact JPA to get user to make jwt
-        return new AuthResponse(authRequest.username,authRequest.password);
     }
 
     public static class AuthRequest{
