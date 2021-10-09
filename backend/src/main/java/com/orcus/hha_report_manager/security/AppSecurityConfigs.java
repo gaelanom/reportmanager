@@ -41,23 +41,14 @@ public class AppSecurityConfigs extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .cors()
                 .and()
-                // .formLogin().and()
-                // .httpBasic().and()
                 .authorizeRequests()
                 .antMatchers("/authenticate").permitAll()
+                .antMatchers("/api/**").hasAnyAuthority("DEPARTMENT_HEAD")
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
-        //     http.csrf().disable()
-        //             .cors().and()
-        //             .formLogin().and()
-        //             .httpBasic().and()
-        //             .authorizeRequests()
-        //             .antMatchers("/authenticate").permitAll()
-        //             .antMatchers("/**").hasAnyAuthority("DEPARTMENT_HEAD");
     }
 
     @Bean
