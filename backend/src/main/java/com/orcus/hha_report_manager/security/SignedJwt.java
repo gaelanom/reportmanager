@@ -1,22 +1,19 @@
 package com.orcus.hha_report_manager.security;
 
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.cglib.core.internal.Function;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.security.Key;
-import java.security.KeyFactory;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 
 
 /**
  * Utility class for generating and verifying JWT's.
  * */
-public class JWSHelper {
+public class SignedJwt {
 
     /*
      *  Todo: We need to store the key for subsequent decryption.
@@ -25,13 +22,33 @@ public class JWSHelper {
      */
     private static final Key KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-    public static String makeJwt(UserDetails userDetails) {
-        //todo: fill out required claims.
-        var claims = new HashMap<String, Object>();
-        return makeJwt(userDetails.getUsername(), claims);
+    private static final JwtParser PARSER = Jwts.parserBuilder()
+            .setSigningKey(KEY)
+            .build();
+
+    /**
+     * Validate the Jwt token against the key.
+     * Throw exceptions if not valid.
+     * */
+    public static Jws<Claims> validate(String token) throws Exception{
+        return PARSER.parseClaimsJws(token);
     }
 
-    private static String makeJwt(String subject, HashMap<String, Object> claims) {
+    public static String extractUsername(String token){
+        return extractClaim(token, Claims::getSubject);
+    }
+
+    private static <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
+        return null;
+    }
+
+    public static String make(UserDetails userDetails) {
+        //todo: fill out required claims.
+        var claims = new HashMap<String, Object>();
+        return make(userDetails.getUsername(), claims);
+    }
+
+    private static String make(String subject, HashMap<String, Object> claims) {
         //Todo: refactor this
         var createdDate = new Date(System.currentTimeMillis());
         var expiryDate = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10);
@@ -43,5 +60,9 @@ public class JWSHelper {
                 .setExpiration(expiryDate)
                 .signWith(KEY, SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public static class JWSBody{
+
     }
 }

@@ -1,5 +1,6 @@
 package com.orcus.hha_report_manager.security.filters;
 
+import com.orcus.hha_report_manager.security.SignedJwt;
 import org.hibernate.annotations.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,23 +30,30 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
-        String jwt = " ";
-
+        String jwtToken = "";
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            jwt = authHeader.substring(7);
+            jwtToken = authHeader.substring(7);
         }
 
-        if (jwt.equals("12345") && SecurityContextHolder.getContext().getAuthentication() == null) {
-            String username = jwt;
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            //Todo: validate Jwt here
-            if (true) {
-                UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                        userDetails, userDetails.getPassword(), userDetails.getAuthorities());
-                token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(token);
+        try {
+            var jwt = SignedJwt.validate(jwtToken);
+            if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                String username = jwt.getBody().getSubject();
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+                System.out.println("HEY: " + username);
+                if (true) {
+                    UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+                            userDetails, userDetails.getPassword(), userDetails.getAuthorities());
+                    token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(token);
+                }
             }
         }
-        filterChain.doFilter(request, response);
+        catch (Exception e) {
+            //Todo: Handle jwt validation and user search exceptions here.
+            e.printStackTrace();
+        } finally {
+            filterChain.doFilter(request, response);
+        }
     }
 }
