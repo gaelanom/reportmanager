@@ -13,7 +13,7 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(name="username")
+    @Column(name = "username", unique = true)
     private String username;
 
     @Column(name="password")
@@ -28,8 +28,11 @@ public class Employee {
     @Column(name = "department")
     private String department;
 
-    @Column(name = "is_department_head")
+    @Column(name = "isDepartmentHead")
     private boolean isDepartmentHead;
+
+    @Column(name = "score")
+    private Integer score;
 
     public Employee() {
 
@@ -47,6 +50,10 @@ public class Employee {
     public long getId() {
         return id;
     }
+
+    public String getUsername() { return username; }
+
+    public void setUsername(String username) { this.username = username; }
 
     public String getFirstName() {
         return firstName;
@@ -87,16 +94,12 @@ public class Employee {
         this.password = password;
     }
 
-    public String getUsername() {
-        return username;
-    }
+    public void setScore(Integer score) { this.score = score; }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    public Integer getScore() { return this.score; }
 
     @Override
     public String toString() {
-        return "Employee [id=" + id + ", first name=" + firstName + ", last name=" + lastName + ", department=" + department + ", department head=" + isDepartmentHead+ "]";
+        return "Employee [id=" + id + ", username=" + username + " , first name=" + firstName + ", last name=" + lastName + ", department=" + department + ", department head=" + isDepartmentHead+ "]";
     }
 }
