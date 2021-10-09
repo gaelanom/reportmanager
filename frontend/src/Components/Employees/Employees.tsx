@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import { getAllEmployees } from '../../API/employees'
 
 
 type Employee = {
@@ -21,17 +22,16 @@ export default class Employees extends React.Component <any, any> {
       }
 
     componentDidMount() {
-        axios.get('http://localhost:8080/api/employees')
-        .then(response => response.data)
-        .then(data => {
+        
+        getAllEmployees().then(data => {
             this.setState({
                 employees: data
             })
         })
+
     }
 
     render() {
-        console.log(this.state.employees)
 
         return (
             

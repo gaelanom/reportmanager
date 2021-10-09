@@ -13,20 +13,8 @@ function App() {
 
       <Router>
         {/* <Navbar /> */}
-        <nav>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/login">Login</Link>
-            </li>
-            <li>
-              <Link to="/employees">employees</Link>
-            </li>
-          </ul>
-        </nav>
         <Switch>
+
           <Route exact path="/">
             <Home />
           </Route>
