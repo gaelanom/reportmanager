@@ -3,9 +3,9 @@ package com.orcus.hha_report_manager.model;
 import javax.persistence.*;
 
 
-@Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@Table(name = "questions")
+//@Entity
+//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+//@Table(name = "questions")
 public class Question {
 
     @Id

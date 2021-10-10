@@ -3,7 +3,7 @@ package com.orcus.hha_report_manager.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "patientData")
+@Table(name = "patientInfo")
 public class PatientInfo {
 
     @Id

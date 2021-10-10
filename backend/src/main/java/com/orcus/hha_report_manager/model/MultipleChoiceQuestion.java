@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 @Entity
-//@Table(name = "MultipleChoiceQuestions")
-public class MultipleChoiceQuestion extends Question {
+@Table(name = "MultipleChoiceQuestions")
+public class MultipleChoiceQuestion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -44,12 +44,10 @@ public class MultipleChoiceQuestion extends Question {
         return id;
     }
 
-    @Override
     public String getQuestion() {
         return question;
     }
 
-    @Override
     public void setQuestion(String question) {
         this.question = question;
     }

@@ -3,8 +3,8 @@ package com.orcus.hha_report_manager.model;
 import javax.persistence.*;
 
 @Entity
-//@Table(name = "WrittenQuestion")
-public class WrittenQuestion extends Question {
+@Table(name = "WrittenQuestion")
+public class WrittenQuestion  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -33,12 +33,10 @@ public class WrittenQuestion extends Question {
         return id;
     }
 
-    @Override
     public String getQuestion() {
         return question;
     }
 
-    @Override
     public void setQuestion(String question) {
         this.question = question;
     }

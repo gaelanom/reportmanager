@@ -39,10 +39,18 @@ public class Report {
     @Column(name = "submitted")
     private boolean submitted;
 
+    @Column(name = "template")
+    private boolean template;
+
     @Column(name = "questions")
-    @OneToMany(targetEntity = Question.class, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(targetEntity = WrittenQuestion.class, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "report_id", referencedColumnName = "id")
-    private List<Question> questions;
+    private List<WrittenQuestion> questions;
+
+    @Column(name = "multipleChoiceQuestions")
+    @OneToMany(targetEntity = MultipleChoiceQuestion.class, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "report_id", referencedColumnName = "id")
+    private List<MultipleChoiceQuestion> multipleChoiceQuestions;
 
     @Column(name = "patientInfo")
     @OneToMany(targetEntity = PatientInfo.class, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -60,7 +68,10 @@ public class Report {
         this.complete = false;
         this.saved = false;
         this.submitted = false;
-        this.questions = new ArrayList<Question>();
+        this.template = false;
+        this.questions = new ArrayList<WrittenQuestion>();
+        this.multipleChoiceQuestions = new ArrayList<MultipleChoiceQuestion>();
+        this.patientInfo = new ArrayList<PatientInfo>();
     }
 
     public Report(String department, String monthName){
@@ -69,28 +80,32 @@ public class Report {
         this.complete = false;
         this.saved = false;
         this.submitted = false;
-        this.questions = new ArrayList<Question>();
+        this.template = false;
+        this.questions = new ArrayList<WrittenQuestion>();
+        this.multipleChoiceQuestions = new ArrayList<MultipleChoiceQuestion>();
     }
 
-    public Report(String department, List<Question> questions){
+    public Report(String department, List<WrittenQuestion> questions, List<MultipleChoiceQuestion> multipleChoiceQuestions){
         this.department = department;
         this.month = LocalDateTime.now().getMonth();
         this.complete = false;
         this.saved = false;
         this.submitted = false;
+        this.template = false;
         this.questions = questions;
     }
 
-    public Report(String department, String monthName, List<Question> questions) {
+    public Report(String department, String monthName, List<WrittenQuestion> questions, List<MultipleChoiceQuestion> multipleChoiceQuestions, List<PatientInfo> patientInfo) {
         this.department = department;
         this.month = LocalDateTime.parse(monthName).getMonth();
         this.complete = false;
         this.saved = false;
         this.submitted = false;
         this.questions = questions;
+        this.multipleChoiceQuestions = multipleChoiceQuestions;
     }
 
-    public Report(String department, Month month, String submitterUsername, String submitterFirstName, String submitterLastName, boolean complete, boolean saved, boolean submitted, List<Question> questions) {
+    public Report(String department, Month month, String submitterUsername, String submitterFirstName, String submitterLastName, boolean complete, boolean saved, boolean submitted, List<WrittenQuestion> questions, List<MultipleChoiceQuestion> multipleChoiceQuestions) {
         this.department = department;
         this.month = month;
         this.submitterUsername = submitterUsername;
@@ -100,6 +115,22 @@ public class Report {
         this.saved = saved;
         this.submitted = submitted;
         this.questions = questions;
+        this.multipleChoiceQuestions = multipleChoiceQuestions;
+    }
+
+    public Report(String department, Month month, String submitterUsername, String submitterFirstName, String submitterLastName, boolean complete, boolean saved, boolean submitted, boolean template, List<WrittenQuestion> questions, List<MultipleChoiceQuestion> multipleChoiceQuestions, List<PatientInfo> patientInfo) {
+        this.department = department;
+        this.month = month;
+        this.submitterUsername = submitterUsername;
+        this.submitterFirstName = submitterFirstName;
+        this.submitterLastName = submitterLastName;
+        this.complete = complete;
+        this.saved = saved;
+        this.submitted = submitted;
+        this.template = template;
+        this.questions = questions;
+        this.multipleChoiceQuestions = multipleChoiceQuestions;
+        this.patientInfo = patientInfo;
     }
 
     public long getId() {
@@ -170,20 +201,36 @@ public class Report {
         this.submitted = submitted;
     }
 
-    public List<Question> getQuestions() {
-        return questions;
+    public boolean isTemplate() {
+        return template;
     }
 
-    public void setQuestions(List<Question> questions) {
+    public void setTemplate(boolean template) {
+        this.template = template;
+    }
+
+    public void setQuestions(List<WrittenQuestion> questions) {
         this.questions = questions;
     }
 
-    public void addQuestion(Question question) {
-        this.questions.add(question);
+    public List<WrittenQuestion> getQuestions() {
+        return questions;
     }
 
-    public void removeQuestion(Question question){
-        this.questions.remove(question);
+    public void addQuestion(WrittenQuestion writtenQuestion){
+        this.questions.add(writtenQuestion);
+    }
+
+    public List<MultipleChoiceQuestion> getMultipleChoiceQuestions() {
+        return multipleChoiceQuestions;
+    }
+
+    public void setMultipleChoiceQuestions(List<MultipleChoiceQuestion> multipleChoiceQuestions) {
+        this.multipleChoiceQuestions = multipleChoiceQuestions;
+    }
+
+    public void addMultipleChoiceQuestion(MultipleChoiceQuestion multipleChoiceQuestion){
+        this.multipleChoiceQuestions.add(multipleChoiceQuestion);
     }
 
     public List<PatientInfo> getPatientInfo() {
