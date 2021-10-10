@@ -44,6 +44,11 @@ public class Report {
     @JoinColumn(name = "report_id", referencedColumnName = "id")
     private List<Question> questions;
 
+    @Column(name = "patientInfo")
+    @OneToMany(targetEntity = PatientInfo.class, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "report_id", referencedColumnName = "id")
+    private List<PatientInfo> patientInfo;
+
 
     public Report() {
 
@@ -181,4 +186,15 @@ public class Report {
         this.questions.remove(question);
     }
 
+    public List<PatientInfo> getPatientInfo() {
+        return patientInfo;
+    }
+
+    public void setPatientInfo(List<PatientInfo> patientInfo) {
+        this.patientInfo = patientInfo;
+    }
+
+    public void addPatient(PatientInfo patientInfo){
+        this.patientInfo.add(patientInfo);
+    }
 }

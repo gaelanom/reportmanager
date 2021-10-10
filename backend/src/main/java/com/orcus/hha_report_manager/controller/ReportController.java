@@ -1,12 +1,7 @@
 package com.orcus.hha_report_manager.controller;
 
-import com.orcus.hha_report_manager.model.Message;
-import com.orcus.hha_report_manager.model.Question;
-import com.orcus.hha_report_manager.model.Reply;
-import com.orcus.hha_report_manager.model.Report;
-import com.orcus.hha_report_manager.repository.MessageRepository;
+import com.orcus.hha_report_manager.model.*;
 import com.orcus.hha_report_manager.repository.QuestionRepository;
-import com.orcus.hha_report_manager.repository.ReplyRepository;
 import com.orcus.hha_report_manager.repository.ReportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -75,6 +69,20 @@ public class ReportController {
         }
     }
 
+//    @PostMapping("/reports/{id}")
+//    public ResponseEntity<Report> addQuestionToReport(@PathVariable("id") long id, @RequestBody List<Question> questions) {
+//        Optional<Report> reportData = reportRepository.findById(id);
+//        if (reportData.isPresent()) {
+//            Report report = reportData.get();
+//            for(Question question : questions){
+//                report.addQuestion(question);
+//            }
+//            return new ResponseEntity<>(reportRepository.save(report), HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//    }
+
     @PostMapping("/reports/{id}")
     public ResponseEntity<Report> addQuestionToReport(@PathVariable("id") long id, @RequestBody Question question) {
         Optional<Report> reportData = reportRepository.findById(id);
@@ -86,6 +94,43 @@ public class ReportController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @PostMapping("/reports/{id}/questions")
+    public ResponseEntity<Report> addQuestionToReport(@PathVariable("id") long id, @RequestBody WrittenQuestion writtenQuestion) {
+        Optional<Report> reportData = reportRepository.findById(id);
+        if (reportData.isPresent()) {
+            Report report = reportData.get();
+            report.addQuestion(writtenQuestion);
+            return new ResponseEntity<>(reportRepository.save(report), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/reports/{id}/questions/mcq")
+    public ResponseEntity<Report> addQuestionToReport(@PathVariable("id") long id, @RequestBody MultipleChoiceQuestion multipleChoiceQuestion) {
+        Optional<Report> reportData = reportRepository.findById(id);
+        if (reportData.isPresent()) {
+            Report report = reportData.get();
+            report.addQuestion(multipleChoiceQuestion);
+            return new ResponseEntity<>(reportRepository.save(report), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/reports/{id}/patient")
+    public ResponseEntity<Report> addPatientInfoToReport(@PathVariable("id") long id, @RequestBody PatientInfo patientInfo) {
+        Optional<Report> reportData = reportRepository.findById(id);
+        if (reportData.isPresent()) {
+            Report report = reportData.get();
+            report.addPatient(patientInfo);
+            return new ResponseEntity<>(reportRepository.save(report), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
 
     @PutMapping("/reports/{id}")
     public ResponseEntity<Report> updateReportDetails(@PathVariable("id") long id, @RequestBody Report report) {
@@ -102,6 +147,7 @@ public class ReportController {
             reportToChange.setSaved(report.isSaved());
             reportToChange.setSubmitted(report.isSubmitted());
             reportToChange.setQuestions(report.getQuestions());
+            reportToChange.setPatientInfo(report.getPatientInfo());
             return new ResponseEntity<>(reportRepository.save(reportToChange), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

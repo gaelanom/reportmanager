@@ -2,7 +2,9 @@ package com.orcus.hha_report_manager.model;
 
 import javax.persistence.*;
 
+
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Table(name = "questions")
 public class Question {
 
@@ -23,5 +25,9 @@ public class Question {
 
     public String getQuestion(){
         return this.question;
+    }
+
+    public void setQuestion(String question){
+        this.question = question;
     }
 }
