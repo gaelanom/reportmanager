@@ -7,8 +7,7 @@ import Employees from '../../Images/Employees.jpg'
 import BioMechanical from '../../Images/BioMechanical.jpg'
 import Points from '../../Images/Points.jpg'
 
-
-function Maternity() {
+function NicuPaed() {
 
     let currDate = new Date();
     let month = currDate.getMonth() + 1;
@@ -19,7 +18,7 @@ function Maternity() {
 
     return (
         <>
-        <h1 className="display-1 text-center my-4">Maternity</h1>
+        <h1 className="display-1 text-center my-4">Nicu Paed</h1>
         <div className="row row-cols-1 row-cols-md-3 g-4 mx-2">
             <div className="col">
                 <div className="card h-100">
@@ -68,55 +67,8 @@ function Maternity() {
             </div>
         </div>
         </>
-    )
-
-        {/* <div id="wrapper">
-            <h1 id="title">Maternity Home Page</h1>
-            <div id="Hcontainer">
-                <div className="with_border">
-                    <Router>
-                        <button className="butt">
-                            <Link to="/maternity/casestudyPg">Case Study</Link>
-                        </button>
-                    </Router>
-                    <div className="inner_mssg">Next Case Study will Due on:
-                        <div className="inner_mssg">{date}</div>
-                    </div>
-                </div>
-                <div className="with_border">
-                    <Router>
-                        <button className="butt">
-                            <Link to="/maternity/datainputPg">Data</Link>
-                        </button>
-                    </Router>
-                    <div className="inner_mssg">Next Data Submission will Due on:
-                        <div className="inner_mssg">{date}</div>
-                    </div>
-                </div>
-                <div className="with_border">
-                    <Router>
-                        <button className="butt">
-                            <Link to="/maternity/empofmthPg">Employees</Link>
-                        </button>
-                    </Router>
-                    <div className="inner_mssg">A list of employees</div>
-                </div>
-                <div className="with_border">
-                    <Router>
-                        <button className="butt">
-                            <Link to="/maternity/biomechPg">BioMech Support</Link>
-                        </button>
-                    </Router>
-                    <div className="inner_mssg">No messages</div>
-                </div>
-                <div id="pointsTally" className="with_border">
-                    <div id="pointsTally_header">Your current points tally is:</div>
-                    <div className="inner_mssg">Employee's score</div>
-                </div>
-            </div>
-        </div> */}
-    
+    );
 }
 
 
-export default Maternity;
+export default NicuPaed;

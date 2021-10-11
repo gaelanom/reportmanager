@@ -33,7 +33,7 @@ class Navbar extends React.Component {
                                             <Link to="/rehab" className="nav-link active">Rehab</Link>
                                         </li>
                                         <li className="nav-item">
-                                            <Link to="/nicu_paed" className="nav-link active">Nicu_Paed</Link>
+                                            <Link to="/nicu-paed" className="nav-link active">Nicu Paed</Link>
                                         </li>
                                         <li className="nav-item">
                                             <Link to="/communityhealth" className="nav-link active">CommunityHealth</Link>

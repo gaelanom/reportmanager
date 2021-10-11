@@ -7,7 +7,7 @@ import Employees from './Components/Employees/Employees'
 import Navbar from './Components/Navbar/Navbar'
 import Maternity from './Components/Departments/Maternity'
 import Rehab from './Components/Departments/Rehab'
-import Nicu_Paed from './Components/Departments/Nicu_Paed'
+import Nicu_Paed from './Components/Departments/NicuPaed'
 import CommunityHealth from './Components/Departments/CommunityHealth'
 
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
@@ -40,7 +40,7 @@ function App() {
             <Rehab />
           </Route>
 
-          <Route path="/nicu_paed">
+          <Route path="/nicu-paed">
             <Nicu_Paed />
           </Route>
 
