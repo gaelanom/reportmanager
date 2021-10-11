@@ -1,38 +1,67 @@
 import React from 'react';
 import {useState} from "react";
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import Divider from '@mui/material/Divider';
 
 enum RecordType {
     written,
     MCQ,
 }
 
-class RecordEntry {
-    question: string = "";
-    answer: string = "";
-    type: RecordType = RecordType.written
-    private id: number;
+type Props = {
+    id: number;
+    type: RecordType;
+};
 
-    constructor(id: number) {
-        this.id = id
+type EntryState = {
+    id: number;
+    question: string;
+    answer: string;
+    type: RecordType;
+};
+
+class RecordEntry extends React.Component<Props, EntryState> {
+    state: EntryState;
+
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            id: props.id,
+            question: "",
+            answer: "",
+            type: props.type,
+        };
+    }
+
+    render() {
+        return (
+            <div>
+                <ListItem alignItems="flex-start">
+                    <Grid container spacing={2}>
+                        <Grid item xs={8}>
+                            <TextField fullWidth id="field" label="Field" variant="outlined"/>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <TextField fullWidth id="value" label="Value" variant="outlined"/>
+                        </Grid>
+                    </Grid>
+                </ListItem>
+                <Divider component="li"/>
+            </div>
+        );
     }
 }
 
 function DataInput() {
-    const [fieldList, setFieldList] = useState([{ firstName: "", lastName: "" }]);
-
     return (
         <div className="DataInput">
             <h1>Department Data Input</h1>
-            {/*<form onSubmit={handleSubmit}>*/}
-            <form>
-                <fieldset>
-                    <label>
-                        <p>Name</p>
-                        <input name="name" />
-                    </label>
-                </fieldset>
-                <button type="submit">Submit</button>
-            </form>
+            <List>
+
+            </List>
         </div>
     )
 }
