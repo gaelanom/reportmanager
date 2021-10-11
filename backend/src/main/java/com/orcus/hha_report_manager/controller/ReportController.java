@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@CrossOrigin(origins = "http://localhost:8081")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api")
 public class ReportController {
@@ -67,38 +67,12 @@ public class ReportController {
     public ResponseEntity<Report> createReport(@RequestBody Report report) {
         try {
             Report newReport = reportRepository
-                    .save(new Report(report.getDepartment(), LocalDate.now().getMonth(), report.getSubmitterUsername(), report.getSubmitterFirstName(), report.getSubmitterLastName(), report.isComplete(), report.isSaved(), report.isSubmitted(), report.getQuestions(), report.getMultipleChoiceQuestions()));
+                    .save(new Report(report.getDepartment(), LocalDate.now().getMonth(), report.getSubmitterUsername(), report.getSubmitterFirstName(), report.getSubmitterLastName(), report.isComplete(), report.isSaved(), report.isSubmitted(), report.isTemplate(), report.getQuestions(), report.getMultipleChoiceQuestions(), report.getPatientInfo()));
             return new ResponseEntity<>(newReport, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-//    @PostMapping("/reports/{id}")
-//    public ResponseEntity<Report> addQuestionToReport(@PathVariable("id") long id, @RequestBody List<Question> questions) {
-//        Optional<Report> reportData = reportRepository.findById(id);
-//        if (reportData.isPresent()) {
-//            Report report = reportData.get();
-//            for(Question question : questions){
-//                report.addQuestion(question);
-//            }
-//            return new ResponseEntity<>(reportRepository.save(report), HttpStatus.OK);
-//        } else {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//    }
-
-//    @PostMapping("/reports/{id}")
-//    public ResponseEntity<Report> addQuestionToReport(@PathVariable("id") long id, @RequestBody WrittenQuestion writtenQuestion) {
-//        Optional<Report> reportData = reportRepository.findById(id);
-//        if (reportData.isPresent()) {
-//            Report report = reportData.get();
-//            report.addQuestion(writtenQuestion);
-//            return new ResponseEntity<>(reportRepository.save(report), HttpStatus.OK);
-//        } else {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//    }
 
     @PostMapping("/reports/{id}/questions")
     public ResponseEntity<Report> addQuestionToReport(@PathVariable("id") long id, @RequestBody WrittenQuestion writtenQuestion) {
