@@ -6,7 +6,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Divider from '@mui/material/Divider';
 import AddIcon from '@mui/icons-material/Add';
-import {newReport, addEmptyQuestion} from '../../API/reports'
+import {newReport, addEmptyQuestion, updateQuestion} from '../../API/reports';
 
 enum RecordType {
     written,
@@ -43,16 +43,28 @@ class RecordEntry extends React.Component<Props, EntryState> {
         };
     }
 
+    update() {
+        updateQuestion(this.state.id, this.state.question, this.state.answer)
+    }
+
     render() {
         return (
             <div>
                 <ListItem alignItems="flex-start">
                     <Grid container spacing={2}>
                         <Grid item xs={8}>
-                            <TextField fullWidth id="field" label="Field" variant="outlined" defaultValue={this.state.question}/>
+                            <TextField fullWidth id="field" label="Field" variant="outlined"
+                                       defaultValue={this.state.question} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                           this.setState({question: event.target.value});
+                                           this.update();
+                            }}/>
                         </Grid>
                         <Grid item xs={4}>
-                            <TextField fullWidth id="value" label="Value" variant="outlined" defaultValue={this.state.answer}/>
+                            <TextField fullWidth id="value" label="Value" variant="outlined"
+                                       defaultValue={this.state.answer} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                           this.setState({question: event.target.value});
+                                           this.update();
+                            }}/>
                         </Grid>
                     </Grid>
                 </ListItem>
@@ -70,7 +82,7 @@ class DataInput extends React.Component {
 
     constructor(props: any) {
         super(props)
-        newReport(props.department).then(r => this.state.id = r.id)
+        newReport(props.department).then(r => this.setState({id: r.id}))
     }
 
     newEntry(id: number) {
