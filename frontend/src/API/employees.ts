@@ -7,3 +7,4 @@ export function getAllEmployees() {
     return axios.get(URL).then(res => res.data)
 
 }
+

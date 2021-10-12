@@ -1,5 +1,7 @@
+import axios from "axios";
 import * as React from "react";
 import { Redirect, RouteComponentProps, withRouter } from "react-router-dom";
+import Api from "../../API/Api";
 
 type Property = {};
 
@@ -7,6 +9,7 @@ type State = {
   username: string;
   password: string;
   text?: string;
+  loggingIn: boolean;
   loggedIn: boolean;
 };
 
@@ -19,7 +22,7 @@ class WrappedLogin extends React.Component<
     this.state = {
       username: "",
       password: "",
-      text: "",
+      loggingIn: false,
       loggedIn: false,
     };
   }
@@ -37,23 +40,32 @@ class WrappedLogin extends React.Component<
   };
 
   private login = () => {
-    if (this.validateLogin()) this.handleSuccessfulLogin();
-    else this.handleFailedLogin();
+    if (this.state.username.length == 0 || this.state.password.length == 0) {
+      this.setState({ loggedIn: false });
+      return;
+    }
+    this.validateLogin();
   };
 
   private validateLogin = () => {
-    return (
-      this.state.username === "catshark" && this.state.password === "12345"
-    );
+    this.setState({ loggingIn: true });
+    Api.Authorization.login(this.state.username, this.state.password)
+      .then((data: any) => this.handleSuccessfulLogin(data.jwt))
+      .catch((error) => this.handleFailedLogin(error));
+    // .finally(() => this.setState({ loggingIn: false }));
   };
 
-  private handleSuccessfulLogin = () => {
-    // this.props.history.push("/");
+  private handleSuccessfulLogin = (token: string) => {
+    if (axios.defaults.headers === undefined) {
+      console.error("Axios undefined");
+      return;
+    }
+    axios.defaults.headers.common["Authorization"] = "Bearer " + token;
     this.setState({ loggedIn: true });
   };
 
-  private handleFailedLogin = () => {
-    alert("Login failed");
+  private handleFailedLogin = (error: any) => {
+    alert(error);
   };
 
   render() {
@@ -67,18 +79,35 @@ class WrappedLogin extends React.Component<
     return (
       <>
         <h1>Login</h1>
-        <h2>text</h2>
-        <input
-          type="text"
-          name="username"
-          onChange={this.handleUsernameChange}
-        />
-        <input
-          type="text"
-          name="password"
-          onChange={this.handlePasswordChange}
-        />
-        <button onClick={this.handleOnClick}> Login </button>
+        {this.state.loggingIn ? this.renderLogingIn() : this.renderInputs()}
+      </>
+    );
+  };
+
+  private renderLogingIn = () => {
+    return <h2>Loging In ... </h2>;
+  };
+
+  private renderInputs = () => {
+    return (
+      <>
+        <div>
+          username:
+          <input
+            type="text"
+            name="username"
+            onChange={this.handleUsernameChange}
+          />
+        </div>
+        <div>
+          password:
+          <input
+            type="text"
+            name="password"
+            onChange={this.handlePasswordChange}
+          />
+        </div>
+        <button onClick={this.handleOnClick}> Login </button>{" "}
       </>
     );
   };
