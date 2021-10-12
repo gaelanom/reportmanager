@@ -6,7 +6,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Divider from '@mui/material/Divider';
 import AddIcon from '@mui/icons-material/Add';
-import {newReport, addEmptyQuestion, updateQuestion} from '../../API/reports';
+import {newReport, addEmptyQuestion, updateQuestion, getReportByDeptName} from '../../API/reports';
 
 enum RecordType {
     written,
@@ -74,15 +74,23 @@ class RecordEntry extends React.Component<Props, EntryState> {
     }
 }
 
-class DataInput extends React.Component {
+class DataInput extends React.Component<any, any> {
     state: RecordState = {
         entryList: [],
         id: 0
     }
 
-    constructor(props: any) {
+    constructor(props: {department: string}) {
         super(props)
-        newReport(props.department).then(r => this.setState({id: r.id}))
+        newReport(props.department)
+        getReportByDeptName(props.department).then((r: any) => {
+            let questionList: any[] = r.questions;
+            let entryList: any[] = [];
+            questionList.forEach(e => {
+                entryList = [...entryList, this.newEntry(e.id)]
+            })
+            this.setState({id: r.id, entryList: entryList});
+        })
     }
 
     newEntry(id: number) {
@@ -90,20 +98,18 @@ class DataInput extends React.Component {
     }
 
     createNewEntry() {
-        addEmptyQuestion(this.state.id).then(r => {
+        addEmptyQuestion(this.state.id).then((r: any) => {
             let entry: any = this.newEntry(r.id)
-            this.state.entryList.push(entry)
+            this.setState({entryList: [...this.state.entryList, entry]})
         })
     }
 
     render() {
         return (
             <div className="DataInput">
-                <h1>Department Data Input</h1>
+                <h1>{ this.props.department } Department Data Input</h1>
                 <List>
-                    {this.state.entryList.map(function(entry: RecordEntry, index: number) {
-                        return {entry}
-                    })}
+                    {this.state.entryList}
                     <ListItem>
                         <Button variant="contained" size="large" startIcon={<AddIcon fontSize="large"/>} onClick={() => {
                             this.createNewEntry();
