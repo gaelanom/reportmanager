@@ -10,7 +10,13 @@ import Rehab from "./Components/Departments/Rehab";
 import Nicu_Paed from "./Components/Departments/NicuPaed";
 import CommunityHealth from "./Components/Departments/CommunityHealth";
 
-import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Link,
+  Redirect,
+} from "react-router-dom";
 
 function App() {
   return (
@@ -18,11 +24,11 @@ function App() {
       <Router>
         <Navbar />
         <Switch>
-          <Route exact path="/">
+          <Route exact path="/home">
             <Home />
           </Route>
 
-          <Route path="/login">
+          <Route exact path="/login">
             <Login />
           </Route>
 
@@ -46,6 +52,7 @@ function App() {
             <CommunityHealth />
           </Route>
         </Switch>
+        <Redirect to="/login" />
       </Router>
     </>
   );

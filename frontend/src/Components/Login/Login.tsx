@@ -1,12 +1,13 @@
 import * as React from "react";
-import { RouteComponentProps, withRouter } from "react-router-dom";
+import { Redirect, RouteComponentProps, withRouter } from "react-router-dom";
 
 type Property = {};
 
 type State = {
   username: string;
   password: string;
-  text: string;
+  text?: string;
+  loggedIn: boolean;
 };
 
 class WrappedLogin extends React.Component<
@@ -19,6 +20,7 @@ class WrappedLogin extends React.Component<
       username: "",
       password: "",
       text: "",
+      loggedIn: false,
     };
   }
 
@@ -46,7 +48,8 @@ class WrappedLogin extends React.Component<
   };
 
   private handleSuccessfulLogin = () => {
-    this.props.history.push("/");
+    // this.props.history.push("/");
+    this.setState({ loggedIn: true });
   };
 
   private handleFailedLogin = () => {
@@ -54,8 +57,15 @@ class WrappedLogin extends React.Component<
   };
 
   render() {
+    return <>{this.state.loggedIn ? this.redirect() : this.renderLogin()}</>;
+  }
+  private redirect = () => {
+    return <Redirect to="/maternity" />;
+  };
+
+  private renderLogin = () => {
     return (
-      <div>
+      <>
         <h1>Login</h1>
         <h2>text</h2>
         <input
@@ -69,9 +79,9 @@ class WrappedLogin extends React.Component<
           onChange={this.handlePasswordChange}
         />
         <button onClick={this.handleOnClick}> Login </button>
-      </div>
+      </>
     );
-  }
+  };
 }
 
 const Login = withRouter(WrappedLogin);
