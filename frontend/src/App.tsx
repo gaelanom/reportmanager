@@ -9,6 +9,7 @@ import Maternity from './Components/Departments/Maternity'
 import Rehab from './Components/Departments/Rehab'
 import NicuPaed from './Components/Departments/NicuPaed'
 import CommunityHealth from './Components/Departments/CommunityHealth'
+import DataInput from './Components/Departments/DataInput'
 import Messages from './Components/Messages/Messages'
 import Leaderboard from './Components/Leaderboard/Leaderboard'
 
@@ -35,16 +36,32 @@ function App() {
             <Employees />
           </Route>
 
+          <Route path="/maternity-data-input">
+            <DataInput department={"Maternity"} />
+          </Route>
+
           <Route path="/maternity">
             <Maternity />
+          </Route>
+
+          <Route path="/rehab-data-input">
+            <DataInput department={"Rehab"} />
           </Route>
 
           <Route path="/rehab">
             <Rehab />
           </Route>
 
+          <Route path="/nicu-paed-data-input">
+            <DataInput department={"NICU-paed"} />
+          </Route>
+
           <Route path="/nicu-paed">
             <NicuPaed />
+          </Route>
+
+          <Route path="/communityhealth-data-input">
+            <DataInput department={"CommunityHealth"} />
           </Route>
 
           <Route path="/communityhealth">
