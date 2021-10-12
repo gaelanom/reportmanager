@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Redirect, RouteComponentProps, withRouter } from "react-router-dom";
 import Api from "../../API/Api";
+import axios from "axios";
 
 type Property = {};
 
@@ -18,6 +19,7 @@ class WrappedLogin extends React.Component<
 > {
   constructor(props: {} & RouteComponentProps) {
     super(props);
+    // this.isMounted = true;
     this.state = {
       username: "",
       password: "",
@@ -55,8 +57,9 @@ class WrappedLogin extends React.Component<
         /*
         Note: this will throw an exception on succesful login beacuse we will then redirect, causing this component to be killed.
         However, this setState called would still be called on an unmounted component.
+        This sometimes cause a crash, so need to check for component unmounted. 
         */
-        this.setState({ loggingIn: false });
+        // this.setState({ loggingIn: false });
       });
   };
 
@@ -101,35 +104,6 @@ class WrappedLogin extends React.Component<
           <input
             type="text"
             name="username"
-            onChange={this.handleUsernameChange}
-          />
-        </div>
-        <div>
-          password:
-          <input
-            type="text"
-            name="password"
-            onChange={this.handlePasswordChange}
-          />
-        </div>
-        <button onClick={this.handleOnClick}> Login </button>{" "}
-        {this.state.loggingIn ? this.renderLogingIn() : this.renderInputs()}
-      </>
-    );
-  };
-
-  private renderLogingIn = () => {
-    return <h2>Loging In ... </h2>;
-  };
-
-  private renderInputs = () => {
-    return (
-      <>
-        <div>
-          username:
-          <input
-            type="text"
-            name="username"
             value={this.state.username}
             onChange={this.handleUsernameChange}
           />
@@ -150,6 +124,7 @@ class WrappedLogin extends React.Component<
 
   componentWillUnmount() {
     console.log("login kill");
+    // this.isMounted = false;
   }
 }
 
