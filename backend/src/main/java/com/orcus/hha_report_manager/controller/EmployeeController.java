@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,8 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.orcus.hha_report_manager.model.Employee;
 import com.orcus.hha_report_manager.repository.EmployeeRepository;
 
-
-@CrossOrigin(origins = "http://localhost:8081")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api")
 public class EmployeeController {
@@ -30,6 +30,9 @@ public class EmployeeController {
     private static final Integer INITIAL_SCORE = 0;
     @Autowired
     EmployeeRepository employeeRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping("/employees")
     public ResponseEntity<List<Employee>> getAllEmployees(@RequestParam(required = false) String title) {
@@ -65,8 +68,11 @@ public class EmployeeController {
     @PostMapping("/employees")
     public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) {
         try {
-            Employee newEmployee = employeeRepository
-                    .save(new Employee(employee.getUsername(), employee.getFirstName(), employee.getLastName(), employee.getDepartment(), employee.isDepartmentHead(), INITIAL_SCORE));
+            if(employee.accessPassword() == null || employee.accessPassword().isEmpty())
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            employee.setPassword(passwordEncoder.encode(employee.accessPassword()));
+            Employee newEmployee = employeeRepository.save(employee);
             return new ResponseEntity<>(newEmployee, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -79,12 +85,10 @@ public class EmployeeController {
 
         if (employeeData.isPresent()) {
             Employee employeeToChange = employeeData.get();
-            employeeToChange.setUsername(employee.getUsername());
             employeeToChange.setFirstName(employee.getFirstName());
             employeeToChange.setLastName(employee.getLastName());
             employeeToChange.setDepartment(employee.getDepartment());
             employeeToChange.setDepartmentHead(employee.isDepartmentHead());
-            employeeToChange.setScore(employee.getScore());
             return new ResponseEntity<>(employeeRepository.save(employeeToChange), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

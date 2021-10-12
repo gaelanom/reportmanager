@@ -13,22 +13,28 @@ import DataInput from './Components/Departments/DataInput'
 import Messages from './Components/Messages/Messages'
 import Leaderboard from './Components/Leaderboard/Leaderboard'
 
-import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
-
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Link,
+  Redirect,
+} from "react-router-dom";
 
 function App() {
   return (
     <>
 
       <Router>
-
         <Navbar />
+        <Redirect to="/login" />
         <Switch>
+
           <Route exact path="/">
             <Home />
           </Route>
 
-          <Route path="/login">
+          <Route exact path="/login">
             <Login />
           </Route>
 

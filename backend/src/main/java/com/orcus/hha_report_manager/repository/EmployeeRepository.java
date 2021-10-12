@@ -9,5 +9,7 @@ import com.orcus.hha_report_manager.model.Employee;
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     List<Employee> findByIsDepartmentHead(boolean isDepartmentHead);
 
-    List<Employee> findByDepartmentContains(String name);
+    List<Employee> findByDepartmentContains(String title);
+
+    List<Employee> findByUsername(String username);
 }
