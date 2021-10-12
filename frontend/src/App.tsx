@@ -10,6 +10,8 @@ import Rehab from './Components/Departments/Rehab'
 import NicuPaed from './Components/Departments/NicuPaed'
 import CommunityHealth from './Components/Departments/CommunityHealth'
 import DataInput from './Components/Departments/DataInput'
+import Messages from './Components/Messages/Messages'
+import Leaderboard from './Components/Leaderboard/Leaderboard'
 
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 
@@ -65,6 +67,15 @@ function App() {
           <Route path="/communityhealth">
             <CommunityHealth />
           </Route>
+
+          <Route path="/messages">
+            <Messages />
+          </Route>
+
+          <Route path="/leaderboard">
+            <Leaderboard />
+          </Route>
+
 
         </Switch>
       </Router>
