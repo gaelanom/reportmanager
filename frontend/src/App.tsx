@@ -9,6 +9,7 @@ import Maternity from './Components/Departments/Maternity'
 import Rehab from './Components/Departments/Rehab'
 import Nicu_Paed from './Components/Departments/NicuPaed'
 import CommunityHealth from './Components/Departments/CommunityHealth'
+import DataInput from './Components/Departments/DataInput'
 
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 
@@ -32,16 +33,32 @@ function App() {
             <Employees />
           </Route>
 
+          <Route path="/maternity/data-input">
+            <DataInput department={"maternity"} />
+          </Route>
+
           <Route path="/maternity">
             <Maternity />
+          </Route>
+
+          <Route path="/rehab/data-input">
+            <DataInput department={"rehab"} />
           </Route>
 
           <Route path="/rehab">
             <Rehab />
           </Route>
 
+          <Route path="/nicu-paed/data-input">
+            <DataInput department={"nicu-paed"} />
+          </Route>
+
           <Route path="/nicu-paed">
             <Nicu_Paed />
+          </Route>
+
+          <Route path="/communityhealth/data-input">
+            <DataInput department={"communityhealth"} />
           </Route>
 
           <Route path="/communityhealth">
