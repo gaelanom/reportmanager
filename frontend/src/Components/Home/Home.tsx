@@ -49,6 +49,26 @@ function Home() {
                         </div>
                     </div>
                 </div>
+
+                <div className="card text-center mt-4">
+                    <div className="card-header">
+                        Leaderboards
+                    </div>
+                    <div className="card-body">
+                        <h5 className="card-title">Click for more information on Leaderboards</h5>
+                        <h5 className="card-title"><Link to="/leaderboard">Leaderboards</Link></h5>
+                    </div>
+                </div>
+
+                <div className="card text-center mt-4">
+                    <div className="card-header">
+                        MessageBoard
+                    </div>
+                    <div className="card-body">
+                        <h5 className="card-title">Click for more information on MessageBoard</h5>
+                        <h5 className="card-title"><Link to="/messages">MessageBoard</Link></h5>
+                    </div>
+                </div>
             </div>
         </div>
     )
