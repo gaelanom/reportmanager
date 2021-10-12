@@ -17,7 +17,7 @@ function Home() {
                         {/* <img src="..." className="card-img-top" alt="..."> */}
                         <div className="card-body">
                             <h5 className="card-title"><Link to="/maternity">Maternity</Link></h5>
-                            <p className="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                            <p className="card-text">Maternity department description</p>
                         </div>
                         </div>
                     </div>
@@ -26,7 +26,7 @@ function Home() {
                         {/* <img src="..." className="card-img-top" alt="..."> */}
                         <div className="card-body">
                             <h5 className="card-title"><Link to="/communityhealth">Community Health</Link></h5>
-                            <p className="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                            <p className="card-text">Community Health description</p>
                         </div>
                         </div>
                     </div>
@@ -35,7 +35,7 @@ function Home() {
                         {/* <img src="..." className="card-img-top" alt="..."> */}
                         <div className="card-body">
                             <h5 className="card-title"><Link to="/nicu-paed">Nicu/Paed</Link></h5>
-                            <p className="card-text">This is a longer card with supporting text below as a natural lead-in to additional content.</p>
+                            <p className="card-text">NICU/PAED description</p>
                         </div>
                         </div>
                     </div>
@@ -44,7 +44,7 @@ function Home() {
                         {/* <img src="..." className="card-img-top" alt="..." /> */}
                         <div className="card-body">
                             <h5 className="card-title"><Link to="/rehab">Rehab</Link></h5>
-                            <p className="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                            <p className="card-text">Rehab description</p>
                         </div>
                         </div>
                     </div>
