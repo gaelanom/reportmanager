@@ -1,14 +1,16 @@
-import React from "react";
-import logo from "./logo.svg";
-import "./App.css";
-import Home from "./Components/Home/Home";
-import Login from "./Components/Login/Login";
-import Employees from "./Components/Employees/Employees";
-import Navbar from "./Components/Navbar/Navbar";
-import Maternity from "./Components/Departments/Maternity";
-import Rehab from "./Components/Departments/Rehab";
-import Nicu_Paed from "./Components/Departments/NicuPaed";
-import CommunityHealth from "./Components/Departments/CommunityHealth";
+import React from 'react';
+import logo from './logo.svg';
+import './App.css';
+import Home from './Components/Home/Home'
+import Login from './Components/Login/Login'
+import Employees from './Components/Employees/Employees'
+import Navbar from './Components/Navbar/Navbar'
+import Maternity from './Components/Departments/Maternity'
+import Rehab from './Components/Departments/Rehab'
+import NicuPaed from './Components/Departments/NicuPaed'
+import CommunityHealth from './Components/Departments/CommunityHealth'
+import Messages from './Components/Messages/Messages'
+import Leaderboard from './Components/Leaderboard/Leaderboard'
 
 import {
   BrowserRouter as Router,
@@ -21,11 +23,13 @@ import {
 function App() {
   return (
     <>
+
       <Router>
         <Navbar />
         <Redirect to="/login" />
         <Switch>
-          <Route exact path="/home">
+
+          <Route exact path="/">
             <Home />
           </Route>
 
@@ -46,11 +50,22 @@ function App() {
           </Route>
 
           <Route path="/nicu-paed">
-            <Nicu_Paed />
+            <NicuPaed />
           </Route>
+
           <Route path="/communityhealth">
             <CommunityHealth />
           </Route>
+
+          <Route path="/messages">
+            <Messages />
+          </Route>
+
+          <Route path="/leaderboard">
+            <Leaderboard />
+          </Route>
+
+
         </Switch>
       </Router>
     </>
