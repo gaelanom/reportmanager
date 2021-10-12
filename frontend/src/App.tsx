@@ -23,6 +23,7 @@ function App() {
     <>
       <Router>
         <Navbar />
+        <Redirect to="/login" />
         <Switch>
           <Route exact path="/home">
             <Home />
@@ -47,12 +48,10 @@ function App() {
           <Route path="/nicu-paed">
             <Nicu_Paed />
           </Route>
-
           <Route path="/communityhealth">
             <CommunityHealth />
           </Route>
         </Switch>
-        <Redirect to="/login" />
       </Router>
     </>
   );
