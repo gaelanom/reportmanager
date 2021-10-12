@@ -74,7 +74,7 @@ class RecordEntry extends React.Component<Props, EntryState> {
                         </Grid>
                     </Grid>
                 </ListItem>
-                <Divider component="li"/>
+                <Divider component="li" variant='middle'/>
             </div>
         );
     }
@@ -117,8 +117,8 @@ class DataInput extends React.Component<any, any> {
     render() {
         return (
             <div className="DataInput">
-                <h1>{ this.props.department } Department Data Input</h1>
-                <List>
+                <h1 style={{marginLeft: "1em", marginRight: "1em"}}>{ this.props.department } Department Data Input</h1>
+                <List style={{marginLeft: "1em", marginRight: "1em"}}>
                     {this.state.entryList}
                     <ListItem>
                         <Button variant="contained" size="large" startIcon={<AddIcon fontSize="large"/>} onClick={() => {
@@ -129,8 +129,6 @@ class DataInput extends React.Component<any, any> {
             </div>
         )
     }
-
-
 }
 
 export default DataInput;

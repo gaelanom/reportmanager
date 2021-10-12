@@ -33,32 +33,32 @@ function App() {
             <Employees />
           </Route>
 
-          <Route path="/maternity/data-input">
-            <DataInput department={"maternity"} />
+          <Route path="/maternity-data-input">
+            <DataInput department={"Maternity"} />
           </Route>
 
           <Route path="/maternity">
             <Maternity />
           </Route>
 
-          <Route path="/rehab/data-input">
-            <DataInput department={"rehab"} />
+          <Route path="/rehab-data-input">
+            <DataInput department={"Rehab"} />
           </Route>
 
           <Route path="/rehab">
             <Rehab />
           </Route>
 
-          <Route path="/nicu-paed/data-input">
-            <DataInput department={"nicu-paed"} />
+          <Route path="/nicu-paed-data-input">
+            <DataInput department={"NICU-paed"} />
           </Route>
 
           <Route path="/nicu-paed">
             <Nicu_Paed />
           </Route>
 
-          <Route path="/communityhealth/data-input">
-            <DataInput department={"communityhealth"} />
+          <Route path="/communityhealth-data-input">
+            <DataInput department={"CommunityHealth"} />
           </Route>
 
           <Route path="/communityhealth">
