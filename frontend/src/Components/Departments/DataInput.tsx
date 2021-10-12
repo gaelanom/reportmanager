@@ -16,6 +16,8 @@ enum RecordType {
 type Props = {
     id: number;
     type: RecordType;
+    question: string;
+    answer: string;
 };
 
 type EntryState = {
@@ -37,14 +39,18 @@ class RecordEntry extends React.Component<Props, EntryState> {
         super(props);
         this.state = {
             id: props.id,
-            question: "",
-            answer: "",
+            question: props.question,
+            answer: props.answer,
             type: props.type,
         };
     }
 
     update() {
         updateQuestion(this.state.id, this.state.question, this.state.answer)
+    }
+
+    setQuestionAnswer(question: string, answer: string) {
+        this.setState({question: question, answer: answer});
     }
 
     render() {
@@ -87,14 +93,18 @@ class DataInput extends React.Component<any, any> {
             let questionList: any[] = r.questions;
             let entryList: any[] = [];
             questionList.forEach(e => {
-                entryList = [...entryList, this.newEntry(e.id)]
+                entryList = [...entryList, this.existEntry(e.id, e.question, e.answer)]
             })
             this.setState({id: r.id, entryList: entryList});
         })
     }
 
     newEntry(id: number) {
-        return <RecordEntry id={id} type={RecordType.written}/>
+        return <RecordEntry id={id} type={RecordType.written} question={""} answer={""}/>
+    }
+
+    existEntry(id: number, question: string, answer: string) {
+        return <RecordEntry id={id} type={RecordType.written} question={question} answer={answer}/>
     }
 
     createNewEntry() {
