@@ -9,6 +9,7 @@ import Maternity from './Components/Departments/Maternity'
 import Rehab from './Components/Departments/Rehab'
 import Nicu_Paed from './Components/Departments/NicuPaed'
 import CommunityHealth from './Components/Departments/CommunityHealth'
+import Messages from './Components/Messages/Messages'
 
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 
@@ -46,6 +47,10 @@ function App() {
 
           <Route path="/communityhealth">
             <CommunityHealth />
+          </Route>
+
+          <Route path="/messages">
+            <Messages />
           </Route>
 
         </Switch>
