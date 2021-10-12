@@ -1,4 +1,3 @@
-import axios from "axios";
 import * as React from "react";
 import { Redirect, RouteComponentProps, withRouter } from "react-router-dom";
 import Api from "../../API/Api";
@@ -53,9 +52,9 @@ class WrappedLogin extends React.Component<
       .then((data: any) => this.handleSuccessfulLogin(data.jwt))
       .catch((error) => this.handleFailedLogin(error))
       .finally(() => {
-        /* 
-        Note: this will throw an exception on succesful login beacuse we will then redirect, causing this component to be killed. 
-        However, this setState called would still be called on an unmounted component. 
+        /*
+        Note: this will throw an exception on succesful login beacuse we will then redirect, causing this component to be killed.
+        However, this setState called would still be called on an unmounted component.
         */
         this.setState({ loggingIn: false });
       });
@@ -85,6 +84,35 @@ class WrappedLogin extends React.Component<
     return (
       <>
         <h1>Login</h1>
+        {this.state.loggingIn ? this.renderLogingIn() : this.renderInputs()}
+      </>
+    );
+  };
+
+  private renderLogingIn = () => {
+    return <h2>Loging In ... </h2>;
+  };
+
+  private renderInputs = () => {
+    return (
+      <>
+        <div>
+          username:
+          <input
+            type="text"
+            name="username"
+            onChange={this.handleUsernameChange}
+          />
+        </div>
+        <div>
+          password:
+          <input
+            type="text"
+            name="password"
+            onChange={this.handlePasswordChange}
+          />
+        </div>
+        <button onClick={this.handleOnClick}> Login </button>{" "}
         {this.state.loggingIn ? this.renderLogingIn() : this.renderInputs()}
       </>
     );
