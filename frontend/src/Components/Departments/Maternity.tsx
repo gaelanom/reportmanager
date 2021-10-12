@@ -39,7 +39,7 @@ function Maternity() {
                 <img src={DataImage} className="card-img-top img-responsive" />
                     <div className="card-body">
                         <h5 className="card-title">
-                            <Link to="/maternity/datainputPg">Data</Link>
+                            <Link to="/maternity-data-input">Data</Link>
                         </h5>
                         <p className="card-text">Next data submission will be due on:
                             <div>{date}</div>

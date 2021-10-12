@@ -38,7 +38,7 @@ function Rehab() {
                 <img src={DataImage} className="card-img-top img-responsive" />
                     <div className="card-body">
                         <h5 className="card-title">
-                            <Link to="/rehab/datainputPg">Data</Link>
+                            <Link to="/rehab-data-input">Data</Link>
                         </h5>
                         <p className="card-text">Next data submission will be due on:
                             <div className="inner_mssg">{date}</div>
