@@ -77,7 +77,22 @@ class WrappedLogin extends React.Component<
   };
 
   render() {
-    return <>{this.state.loggedIn ? this.redirect() : this.renderLogin()}</>;
+    const style: any = {
+      "margin-top": "8%",
+    };
+    return (
+      <div className="container" style={style}>
+        <div className="row justify-content-around">
+          <div className="col-6 display-1 text-center">HHA Data Portal</div>
+        </div>
+        <div className="row justify-content-center">
+          <div className="col-6 display-6 text-center">Sign in</div>
+        </div>
+        <div className="row justify-content-center">
+          {this.state.loggedIn ? this.redirect() : this.renderLogin()}
+        </div>
+      </div>
+    );
   }
   private redirect = () => {
     return <Redirect to="/" />;
@@ -85,10 +100,7 @@ class WrappedLogin extends React.Component<
 
   private renderLogin = () => {
     return (
-      <>
-        <h1>Login</h1>
-        {this.state.loggingIn ? this.renderLogingIn() : this.renderInputs()}
-      </>
+      <>{this.state.loggingIn ? this.renderLogingIn() : this.renderInputs()}</>
     );
   };
 
@@ -98,27 +110,37 @@ class WrappedLogin extends React.Component<
 
   private renderInputs = () => {
     return (
-      <>
-        <div>
-          username:
+      <div className="col-4">
+        <div className="mb-3">
+          <div className="form-label">Username</div>
           <input
             type="text"
             name="username"
             value={this.state.username}
             onChange={this.handleUsernameChange}
+            className="form-control"
           />
         </div>
-        <div>
-          password:
+        <div className="mb-3">
+          <div className="form-label">Password</div>
           <input
-            type="text"
+            type="password"
             name="password"
             value={this.state.password}
             onChange={this.handlePasswordChange}
+            className="form-control"
           />
         </div>
-        <button onClick={this.handleOnClick}> Login </button>{" "}
-      </>
+
+        <div className="row">
+          <button
+            className="btn btn-primary mb-3 col-6 mx-auto"
+            onClick={this.handleOnClick}
+          >
+            Login
+          </button>
+        </div>
+      </div>
     );
   };
 
