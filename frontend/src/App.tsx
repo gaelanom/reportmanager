@@ -21,68 +21,80 @@ import {
   Redirect,
 } from "react-router-dom";
 
-function App() {
-  return (
-    <>
-      <Router>
-        <Navbar />
-        <Redirect to="/login" />
-        <Switch>
-          <Route exact path="/">
-            <Home />
-          </Route>
+class App extends React.Component<any, any> {
+  constructor(props: any) {
+    super(props);
 
-          <Route exact path="/login">
-            <Login />
-          </Route>
+    this.state = {
+      loggedIn: false,
+    };
+  }
 
-          <Route path="/employees">
-            <Employees />
-          </Route>
+  private handleLoggedIn = () => {
+    this.setState({ loggedIn: true });
+  };
 
-          <Route path="/maternity-data-input">
-            <DataInput department={"Maternity"} />
-          </Route>
+  render() {
+    return (
+      <>
+        <Router>
+          {this.state.loggedIn ? <Navbar /> : <Redirect to="/login" />}
+          <Switch>
+            <Route exact path="/">
+              <Home />
+            </Route>
+            <Route exact path="/login">
+              <Login onLoggedIn={this.handleLoggedIn} />
+            </Route>
 
-          <Route path="/maternity">
-            <Maternity />
-          </Route>
+            <Route path="/employees">
+              <Employees />
+            </Route>
 
-          <Route path="/rehab-data-input">
-            <DataInput department={"Rehab"} />
-          </Route>
+            <Route path="/maternity-data-input">
+              <DataInput department={"Maternity"} />
+            </Route>
 
-          <Route path="/rehab">
-            <Rehab />
-          </Route>
+            <Route path="/maternity">
+              <Maternity />
+            </Route>
 
-          <Route path="/nicu-paed-data-input">
-            <DataInput department={"NICU-paed"} />
-          </Route>
+            <Route path="/rehab-data-input">
+              <DataInput department={"Rehab"} />
+            </Route>
 
-          <Route path="/nicu-paed">
-            <NicuPaed />
-          </Route>
+            <Route path="/rehab">
+              <Rehab />
+            </Route>
 
-          <Route path="/communityhealth-data-input">
-            <DataInput department={"CommunityHealth"} />
-          </Route>
+            <Route path="/nicu-paed-data-input">
+              <DataInput department={"NICU-paed"} />
+            </Route>
 
-          <Route path="/communityhealth">
-            <CommunityHealth />
-          </Route>
+            <Route path="/nicu-paed">
+              <NicuPaed />
+            </Route>
 
-          <Route path="/messages">
-            <Messages />
-          </Route>
+            <Route path="/communityhealth-data-input">
+              <DataInput department={"CommunityHealth"} />
+            </Route>
 
-          <Route path="/leaderboard">
-            <Leaderboard />
-          </Route>
-        </Switch>
-      </Router>
-    </>
-  );
+            <Route path="/communityhealth">
+              <CommunityHealth />
+            </Route>
+
+            <Route path="/messages">
+              <Messages />
+            </Route>
+
+            <Route path="/leaderboard">
+              <Leaderboard />
+            </Route>
+          </Switch>
+        </Router>
+      </>
+    );
+  }
 }
 
 export default App;
