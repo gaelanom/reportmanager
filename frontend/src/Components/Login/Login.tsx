@@ -2,6 +2,7 @@ import * as React from "react";
 import { Redirect, RouteComponentProps, withRouter } from "react-router-dom";
 import Api from "../../API/Api";
 import axios from "axios";
+import { WindowRounded } from "@mui/icons-material";
 
 type Property = {
   onLoggedIn?(): void;
@@ -17,7 +18,7 @@ type State = {
 
 class WrappedLogin extends React.Component<
   Property & RouteComponentProps,
-  State
+  State & any
 > {
   constructor(props: Property & RouteComponentProps) {
     super(props);
@@ -29,10 +30,15 @@ class WrappedLogin extends React.Component<
       password: "",
       loggingIn: false,
       loggedIn: false,
+      windowHeight: window.innerHeight,
+    };
+
+    window.onresize = () => {
+      this.setState({ windowHeight: window.innerHeight });
     };
   }
 
-  private onLoggedIn;
+  private onLoggedIn?: () => void;
 
   private handleUsernameChange = (event: React.FormEvent<HTMLInputElement>) => {
     this.setState({ username: event.currentTarget.value });
@@ -56,12 +62,6 @@ class WrappedLogin extends React.Component<
 
   private validateLogin = () => {
     this.setState({ loggingIn: true });
-
-    this.setState({ loggedIn: true });
-    if (this.onLoggedIn !== undefined) this.onLoggedIn();
-
-    return;
-
     Api.Authorization.login(this.state.username, this.state.password)
       .then((data: any) => this.handleSuccessfulLogin(data.jwt))
       .catch((error) => this.handleFailedLogin(error))
@@ -90,16 +90,17 @@ class WrappedLogin extends React.Component<
   };
 
   render() {
+    console.log(this.state.windowHeight);
     const style: any = {
-      "margin-top": "8%",
+      "margin-top": this.state.windowHeight * 0.25 + "px",
     };
     return (
       <div className="container" style={style}>
         <div className="row justify-content-around">
-          <div className="col-6 display-1 text-center">HHA Data Portal</div>
+          <div className="col display-1 text-center">HHA Data Portal</div>
         </div>
         <div className="row justify-content-center">
-          <div className="col-6 display-6 text-center">Sign in</div>
+          <div className="col display-6 text-center">Sign in</div>
         </div>
         <div className="row justify-content-center">
           {this.state.loggedIn ? this.redirect() : this.renderLogin()}
@@ -123,7 +124,7 @@ class WrappedLogin extends React.Component<
 
   private renderInputs = () => {
     return (
-      <div className="col-4">
+      <div className="col-4" style={{ minWidth: "300px", maxWidth: "300px" }}>
         <div className="mb-3">
           <div className="form-label">Username</div>
           <input
