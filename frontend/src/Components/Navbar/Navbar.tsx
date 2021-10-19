@@ -38,6 +38,13 @@ class Navbar extends React.Component {
                                         <li className="nav-item">
                                             <Link to="/communityhealth" className="nav-link active">CommunityHealth</Link>
                                         </li>
+                                        <li className="nav-item">
+                                            <Link to="/messages" className="nav-link active">messages</Link>
+                                        </li>
+                                        <li className="nav-item">
+                                            <Link to="/leaderboard" className="nav-link active">Leaderboard</Link>
+                                        </li>
+
                                     </ul>
                                 </div>
                             </div>

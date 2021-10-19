@@ -75,12 +75,14 @@ public class ReportController {
     }
 
     @PostMapping("/reports/{id}/questions")
-    public ResponseEntity<Report> addQuestionToReport(@PathVariable("id") long id, @RequestBody WrittenQuestion writtenQuestion) {
+    public ResponseEntity<WrittenQuestion> addQuestionToReport(@PathVariable("id") long id, @RequestBody WrittenQuestion writtenQuestion) {
         Optional<Report> reportData = reportRepository.findById(id);
         if (reportData.isPresent()) {
             Report report = reportData.get();
-            report.addQuestion(writtenQuestion);
-            return new ResponseEntity<>(reportRepository.save(report), HttpStatus.OK);
+            WrittenQuestion question = writtenQuestionRepository.save(writtenQuestion);
+            report.addQuestion(question);
+            reportRepository.save(report);
+            return new ResponseEntity<>(question, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
