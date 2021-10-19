@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:8081")
@@ -94,12 +95,22 @@ public class MessageController {
 
         if (messageData.isPresent()) {
             Message messageToChange = messageData.get();
-            messageToChange.setUsername(message.getUsername());
-            messageToChange.setFirstName(message.getFirstName());
-            messageToChange.setLastName(message.getLastName());
-            messageToChange.setDepartment(message.getDepartment());
+            if(Objects.nonNull(message.getUsername())){
+                messageToChange.setUsername(message.getUsername());
+            }
+            if(Objects.nonNull(message.getFirstName())){
+                messageToChange.setFirstName(message.getFirstName());
+            }
+            if(Objects.nonNull(message.getLastName())){
+                messageToChange.setLastName(message.getLastName());
+            }
+            if(Objects.nonNull(message.getDepartment())){
+                messageToChange.setDepartment(message.getDepartment());
+            }
+            if(Objects.nonNull(message.getContent())){
+                messageToChange.setContent(message.getContent());
+            }
             messageToChange.setTimestamp(LocalDateTime.now());
-            messageToChange.setContent(message.getContent());
             return new ResponseEntity<>(messageRepository.save(messageToChange), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
