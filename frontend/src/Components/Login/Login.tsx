@@ -50,6 +50,7 @@ class WrappedLogin extends React.Component<Property, State> {
   };
 
   private handleOnClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    this.setState({ authResCode: 0 });
     this.login();
   };
 
@@ -95,9 +96,8 @@ class WrappedLogin extends React.Component<Property, State> {
   };
 
   render() {
-    console.log("window height: " + this.state.windowHeight);
     const style: any = {
-      "margin-top": this.state.windowHeight * 0.25 + "px",
+      marginTop: this.state.windowHeight * 0.25 + "px",
     };
     return (
       <div className="container" style={style}>
@@ -111,10 +111,10 @@ class WrappedLogin extends React.Component<Property, State> {
         {this.state.authResCode != 200 && this.state.authResCode != 0 ? (
           <div className="row justify-content-center">{this.renderAlert()}</div>
         ) : (
-          <></>
+          <React.Fragment />
         )}
         <div className="row justify-content-center">
-          {this.state.loggedIn ? this.redirect() : this.renderLogin()}
+          {this.state.loggedIn ? this.redirect() : this.renderLoginForm()}
         </div>
       </div>
     );
@@ -139,7 +139,7 @@ class WrappedLogin extends React.Component<Property, State> {
     return <Redirect to="/" />;
   };
 
-  private renderLogin = () => {
+  private renderLoginForm = () => {
     return (
       <>
         {this.state.loggingIn ? this.renderSpinner() : <div />}
@@ -158,21 +158,23 @@ class WrappedLogin extends React.Component<Property, State> {
         <div className="mb-3">
           <div className="form-label">Username</div>
           <input
+            className="form-control"
             type="text"
             name="username"
             value={this.state.username}
             onChange={this.handleUsernameChange}
-            className="form-control"
+            disabled={this.state.loggingIn}
           />
         </div>
         <div className="mb-3">
           <div className="form-label">Password</div>
           <input
+            className="form-control"
             type="password"
             name="password"
             value={this.state.password}
             onChange={this.handlePasswordChange}
-            className="form-control"
+            disabled={this.state.loggingIn}
           />
         </div>
 
@@ -180,8 +182,9 @@ class WrappedLogin extends React.Component<Property, State> {
           <button
             className="btn btn-primary mb-3 col-6 mx-auto"
             onClick={this.handleOnClick}
+            disabled={this.state.loggingIn}
           >
-            Login
+            {"Login"}
           </button>
         </div>
       </div>
@@ -189,7 +192,7 @@ class WrappedLogin extends React.Component<Property, State> {
   };
 
   componentWillUnmount() {
-    console.log("login kill");
+    // console.log("login kill");
     // this.isMounted = false;
   }
 }
