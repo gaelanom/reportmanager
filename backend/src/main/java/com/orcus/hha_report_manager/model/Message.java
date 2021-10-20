@@ -40,12 +40,6 @@ public class Message {
     @JoinColumn(name = "message_id", referencedColumnName = "id")
     private List<Reply> replies;
 
-    @ElementCollection
-    @MapKeyColumn(name = "id")
-    @Column(name = "reply")
-    @CollectionTable(name = "replies2", joinColumns = @JoinColumn(name = "message_id", referencedColumnName = "id"))
-    Map<Long,Reply> replies2 = new HashMap<Long, Reply>();
-
     public Message() {
 
     }
@@ -100,14 +94,8 @@ public class Message {
 
     public List<Reply> getReplies() { return this.replies; }
 
-    public Map<Long, Reply> getReplies2() {
-        return replies2;
-    }
-
-    public void addReply2(Reply reply) { replies2.put(reply.getId(), reply); }
-
-    public void setReplies2(Map<Long, Reply> replies2) {
-        this.replies2 = replies2;
+    public void setReplies(List<Reply> replies) {
+        this.replies = replies;
     }
 
     @Override
