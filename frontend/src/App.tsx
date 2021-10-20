@@ -1,5 +1,4 @@
 import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import Home from "./Components/Home/Home";
 import Login from "./Components/Login/Login";
@@ -17,7 +16,6 @@ import {
   BrowserRouter as Router,
   Route,
   Switch,
-  Link,
   Redirect,
 } from "react-router-dom";
 

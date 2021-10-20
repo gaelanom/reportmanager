@@ -2,25 +2,25 @@ import * as React from "react";
 import { Redirect, RouteComponentProps, withRouter } from "react-router-dom";
 import Api from "../../API/Api";
 import axios from "axios";
-import { WindowRounded } from "@mui/icons-material";
 
 type Property = {
   onLoggedIn?(): void;
-};
+} & RouteComponentProps;
 
 type State = {
   username: string;
   password: string;
   text?: string;
+  // Used for spinner state control
   loggingIn: boolean;
   loggedIn: boolean;
+  authResCode: number;
+  windowHeight: number;
+  onLoggedIn?(): void;
 };
 
-class WrappedLogin extends React.Component<
-  Property & RouteComponentProps,
-  State & any
-> {
-  constructor(props: Property & RouteComponentProps) {
+class WrappedLogin extends React.Component<Property, State> {
+  constructor(props: Property) {
     super(props);
     // this.isMounted = true;
 
@@ -30,6 +30,7 @@ class WrappedLogin extends React.Component<
       password: "",
       loggingIn: false,
       loggedIn: false,
+      authResCode: 0,
       windowHeight: window.innerHeight,
     };
 
@@ -54,7 +55,7 @@ class WrappedLogin extends React.Component<
 
   private login = () => {
     if (this.state.username.length == 0 || this.state.password.length == 0) {
-      this.setState({ loggedIn: false });
+      this.setState({ loggedIn: false, authResCode: 400 });
       return;
     }
     this.validateLogin();
@@ -81,16 +82,20 @@ class WrappedLogin extends React.Component<
       return;
     }
     axios.defaults.headers.common["Authorization"] = "Bearer " + token;
-    this.setState({ loggedIn: true });
+    this.setState({ authResCode: 200, loggedIn: true, loggingIn: false });
     if (this.onLoggedIn !== undefined) this.onLoggedIn();
   };
 
   private handleFailedLogin = (error: any) => {
-    alert(error);
+    this.setState({
+      authResCode: error.response.status,
+      loggedIn: false,
+      loggingIn: false,
+    });
   };
 
   render() {
-    console.log(this.state.windowHeight);
+    console.log("window height: " + this.state.windowHeight);
     const style: any = {
       "margin-top": this.state.windowHeight * 0.25 + "px",
     };
@@ -102,24 +107,49 @@ class WrappedLogin extends React.Component<
         <div className="row justify-content-center">
           <div className="col display-6 text-center">Sign in</div>
         </div>
+
+        {this.state.authResCode != 200 && this.state.authResCode != 0 ? (
+          <div className="row justify-content-center">{this.renderAlert()}</div>
+        ) : (
+          <></>
+        )}
         <div className="row justify-content-center">
           {this.state.loggedIn ? this.redirect() : this.renderLogin()}
         </div>
       </div>
     );
   }
+
+  private renderAlert = () => {
+    return (
+      <div className="col-4 alert alert-danger m-4 text-center">
+        {this.getAlertMessage()}
+      </div>
+    );
+  };
+
+  private getAlertMessage = () => {
+    const CODE = this.state.authResCode;
+    if (CODE == 408) return "Request Timeout";
+    if (400 <= CODE && CODE <= 500) return "Invalid Credentials";
+    else return "Unknown Error";
+  };
+
   private redirect = () => {
     return <Redirect to="/" />;
   };
 
   private renderLogin = () => {
     return (
-      <>{this.state.loggingIn ? this.renderLogingIn() : this.renderInputs()}</>
+      <>
+        {this.state.loggingIn ? this.renderSpinner() : <div />}
+        {this.renderInputs()}
+      </>
     );
   };
 
-  private renderLogingIn = () => {
-    return <h2>Loging In ... </h2>;
+  private renderSpinner = () => {
+    return <div className="">{/* Spinner here? */}</div>;
   };
 
   private renderInputs = () => {
