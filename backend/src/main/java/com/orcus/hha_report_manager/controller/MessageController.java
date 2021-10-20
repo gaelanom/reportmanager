@@ -83,6 +83,7 @@ public class MessageController {
         if (messageData.isPresent()) {
             Message parent = messageData.get();
             parent.getReplies().add(reply);
+            parent.getReplies2().put(reply.getId(), reply);
             return new ResponseEntity<>(messageRepository.save(parent), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

@@ -5,7 +5,9 @@ import org.apache.tomcat.jni.Local;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = "messages")
@@ -37,6 +39,12 @@ public class Message {
     @OneToMany(targetEntity = Reply.class, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "message_id", referencedColumnName = "id")
     private List<Reply> replies;
+
+    @ElementCollection
+    @MapKeyColumn(name = "id")
+    @Column(name = "reply")
+    @CollectionTable(name = "replies2", joinColumns = @JoinColumn(name = "message_id", referencedColumnName = "id"))
+    Map<Long,Reply> replies2 = new HashMap<Long, Reply>();
 
     public Message() {
 
@@ -91,6 +99,16 @@ public class Message {
     public void addReply(Reply reply) { replies.add(reply); }
 
     public List<Reply> getReplies() { return this.replies; }
+
+    public Map<Long, Reply> getReplies2() {
+        return replies2;
+    }
+
+    public void addReply2(Reply reply) { replies2.put(reply.getId(), reply); }
+
+    public void setReplies2(Map<Long, Reply> replies2) {
+        this.replies2 = replies2;
+    }
 
     @Override
     public String toString() {
