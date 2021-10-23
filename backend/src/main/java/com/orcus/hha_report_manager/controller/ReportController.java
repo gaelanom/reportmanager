@@ -2,6 +2,7 @@ package com.orcus.hha_report_manager.controller;
 
 import com.orcus.hha_report_manager.model.*;
 import com.orcus.hha_report_manager.repository.MultipleChoiceQuestionRepository;
+import com.orcus.hha_report_manager.repository.PatientInfoRepository;
 import com.orcus.hha_report_manager.repository.ReportRepository;
 import com.orcus.hha_report_manager.repository.WrittenQuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -28,6 +26,12 @@ public class ReportController {
 
     @Autowired
     MultipleChoiceQuestionRepository multipleChoiceQuestionRepository;
+
+    @Autowired
+    PatientInfoRepository patientInfoRepository;
+
+
+    //Reports; collections of some Metadata, some Written Questions, some Multiple Choice Questions, and some PatientInfo.
 
     @GetMapping("/reports")
     public ResponseEntity<List<Report>> getAllReports(@RequestParam(required = false) String department, String username) {
@@ -71,63 +75,6 @@ public class ReportController {
             return new ResponseEntity<>(newReport, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @PostMapping("/reports/{id}/questions")
-    public ResponseEntity<WrittenQuestion> addQuestionToReport(@PathVariable("id") long id, @RequestBody WrittenQuestion writtenQuestion) {
-        Optional<Report> reportData = reportRepository.findById(id);
-        if (reportData.isPresent()) {
-            Report report = reportData.get();
-            WrittenQuestion question = writtenQuestionRepository.save(writtenQuestion);
-            report.addQuestion(question);
-            reportRepository.save(report);
-            return new ResponseEntity<>(question, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @PutMapping("/reports/questions/{id}")
-    public ResponseEntity<WrittenQuestion> editOrAnswerQuestion(@PathVariable("id") long id, @RequestBody WrittenQuestion writtenQuestion) {
-        Optional<WrittenQuestion> questionData = writtenQuestionRepository.findById(id);
-        if (questionData.isPresent()) {
-            WrittenQuestion questionToUpdate = questionData.get();
-            if(Objects.nonNull(writtenQuestion.getQuestion())){
-                questionToUpdate.setQuestion(writtenQuestion.getQuestion());
-            } else {
-                writtenQuestion.setQuestion(questionToUpdate.getQuestion());
-            }
-            if(Objects.nonNull(writtenQuestion.getAnswer())){
-                questionToUpdate.setAnswer(writtenQuestion.getAnswer());
-            }
-            return new ResponseEntity<>(writtenQuestionRepository.save(writtenQuestion), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @PostMapping("/reports/{id}/questions/mcq")
-    public ResponseEntity<Report> addQuestionToReport(@PathVariable("id") long id, @RequestBody MultipleChoiceQuestion multipleChoiceQuestion) {
-        Optional<Report> reportData = reportRepository.findById(id);
-        if (reportData.isPresent()) {
-            Report report = reportData.get();
-            report.addMultipleChoiceQuestion(multipleChoiceQuestion);
-            return new ResponseEntity<>(reportRepository.save(report), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @PostMapping("/reports/{id}/patients")
-    public ResponseEntity<Report> addPatientInfoToReport(@PathVariable("id") long id, @RequestBody PatientInfo patientInfo) {
-        Optional<Report> reportData = reportRepository.findById(id);
-        if (reportData.isPresent()) {
-            Report report = reportData.get();
-            report.addPatient(patientInfo);
-            return new ResponseEntity<>(reportRepository.save(report), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -176,7 +123,6 @@ public class ReportController {
         }
     }
 
-
     @DeleteMapping("/reports/{id}")
     public ResponseEntity<HttpStatus> deleteReport(@PathVariable("id") long id) {
         try {
@@ -196,5 +142,143 @@ public class ReportController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+    }
+
+    //Written Questions, with a String Question and a String Answer.
+
+    @PostMapping("/reports/{id}/questions")
+    public ResponseEntity<WrittenQuestion> addQuestionToReport(@PathVariable("id") long id, @RequestBody WrittenQuestion writtenQuestion) {
+        Optional<Report> reportData = reportRepository.findById(id);
+        if (reportData.isPresent()) {
+            Report report = reportData.get();
+            WrittenQuestion question = writtenQuestionRepository.save(writtenQuestion);
+            report.addQuestion(question);
+            reportRepository.save(report);
+            return new ResponseEntity<>(question, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/reports/questions/{id}")
+    public ResponseEntity<WrittenQuestion> editOrAnswerQuestion(@PathVariable("id") long id, @RequestBody WrittenQuestion writtenQuestion) {
+        Optional<WrittenQuestion> questionData = writtenQuestionRepository.findById(id);
+        if (questionData.isPresent()) {
+            WrittenQuestion questionToUpdate = questionData.get();
+            if(Objects.nonNull(writtenQuestion.isRequiredByMSPP())){
+                questionToUpdate.setRequiredByMSPP(writtenQuestion.isRequiredByMSPP());
+            }
+            if(Objects.nonNull(writtenQuestion.getQuestion())) {
+                questionToUpdate.setQuestion(writtenQuestion.getQuestion());
+            }
+            if(Objects.nonNull(writtenQuestion.getAnswer())){
+                questionToUpdate.setAnswer(writtenQuestion.getAnswer());
+            }
+            return new ResponseEntity<>(writtenQuestionRepository.save(questionToUpdate), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/reports/questions/{id}")
+    public ResponseEntity<HttpStatus> deleteQuestion(@PathVariable("id") long id) {
+        try {
+            writtenQuestionRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    //Multiple choice questions, with a String Question, a Map<String, Character> set of Choices, and a Character Choice.
+
+    @PostMapping("/reports/{id}/questions/mcq")
+    public ResponseEntity<MultipleChoiceQuestion> addQuestionToReport(@PathVariable("id") long id, @RequestBody MultipleChoiceQuestion multipleChoiceQuestion) {
+        Optional<Report> reportData = reportRepository.findById(id);
+        if (reportData.isPresent()) {
+            Report report = reportData.get();
+            report.addMultipleChoiceQuestion(multipleChoiceQuestion);
+            MultipleChoiceQuestion question = multipleChoiceQuestionRepository.save(multipleChoiceQuestion);
+            reportRepository.save(report);
+            return new ResponseEntity<>(question, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/reports/questions/mcq/{id}")
+    public ResponseEntity<MultipleChoiceQuestion> editOrAnswerMCQuestion(@PathVariable("id") long id, @RequestBody MultipleChoiceQuestion multipleChoiceQuestion) {
+        Optional<MultipleChoiceQuestion> questionData = multipleChoiceQuestionRepository.findById(id);
+        if (questionData.isPresent()) {
+            MultipleChoiceQuestion questionToUpdate = questionData.get();
+            if(Objects.nonNull(multipleChoiceQuestion.getRequiredByMSPP())){
+                questionToUpdate.setRequiredByMSPP(multipleChoiceQuestion.getRequiredByMSPP());
+            }
+            if(Objects.nonNull(multipleChoiceQuestion.getQuestion())) {
+                questionToUpdate.setQuestion(multipleChoiceQuestion.getQuestion());
+            }
+            Map<Character, String> Choices = multipleChoiceQuestion.getChoices();
+            if(Objects.nonNull(Choices)){
+                for(Map.Entry<Character, String> choice : Choices.entrySet()){
+                    questionToUpdate.getChoices().put(choice.getKey(), choice.getValue());
+                }
+            }
+            if(Objects.nonNull(multipleChoiceQuestion.getChoice())){
+                questionToUpdate.setChoice(multipleChoiceQuestion.getChoice());
+            }
+            return new ResponseEntity<>(multipleChoiceQuestionRepository.save(questionToUpdate), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/reports/questions/mcq/{id}")
+    public ResponseEntity<HttpStatus> deleteMultipleChoiceQuestion(@PathVariable("id") long id) {
+        try {
+            multipleChoiceQuestionRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    //PatientInfo; Individual patient incidents that are included anonymously on Reports.
+
+    @PostMapping("/reports/{id}/patients")
+    public ResponseEntity<PatientInfo> addPatientInfoToReport(@PathVariable("id") long id, @RequestBody PatientInfo patientInfo) {
+        Optional<Report> reportData = reportRepository.findById(id);
+        if (reportData.isPresent()) {
+            Report report = reportData.get();
+            report.addPatient(patientInfo);
+            PatientInfo info = patientInfoRepository.save(patientInfo);
+            reportRepository.save(report);
+            return new ResponseEntity<>(info, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/reports/patients/{id}")
+    public ResponseEntity<PatientInfo> updatePatientInfo(@PathVariable("id") long id, @RequestBody PatientInfo patientInfo) {
+        Optional<PatientInfo> patientData = patientInfoRepository.findById(id);
+        if (patientData.isPresent()) {
+            PatientInfo patientInfoToUpdate = patientData.get();
+            if(Objects.nonNull(patientInfo.getInformation())) {
+                patientInfoToUpdate.setInformation(patientInfo.getInformation());
+            }
+            return new ResponseEntity<>(patientInfoRepository.save(patientInfoToUpdate), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/reports/patients/{id}")
+    public ResponseEntity<HttpStatus> deletePatientInfo(@PathVariable("id") long id) {
+        try {
+            patientInfoRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
