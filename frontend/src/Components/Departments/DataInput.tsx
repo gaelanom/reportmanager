@@ -5,6 +5,7 @@ import TextField from '@mui/material/TextField';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Divider from '@mui/material/Divider';
+import Box from '@mui/material/Box';
 import AddIcon from '@mui/icons-material/Add';
 import {newReport, addEmptyQuestion, updateQuestion, getReportByDeptName} from '../../API/reports';
 
@@ -31,6 +32,39 @@ type RecordState = {
     id: number;
     entryList: RecordEntry[];
 };
+
+class Metadata extends React.Component<{name: String, value: String}, {name: String, value: String, isEdit: boolean}> {
+
+    constructor(props: {name: String, value: String}) {
+        super(props);
+        this.state = {
+            name: props.name,
+            value: props.value,
+            isEdit: false
+        }
+    }
+
+    render() {
+        if (this.state.isEdit) {
+            return (<TextField fullWidth variant="standard" label={this.state.name} defaultValue={this.state.value}/>)
+        } else {
+            return (
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        alignContent: 'center',
+                        p: 1,
+                        m: 1,
+                    }}
+                >
+                    {this.state.name}: {this.state.value}
+                </Box>
+            )
+        }
+        return undefined;
+    }
+}
 
 class RecordEntry extends React.Component<Props, EntryState> {
     state: EntryState;
