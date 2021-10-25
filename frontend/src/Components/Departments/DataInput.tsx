@@ -6,11 +6,15 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Divider from '@mui/material/Divider';
 import AddIcon from '@mui/icons-material/Add';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
 import {newReport, addEmptyQuestion, updateQuestion, getReportByDeptName} from '../../API/reports';
 
 enum RecordType {
-    written,
-    MCQ,
+    written = "Written",
+    MCQ = "Multiple Choice",
 }
 
 type Props = {
@@ -53,11 +57,37 @@ class RecordEntry extends React.Component<Props, EntryState> {
         this.setState({question: question, answer: answer});
     }
 
+    changeType(event: SelectChangeEvent) {
+        switch (event.target.value) {
+            case RecordType.MCQ:
+                this.setState({type: RecordType.MCQ});
+                break;
+            case RecordType.written:
+                this.setState({type: RecordType.written});
+                break;
+        }
+    }
+
     render() {
         return (
             <div>
                 <ListItem alignItems="flex-start">
                     <Grid container spacing={2}>
+                        <Grid item xs={2}>
+                            <FormControl fullWidth>
+                                <InputLabel id="question-type-select-label">Type</InputLabel>
+                                <Select
+                                    labelId="question-type-select-label"
+                                    id="question-type"
+                                    value={this.state.type}
+                                    label="Age"
+                                    onChange={this.changeType}
+                                >
+                                    <MenuItem value={RecordType.written}>Written</MenuItem>
+                                    <MenuItem value={RecordType.MCQ}>Multiple Choice</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Grid>
                         <Grid item xs={8}>
                             <TextField fullWidth id="field" label="Field" variant="outlined"
                                        defaultValue={this.state.question} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
