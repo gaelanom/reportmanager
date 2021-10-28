@@ -22,6 +22,8 @@ type Props = {
     type: RecordType;
     question: string;
     answer: string;
+    choices: Map<string, string>;
+    choice: string;
 };
 
 type EntryState = {
@@ -29,6 +31,7 @@ type EntryState = {
     question: string;
     answer: string;
     type: RecordType;
+    entryField: any[];
 };
 
 type RecordState = {
@@ -46,9 +49,12 @@ class RecordEntry extends React.Component<Props, EntryState> {
             question: props.question,
             answer: props.answer,
             type: props.type,
+            entryField: [],
         };
+        this.writtenQuestion();
     }
 
+    // to do need change
     update() {
         updateQuestion(this.state.id, this.state.question, this.state.answer)
     }
@@ -66,6 +72,40 @@ class RecordEntry extends React.Component<Props, EntryState> {
                 this.setState({type: RecordType.written});
                 break;
         }
+    }
+
+    writtenQuestion() {
+        let entryList: any[] = [(
+            <Grid item xs={10}>
+                <TextField fullWidth id="field" label="Field" variant="outlined"
+                           defaultValue={this.state.question} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    this.setState({question: event.target.value});
+                    this.update();
+                }}/>
+            </Grid>
+        ), (
+            <Grid item xs={12}>
+                <TextField fullWidth id="value" label="Value" variant="outlined"
+                           defaultValue={this.state.answer} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    this.setState({question: event.target.value});
+                    this.update();
+                }}/>
+            </Grid>
+        )];
+        this.setState({entryField: entryList});
+    }
+
+    mcq() {
+        let entryList: any[] = [(
+            <Grid item xs={10}>
+                <TextField fullWidth id="field" label="Field" variant="outlined"
+                           defaultValue={this.state.question} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    this.setState({question: event.target.value});
+                    this.update();
+                }}/>
+            </Grid>
+        )];
+        this.setState({entryField: entryList});
     }
 
     render() {
@@ -88,20 +128,7 @@ class RecordEntry extends React.Component<Props, EntryState> {
                                 </Select>
                             </FormControl>
                         </Grid>
-                        <Grid item xs={8}>
-                            <TextField fullWidth id="field" label="Field" variant="outlined"
-                                       defaultValue={this.state.question} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                           this.setState({question: event.target.value});
-                                           this.update();
-                            }}/>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <TextField fullWidth id="value" label="Value" variant="outlined"
-                                       defaultValue={this.state.answer} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                           this.setState({question: event.target.value});
-                                           this.update();
-                            }}/>
-                        </Grid>
+                        {this.state.entryField}
                     </Grid>
                 </ListItem>
                 <Divider component="li" variant='middle'/>
