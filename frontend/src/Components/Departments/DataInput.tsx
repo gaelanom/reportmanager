@@ -16,8 +16,9 @@ import RadioGroup from '@mui/material/RadioGroup';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import CheckIcon from '@mui/icons-material/Check';
+import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import {newReport, addEmptyQuestion, updateQuestion, getReportByDeptName} from '../../API/reports';
+import {newReport, addEmptyQuestion, addQuestion, addMultipleChoiceQuestion, updateQuestion, getReportByDeptName} from '../../API/reports';
 
 enum RecordType {
     written = "Written",
@@ -49,6 +50,8 @@ type RecordState = {
     entryList: RecordEntry[];
 };
 
+let reportId: number;
+
 class RecordEntry extends React.Component<Props, EntryState> {
     state: EntryState;
 
@@ -60,7 +63,7 @@ class RecordEntry extends React.Component<Props, EntryState> {
             answer: props.answer,
             type: props.type,
             entryField: [],
-            options: [],
+            options: Array.from(props.options.values()),
             choice: props.choice,
             isEdit: false,
         };
@@ -69,9 +72,6 @@ class RecordEntry extends React.Component<Props, EntryState> {
                 this.writtenQuestion();
                 break;
             case RecordType.MCQ:
-                if (props.options != null) {
-                    this.state.options = Array.from(props.options.values());
-                }
                 if (this.state.options.length === 0) {
                     this.state.isEdit = true;
                 }
@@ -92,10 +92,20 @@ class RecordEntry extends React.Component<Props, EntryState> {
     changeType(event: SelectChangeEvent) {
         switch (event.target.value) {
             case RecordType.MCQ:
-                this.setState({type: RecordType.MCQ});
+                if (this.state.type !== RecordType.MCQ) {
+                    this.setState({type: RecordType.MCQ});
+                    addMultipleChoiceQuestion(reportId, this.state.question).then((r: any) => {
+                        this.setState({id: r.id});
+                    });
+                }
                 break;
             case RecordType.written:
-                this.setState({type: RecordType.written});
+                if (this.state.type !== RecordType.written) {
+                    this.setState({type: RecordType.written});
+                    addQuestion(reportId, this.state.question).then((r: any) => {
+                        this.setState({id: r.id});
+                    });
+                }
                 break;
         }
     }
@@ -176,6 +186,9 @@ class RecordEntry extends React.Component<Props, EntryState> {
                             {this.state.options.map((value, index) => {
                                 return (<FormControlLabel value={String.fromCharCode(65 + index)} control={<Radio />} label={value} />)
                             })}
+                            <IconButton onClick={event => {this.setState({isEdit: true})}}>
+                                <EditIcon />
+                            </IconButton>
                         </RadioGroup>
                     </FormControl>
                 </Grid>
@@ -229,15 +242,16 @@ class DataInput extends React.Component<any, any> {
                 entryList = [...entryList, this.existEntry(e.id, e.question, e.answer)]
             })
             this.setState({id: r.id, entryList: entryList});
+            reportId = r.id;
         })
     }
 
     newEntry(id: number) {
-        return <RecordEntry id={id} type={RecordType.written} question={""} answer={""}/>
+        return <RecordEntry id={id} type={RecordType.written} question={""} answer={""} choice={""} options={new Map<string, string>()}/>
     }
 
     existEntry(id: number, question: string, answer: string) {
-        return <RecordEntry id={id} type={RecordType.written} question={question} answer={answer}/>
+        return <RecordEntry id={id} type={RecordType.written} question={question} answer={answer} choice={""} options={new Map<string, string>()}/>
     }
 
     createNewEntry() {
