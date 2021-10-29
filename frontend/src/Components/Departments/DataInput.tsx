@@ -13,6 +13,10 @@ import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import CheckIcon from '@mui/icons-material/Check';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import {newReport, addEmptyQuestion, updateQuestion, getReportByDeptName} from '../../API/reports';
 
 enum RecordType {
@@ -66,7 +70,10 @@ class RecordEntry extends React.Component<Props, EntryState> {
                 break;
             case RecordType.MCQ:
                 if (props.options != null) {
-                    this.setState({options: Array.from(props.options.values())});
+                    this.state.options = Array.from(props.options.values());
+                }
+                if (this.state.options.length === 0) {
+                    this.state.isEdit = true;
                 }
                 this.mcq();
                 break;
@@ -125,12 +132,44 @@ class RecordEntry extends React.Component<Props, EntryState> {
             </Grid>
         )];
         if (this.state.isEdit) {
-
+            this.state.options.forEach((value, index) => {
+                entryList.push(
+                    <Grid item xs={4}>
+                        <TextField fullWidth id="choices" label={String.fromCharCode(65 + index)} variant="standard"
+                                   InputProps={{endAdornment: (
+                                       <InputAdornment position="end">
+                                           <IconButton onClick={event => {
+                                               this.setState({options: this.state.options.splice(index, 1)})
+                                               // update to server
+                                           }}>
+                                               <DeleteForeverIcon />
+                                           </IconButton>
+                                       </InputAdornment>)}}
+                                   defaultValue={value} onChange={event => {
+                            this.setState({options: this.state.options.splice(index, 1, event.target.value)})
+                            // this.update();
+                        }}/>
+                    </Grid>
+                )
+            });
+            entryList.push(
+                <Grid item xs={4}>
+                    <IconButton onClick={event => {
+                        this.setState({options: [...this.state.options, ""]})
+                        // update to server
+                    }}>
+                        <AddIcon />
+                    </IconButton>
+                    <IconButton onClick={event => {this.setState({isEdit: false})}}>
+                        <CheckIcon />
+                    </IconButton>
+                </Grid>
+            );
         } else {
             entryList.push(
                 <Grid item xs={12}>
                     <FormControl component="fieldset">
-                        <RadioGroup row name="mcq-options" onChange={event => {
+                        <RadioGroup row name="mcq-options" defaultValue={this.state.choice} onChange={event => {
                             this.setState({choice: event.target.value});
                             // push to server
                         }}>
@@ -140,7 +179,7 @@ class RecordEntry extends React.Component<Props, EntryState> {
                         </RadioGroup>
                     </FormControl>
                 </Grid>
-            )
+            );
         }
         this.setState({entryField: entryList});
     }
