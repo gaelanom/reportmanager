@@ -10,6 +10,9 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
 import {newReport, addEmptyQuestion, updateQuestion, getReportByDeptName} from '../../API/reports';
 
 enum RecordType {
@@ -22,7 +25,7 @@ type Props = {
     type: RecordType;
     question: string;
     answer: string;
-    choices: Map<string, string>;
+    options: Map<string, string>;
     choice: string;
 };
 
@@ -32,6 +35,9 @@ type EntryState = {
     answer: string;
     type: RecordType;
     entryField: any[];
+    options: string[];
+    choice: string;
+    isEdit: boolean;
 };
 
 type RecordState = {
@@ -50,8 +56,21 @@ class RecordEntry extends React.Component<Props, EntryState> {
             answer: props.answer,
             type: props.type,
             entryField: [],
+            options: [],
+            choice: props.choice,
+            isEdit: false,
         };
-        this.writtenQuestion();
+        switch (props.type) {
+            case RecordType.written:
+                this.writtenQuestion();
+                break;
+            case RecordType.MCQ:
+                if (props.options != null) {
+                    this.setState({options: Array.from(props.options.values())});
+                }
+                this.mcq();
+                break;
+        }
     }
 
     // to do need change
@@ -105,6 +124,24 @@ class RecordEntry extends React.Component<Props, EntryState> {
                 }}/>
             </Grid>
         )];
+        if (this.state.isEdit) {
+
+        } else {
+            entryList.push(
+                <Grid item xs={12}>
+                    <FormControl component="fieldset">
+                        <RadioGroup row name="mcq-options" onChange={event => {
+                            this.setState({choice: event.target.value});
+                            // push to server
+                        }}>
+                            {this.state.options.map((value, index) => {
+                                return (<FormControlLabel value={String.fromCharCode(65 + index)} control={<Radio />} label={value} />)
+                            })}
+                        </RadioGroup>
+                    </FormControl>
+                </Grid>
+            )
+        }
         this.setState({entryField: entryList});
     }
 
