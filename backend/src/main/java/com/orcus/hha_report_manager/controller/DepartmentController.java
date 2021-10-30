@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -56,7 +57,7 @@ public class DepartmentController {
     public ResponseEntity<Department> createDepartment(@RequestBody Department department) {
         try {
             Department newDepartment = departmentRepository
-                    .save(new Department(department.getName()));
+                    .save(new Department(department.getName(), department.getBlurb()));
             return new ResponseEntity<>(newDepartment, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -69,7 +70,12 @@ public class DepartmentController {
 
         if (departmentData.isPresent()) {
             Department departmentToChange = departmentData.get();
-            departmentToChange.setName(department.getName());
+            if(Objects.nonNull(department.getName())){
+                departmentToChange.setName(department.getName());
+            }
+            if(Objects.nonNull(department.getBlurb())) {
+                departmentToChange.setBlurb(department.getBlurb());
+            }
             return new ResponseEntity<>(departmentRepository.save(departmentToChange), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

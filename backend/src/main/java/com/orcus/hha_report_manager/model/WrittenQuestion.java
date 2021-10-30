@@ -10,6 +10,9 @@ public class WrittenQuestion  {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @Column(name = "requiredByMSPP")
+    private Boolean requiredByMSPP;
+
     @Column(name = "question")
     private String question;
 
@@ -24,13 +27,22 @@ public class WrittenQuestion  {
         this.question = question;
     }
 
-    public WrittenQuestion(String question, String answer){
+    public WrittenQuestion(Boolean requiredByMSPP, String question, String answer){
+        this.requiredByMSPP = requiredByMSPP;
         this.question = question;
         this.answer = answer;
     }
 
     public long getId() {
         return id;
+    }
+
+    public Boolean isRequiredByMSPP() {
+        return requiredByMSPP;
+    }
+
+    public void setRequiredByMSPP(Boolean requiredByMSPP) {
+        this.requiredByMSPP = requiredByMSPP;
     }
 
     public String getQuestion() {

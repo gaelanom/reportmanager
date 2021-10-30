@@ -12,6 +12,9 @@ public class MultipleChoiceQuestion {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @Column(name = "requiredByMSPP")
+    private Boolean requiredByMSPP;
+
     @Column(name = "question")
     private String question;
 
@@ -34,7 +37,8 @@ public class MultipleChoiceQuestion {
         this.choices = choices;
     }
 
-    public MultipleChoiceQuestion(String question, Map<Character, String> choices, Character choice){
+    public MultipleChoiceQuestion(Boolean requiredByMSPP, String question, Map<Character, String> choices, Character choice){
+        this.requiredByMSPP = requiredByMSPP;
         this.question = question;
         this.choices = choices;
         this.choice = choice;
@@ -42,6 +46,14 @@ public class MultipleChoiceQuestion {
 
     public long getId() {
         return id;
+    }
+
+    public Boolean getRequiredByMSPP() {
+        return requiredByMSPP;
+    }
+
+    public void setRequiredByMSPP(Boolean requiredByMSPP) {
+        this.requiredByMSPP = requiredByMSPP;
     }
 
     public String getQuestion() {
