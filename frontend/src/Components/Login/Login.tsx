@@ -80,7 +80,7 @@ class WrappedLogin extends React.Component<
     return <>{this.state.loggedIn ? this.redirect() : this.renderLogin()}</>;
   }
   private redirect = () => {
-    return <Redirect to="/maternity" />;
+    return <Redirect to="/" />;
   };
 
   private renderLogin = () => {
