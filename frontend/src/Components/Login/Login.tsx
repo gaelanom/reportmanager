@@ -2,6 +2,7 @@ import * as React from "react";
 import { Redirect, RouteComponentProps, withRouter } from "react-router-dom";
 import Api from "../../API/Api";
 import axios from "axios";
+import "./Login.css";
 
 type Property = {
   onLoggedIn?(): void;
@@ -100,23 +101,36 @@ class WrappedLogin extends React.Component<Property, State> {
       marginTop: this.state.windowHeight * 0.25 + "px",
     };
     return (
-      <div className="container" style={style}>
-        <div className="row justify-content-around">
-          <div className="col display-1 text-center">HHA Data Portal</div>
-        </div>
-        <div className="row justify-content-center">
-          <div className="col display-6 text-center">Sign in</div>
-        </div>
+      <section className="vh-100 vh-100 gradient-custom">
+        <div className="container py-5 h-100">
+          <div className="row d-flex justify-content-center align-items-center h-100">
+            <div className="col-12 col-md-8 col-lg-6 col-xl-5">
+              <div
+                className="card bg-dark text-white"
+                style={{ borderRadius: "1rem" }}
+              >
+                <div className="card-body p-5 text-center">
+                  <h3 className="fw-bold mb-4 text-uppercase">Login</h3>
 
-        {this.state.authResCode != 200 && this.state.authResCode != 0 ? (
-          <div className="row justify-content-center">{this.renderAlert()}</div>
-        ) : (
-          <React.Fragment />
-        )}
-        <div className="row justify-content-center">
-          {this.state.loggedIn ? this.redirect() : this.renderLoginForm()}
+                  {this.state.authResCode != 200 &&
+                  this.state.authResCode != 0 ? (
+                    <div className="row justify-content-center">
+                      {this.renderAlert()}
+                    </div>
+                  ) : (
+                    <React.Fragment />
+                  )}
+                  <div className="row justify-content-center">
+                    {this.state.loggedIn
+                      ? this.redirect()
+                      : this.renderLoginForm()}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
     );
   }
 
@@ -149,45 +163,67 @@ class WrappedLogin extends React.Component<Property, State> {
   };
 
   private renderSpinner = () => {
-    return <div className="">{/* Spinner here? */}</div>;
+    return (
+      <>
+        <div className="d-flex align-items-center">
+          <strong>Loading...</strong>
+          <div
+            className="spinner-border ms-auto text-light"
+            role="status"
+            aria-hidden="true"
+          ></div>
+        </div>
+      </>
+    );
   };
 
   private renderInputs = () => {
     return (
-      <div className="col-4" style={{ minWidth: "300px", maxWidth: "300px" }}>
-        <div className="mb-3">
-          <div className="form-label">Username</div>
+      <>
+        <div className="form-outline form-white mb-4">
           <input
-            className="form-control"
+            className="form-label form-control form-control-lg"
             type="text"
             name="username"
+            disabled={this.state.loggingIn}
             value={this.state.username}
             onChange={this.handleUsernameChange}
-            disabled={this.state.loggingIn}
+            placeholder="Username"
           />
         </div>
-        <div className="mb-3">
-          <div className="form-label">Password</div>
+        <div className="form-outline form-white mb-4">
           <input
-            className="form-control"
-            type="password"
+            className="form-label form-control form-control-lg"
+            type="text"
             name="password"
+            disabled={this.state.loggingIn}
             value={this.state.password}
             onChange={this.handlePasswordChange}
-            disabled={this.state.loggingIn}
+            placeholder="Password"
           />
         </div>
-
-        <div className="row">
-          <button
-            className="btn btn-primary mb-3 col-6 mx-auto"
-            onClick={this.handleOnClick}
-            disabled={this.state.loggingIn}
-          >
-            {"Login"}
-          </button>
+        <p className="small mb-3 pb-lg-2">
+          <a className="text-white-50" href="#!">
+            Forgot password?
+          </a>
+        </p>
+        <button
+          className="btn btn-outline-light btn-lg px-5"
+          disabled={this.state.loggingIn}
+          onClick={this.handleOnClick}
+        >
+          Login
+        </button>{" "}
+        <div>
+          {/* not implemented yet */}
+          <p className="mb-0 pt-4">
+            Don't have an account?{" "}
+            <a href="#!" className="text-white-50 fw-bold">
+              Sign Up
+            </a>
+          </p>
         </div>
-      </div>
+      </>
     );
   };
 
