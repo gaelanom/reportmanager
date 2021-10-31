@@ -160,8 +160,7 @@ Returns:
     "lastName": "Smith",
     "department": "Placeholder",
     "departmentHead": false,
-    "score": 0,
-    "password": "hha"
+    "score": 0
 }
 ```
 
