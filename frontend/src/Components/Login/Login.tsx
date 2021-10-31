@@ -78,7 +78,7 @@ class WrappedLogin extends React.Component<
   };
 
   render() {
-    return <section className="vh-100" style={{backgroundColor: "#508bfc"}}>{this.state.loggedIn ? this.redirect() : this.renderLogin()}</section>;
+    return <section className="vh-100 vh-100 gradient-custom">{this.state.loggedIn ? this.redirect() : this.renderLogin()}</section>;
   }
   private redirect = () => {
     return <Redirect to="/" />;
@@ -93,7 +93,13 @@ class WrappedLogin extends React.Component<
   };
 
   private renderLogingIn = () => {
-    return <h2>Loging In ... </h2>;
+    return
+    <>
+    <div className="d-flex align-items-center">
+      <strong>Loading...</strong>
+      <div className="spinner-border ms-auto text-light" role="status" aria-hidden="true"></div>
+    </div>
+    </>;
   };
 
   private renderInputs = () => {
@@ -102,20 +108,27 @@ class WrappedLogin extends React.Component<
         <div className="container py-5 h-100">
           <div className="row d-flex justify-content-center align-items-center h-100">
             <div className="col-12 col-md-8 col-lg-6 col-xl-5">
-              <div className="card shadow-2-strong border-one-rem">
+              <div className="card bg-dark text-white" style={{borderRadius: "1rem"}}>
                 <div className="card-body p-5 text-center">
 
-                  <h3 className="mb-5">Login</h3>
+                  <h3 className="fw-bold mb-4 text-uppercase">Login</h3>
 
-                  <div className="form-outline mb-4">
-                  <input type="text" name="username" value={this.state.username} onChange={this.handleUsernameChange} placeholder="Username" />
+                  <div className="form-outline form-white mb-4">
+                  <input className="form-label form-control form-control-lg" type="text" name="username" value={this.state.username} onChange={this.handleUsernameChange} placeholder="Username" />
                   </div>
 
-                  <div className="form-outline mb-4">
-                  <input type="text" name="password" value={this.state.password} onChange={this.handlePasswordChange} placeholder="Password" />
+                  <div className="form-outline form-white mb-4">
+                  <input className="form-label form-control form-control-lg" type="text" name="password" value={this.state.password} onChange={this.handlePasswordChange} placeholder="Password" />
                   </div>
 
-                  <button className="btn btn-primary btn-lg btn-block" onClick={this.handleOnClick}>Login</button>{" "}
+                  <p className="small mb-3 pb-lg-2"><a className="text-white-50" href="#!">Forgot password?</a></p>
+
+                  <button className="btn btn-outline-light btn-lg px-5" onClick={this.handleOnClick}>Login</button>{" "}
+
+                  <div>
+                    {/* not implemented yet */}
+                    <p className="mb-0 pt-4">Don't have an account? <a href="#!" className="text-white-50 fw-bold">Sign Up</a></p>
+                  </div>
 
                 </div>
               </div>
