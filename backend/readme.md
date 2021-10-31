@@ -99,7 +99,7 @@ Returns:
 
 Or: `404` if Department {id} does not exist.
 
-###Employees
+##Employees
 
 **Create Employee** `POST` `.../api/employees`
 
@@ -211,7 +211,7 @@ Returns:
 
 `204` or `404` if Employee {id} does not exist.
 
-###Messages
+##Messages
 
 **Create new Message** `POST` `.../api/messages`
 
