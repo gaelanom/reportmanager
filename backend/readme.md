@@ -348,7 +348,7 @@ Returns:
 ```
 Or: `404` if Message {id} does not exist.
 
-**Delete Message by ID** `DELETE` `.../api/messages/{id}
+**Delete Message by ID** `DELETE` `.../api/messages/{id}`
 
 Returns: `204` Or: `404` if Message {id} does not exist.
 
@@ -395,7 +395,7 @@ Returns:
 
 Or: `404` if Message {id} does not exist.
 
-**Update Reply by ID** `PUT` `.../api/messages/replies/{replyid}
+**Update Reply by ID** `PUT` `.../api/messages/replies/{replyid}`
 
 Requires:
 
