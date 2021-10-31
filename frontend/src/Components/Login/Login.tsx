@@ -2,31 +2,46 @@ import * as React from "react";
 import { Redirect, RouteComponentProps, withRouter } from "react-router-dom";
 import Api from "../../API/Api";
 import axios from "axios";
+import "./Login.css";
+import { width } from "@mui/system";
 
-type Property = {};
+type Property = {
+  onLoggedIn?(): void;
+} & RouteComponentProps;
 
 type State = {
   username: string;
   password: string;
   text?: string;
+  // Used for spinner state control
   loggingIn: boolean;
   loggedIn: boolean;
+  authResCode: number;
+  windowHeight: number;
+  onLoggedIn?(): void;
 };
 
-class WrappedLogin extends React.Component<
-  Property & RouteComponentProps,
-  State
-> {
-  constructor(props: {} & RouteComponentProps) {
+class WrappedLogin extends React.Component<Property, State> {
+  constructor(props: Property) {
     super(props);
     // this.isMounted = true;
+
+    this.onLoggedIn = props.onLoggedIn;
     this.state = {
       username: "",
       password: "",
       loggingIn: false,
       loggedIn: false,
+      authResCode: 0,
+      windowHeight: window.innerHeight,
+    };
+
+    window.onresize = () => {
+      this.setState({ windowHeight: window.innerHeight });
     };
   }
+
+  private onLoggedIn?: () => void;
 
   private handleUsernameChange = (event: React.FormEvent<HTMLInputElement>) => {
     this.setState({ username: event.currentTarget.value });
@@ -37,12 +52,13 @@ class WrappedLogin extends React.Component<
   };
 
   private handleOnClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    this.setState({ authResCode: 0 });
     this.login();
   };
 
   private login = () => {
     if (this.state.username.length == 0 || this.state.password.length == 0) {
-      this.setState({ loggedIn: false });
+      this.setState({ loggedIn: false, authResCode: 400 });
       return;
     }
     this.validateLogin();
@@ -69,61 +85,150 @@ class WrappedLogin extends React.Component<
       return;
     }
     axios.defaults.headers.common["Authorization"] = "Bearer " + token;
-    this.setState({ loggedIn: true });
+    this.setState({ authResCode: 200, loggedIn: true, loggingIn: false });
+    if (this.onLoggedIn !== undefined) this.onLoggedIn();
   };
 
   private handleFailedLogin = (error: any) => {
-    alert(error);
+    this.setState({
+      authResCode: error.response.status,
+      loggedIn: false,
+      loggingIn: false,
+    });
   };
 
   render() {
-    return <>{this.state.loggedIn ? this.redirect() : this.renderLogin()}</>;
+    const style: any = {
+      marginTop: this.state.windowHeight * 0.25 + "px",
+    };
+    return (
+      <section className="vh-100 vh-100 gradient-custom">
+        <div className="container py-5 h-100">
+          <div className="row d-flex justify-content-center align-items-center h-100">
+            <div className="col-12 col-md-8 col-lg-6 col-xl-5">
+              <div
+                className="card bg-dark text-white"
+                style={{ borderRadius: "1rem" }}
+              >
+                <div className="card-body p-5 text-center">
+                  {this.renderTitle()}
+                  {this.state.authResCode != 200 &&
+                  this.state.authResCode != 0 ? (
+                    <div className="row justify-content-center">
+                      {this.renderAlert()}
+                    </div>
+                  ) : (
+                    <React.Fragment />
+                  )}
+                  <div className="row justify-content-center">
+                    {this.state.loggedIn
+                      ? this.redirect()
+                      : this.renderLoginForm()}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
   }
+
+  private renderAlert = () => {
+    return (
+      <div className=" alert alert-danger text-center">
+        {this.getAlertMessage()}
+      </div>
+    );
+  };
+
+  private getAlertMessage = () => {
+    const CODE = this.state.authResCode;
+    //  Not an error
+    if (CODE < 400) return "";
+    if (CODE == 408) return "Request Timeout";
+    if (CODE < 500) return "Invalid Credentials";
+    else return "Unknown Error";
+  };
+
   private redirect = () => {
     return <Redirect to="/" />;
   };
 
-  private renderLogin = () => {
+  private renderLoginForm = () => {
+    return <>{this.renderInputs()}</>;
+  };
+
+  private renderTitle = (): React.ReactNode => {
     return (
-      <>
-        <h1>Login</h1>
-        {this.state.loggingIn ? this.renderLogingIn() : this.renderInputs()}
-      </>
+      <div className="d-flex justify-content-center mb-4">
+        {this.state.loggingIn ? (
+          this.renderSpinner()
+        ) : (
+          <h3 className="fw-bold text-uppercase">Login</h3>
+        )}
+      </div>
     );
   };
 
-  private renderLogingIn = () => {
-    return <h2>Loging In ... </h2>;
+  private renderSpinner = () => {
+    return (
+      <>
+        <div className="d-flex justify-content-center">
+          <div
+            className="col-4 spinner-border text-light"
+            style={{ width: "3rem", height: "3rem" }}
+            role="status"
+            aria-hidden="true"
+          ></div>
+        </div>
+      </>
+    );
   };
 
   private renderInputs = () => {
     return (
       <>
-        <div>
-          username:
+        <div className="form-outline form-white mb-4">
           <input
+            className="form-label form-control form-control-lg"
             type="text"
             name="username"
+            disabled={this.state.loggingIn}
             value={this.state.username}
             onChange={this.handleUsernameChange}
+            placeholder="Username"
           />
         </div>
-        <div>
-          password:
+        <div className="form-outline form-white mb-4">
           <input
-            type="text"
+            className="form-label form-control form-control-lg"
+            type="password"
             name="password"
+            disabled={this.state.loggingIn}
             value={this.state.password}
             onChange={this.handlePasswordChange}
+            placeholder="Password"
           />
         </div>
-        <button onClick={this.handleOnClick}> Login </button>{" "}
+        <p className="small mb-3 pb-lg-2">
+          <a className="text-white-50" href="#!">
+            Forgot password?
+          </a>
+        </p>
+        <button
+          className="btn btn-outline-light btn-lg px-5"
+          disabled={this.state.loggingIn}
+          onClick={this.handleOnClick}
+        >
+          Login
+        </button>{" "}
       </>
     );
   };
 
   componentWillUnmount() {
-    console.log("login kill");
+    // console.log("login kill");
     // this.isMounted = false;
   }
 }
