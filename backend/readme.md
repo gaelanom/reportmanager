@@ -6,6 +6,7 @@ Below are the various API endpoints used by the project, and what kind of conten
 
 All endpoints except for **Authenticate** require bearer token authentication.
 
+#
 ### Authentication
 
 **Authenticate** `POST` `.../authenticate`
@@ -31,6 +32,7 @@ Returns:
 ```
 
 Or: `401` if `username` and `password` do not belong to a user.
+#
 ### Departments
 
 
