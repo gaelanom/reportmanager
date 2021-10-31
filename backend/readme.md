@@ -2,9 +2,37 @@
 
 Welcome to the `readme` for the API for the HHA Report Manager, created by Team Orcus for CMPT373 with Brian Fraser in Fall 2021!
 
-## Controllers
+Below are the various API endpoints used by the project, and what kind of contents they might expect!
 
+All endpoints except for **Authenticate** require bearer token authentication.
+
+### Authentication
+
+**Authenticate** `POST` `.../authenticate`
+
+Requires: 
+
+```json
+{
+  "username": "user",
+  "password": "password"
+}
+```
+
+Returns: 
+
+`200`
+
+```json
+{
+    "jwt": "bearertoken",
+    "department": "Placeholder"
+}
+```
+
+Or: `401` if `username` and `password` do not belong to a user.
 ### Departments
+
 
 **Create Department**
 `POST` `.../api/departments`
@@ -99,7 +127,8 @@ Returns:
 
 Or: `404` if Department {id} does not exist.
 
-##Employees
+#
+### Employees
 
 **Create Employee** `POST` `.../api/employees`
 
@@ -211,7 +240,8 @@ Returns:
 
 `204` or `404` if Employee {id} does not exist.
 
-##Messages
+#
+### Messages
 
 **Create new Message** `POST` `.../api/messages`
 
@@ -400,7 +430,8 @@ Or: `404` if Reply {replyid} does not exist.
 
 Returns: `204` Or: `404` if Reply {replyid} does not exist.
 
-###Reports
+#
+### Reports
 
 **Create Report** `POST` `.../api/reports`
 
