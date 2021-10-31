@@ -144,8 +144,10 @@ class WrappedLogin extends React.Component<Property, State> {
 
   private getAlertMessage = () => {
     const CODE = this.state.authResCode;
+    //  Not an error
+    if (CODE < 400) return "";
     if (CODE == 408) return "Request Timeout";
-    if (400 <= CODE && CODE <= 500) return "Invalid Credentials";
+    if (CODE < 500) return "Invalid Credentials";
     else return "Unknown Error";
   };
 
@@ -221,15 +223,6 @@ class WrappedLogin extends React.Component<Property, State> {
         >
           Login
         </button>{" "}
-        <div>
-          {/* not implemented yet */}
-          <p className="mb-0 pt-4">
-            Don't have an account?{" "}
-            <a href="#!" className="text-white-50 fw-bold">
-              Sign Up
-            </a>
-          </p>
-        </div>
       </>
     );
   };
