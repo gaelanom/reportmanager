@@ -3,6 +3,7 @@ import { Redirect, RouteComponentProps, withRouter } from "react-router-dom";
 import Api from "../../API/Api";
 import axios from "axios";
 import "./Login.css";
+import { width } from "@mui/system";
 
 type Property = {
   onLoggedIn?(): void;
@@ -110,8 +111,7 @@ class WrappedLogin extends React.Component<Property, State> {
                 style={{ borderRadius: "1rem" }}
               >
                 <div className="card-body p-5 text-center">
-                  <h3 className="fw-bold mb-4 text-uppercase">Login</h3>
-
+                  {this.renderTitle()}
                   {this.state.authResCode != 200 &&
                   this.state.authResCode != 0 ? (
                     <div className="row justify-content-center">
@@ -136,7 +136,7 @@ class WrappedLogin extends React.Component<Property, State> {
 
   private renderAlert = () => {
     return (
-      <div className="col-4 alert alert-danger m-4 text-center">
+      <div className=" alert alert-danger text-center">
         {this.getAlertMessage()}
       </div>
     );
@@ -154,21 +154,28 @@ class WrappedLogin extends React.Component<Property, State> {
   };
 
   private renderLoginForm = () => {
+    return <>{this.renderInputs()}</>;
+  };
+
+  private renderTitle = (): React.ReactNode => {
     return (
-      <>
-        {this.state.loggingIn ? this.renderSpinner() : <div />}
-        {this.renderInputs()}
-      </>
+      <div className="d-flex justify-content-center mb-4">
+        {this.state.loggingIn ? (
+          this.renderSpinner()
+        ) : (
+          <h3 className="fw-bold text-uppercase">Login</h3>
+        )}
+      </div>
     );
   };
 
   private renderSpinner = () => {
     return (
       <>
-        <div className="d-flex align-items-center">
-          <strong>Loading...</strong>
+        <div className="d-flex justify-content-center">
           <div
-            className="spinner-border ms-auto text-light"
+            className="col-4 spinner-border text-light"
+            style={{ width: "3rem", height: "3rem" }}
             role="status"
             aria-hidden="true"
           ></div>
@@ -194,7 +201,7 @@ class WrappedLogin extends React.Component<Property, State> {
         <div className="form-outline form-white mb-4">
           <input
             className="form-label form-control form-control-lg"
-            type="text"
+            type="password"
             name="password"
             disabled={this.state.loggingIn}
             value={this.state.password}
