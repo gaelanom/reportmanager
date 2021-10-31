@@ -663,7 +663,7 @@ Returns:
 
 Or: `404` if Report {reportid} does not exist.
 
-**Update Multiple Choice Question** `PUT` `.../api/reports/questions/mcq/{mcq_id}
+**Update Multiple Choice Question** `PUT` `.../api/reports/questions/mcq/{mcq_id}`
 
 Requires:
 
