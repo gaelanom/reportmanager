@@ -2,6 +2,7 @@ import * as React from "react";
 import { Redirect, RouteComponentProps, withRouter } from "react-router-dom";
 import Api from "../../API/Api";
 import axios from "axios";
+import './Login.css';
 
 type Property = {};
 
@@ -77,7 +78,7 @@ class WrappedLogin extends React.Component<
   };
 
   render() {
-    return <>{this.state.loggedIn ? this.redirect() : this.renderLogin()}</>;
+    return <section className="vh-100" style={{backgroundColor: "#508bfc"}}>{this.state.loggedIn ? this.redirect() : this.renderLogin()}</section>;
   }
   private redirect = () => {
     return <Redirect to="/" />;
@@ -86,7 +87,6 @@ class WrappedLogin extends React.Component<
   private renderLogin = () => {
     return (
       <>
-        <h1>Login</h1>
         {this.state.loggingIn ? this.renderLogingIn() : this.renderInputs()}
       </>
     );
@@ -99,25 +99,29 @@ class WrappedLogin extends React.Component<
   private renderInputs = () => {
     return (
       <>
-        <div>
-          username:
-          <input
-            type="text"
-            name="username"
-            value={this.state.username}
-            onChange={this.handleUsernameChange}
-          />
+        <div className="container py-5 h-100">
+          <div className="row d-flex justify-content-center align-items-center h-100">
+            <div className="col-12 col-md-8 col-lg-6 col-xl-5">
+              <div className="card shadow-2-strong border-one-rem">
+                <div className="card-body p-5 text-center">
+
+                  <h3 className="mb-5">Login</h3>
+
+                  <div className="form-outline mb-4">
+                  <input type="text" name="username" value={this.state.username} onChange={this.handleUsernameChange} placeholder="Username" />
+                  </div>
+
+                  <div className="form-outline mb-4">
+                  <input type="text" name="password" value={this.state.password} onChange={this.handlePasswordChange} placeholder="Password" />
+                  </div>
+
+                  <button className="btn btn-primary btn-lg btn-block" onClick={this.handleOnClick}>Login</button>{" "}
+
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div>
-          password:
-          <input
-            type="text"
-            name="password"
-            value={this.state.password}
-            onChange={this.handlePasswordChange}
-          />
-        </div>
-        <button onClick={this.handleOnClick}> Login </button>{" "}
       </>
     );
   };
