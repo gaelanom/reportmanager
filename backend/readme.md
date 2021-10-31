@@ -98,7 +98,7 @@ Returns:
 `204`
 
 Or: `404` if Department {id} does not exist.
-#
+
 ###Employees
 
 **Create Employee** `POST` `.../api/employees`
@@ -210,7 +210,7 @@ Or: `404` if Employee {id} does not exist.
 Returns:
 
 `204` or `404` if Employee {id} does not exist.
-#
+
 ###Messages
 
 **Create new Message** `POST` `.../api/messages`
@@ -399,7 +399,7 @@ Or: `404` if Reply {replyid} does not exist.
 **Delete Reply by ID** `DELETE` `.../api/messages/replies/{replyid}`
 
 Returns: `204` Or: `404` if Reply {replyid} does not exist.
-#
+
 ###Reports
 
 **Create Report** `POST` `.../api/reports`
