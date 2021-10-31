@@ -36,33 +36,18 @@ class Navbar extends React.Component {
                         </Link>
                       </li>
                       <li className="nav-item">
+                        <Link to="/departments" className="nav-link active">
+                          Departments
+                        </Link>
+                      </li>
+                      <li className="nav-item">
                         <Link to="/employees" className="nav-link active">
                           Employees
                         </Link>
                       </li>
                       <li className="nav-item">
-                        <Link to="/maternity" className="nav-link active">
-                          Maternity
-                        </Link>
-                      </li>
-                      <li className="nav-item">
-                        <Link to="/rehab" className="nav-link active">
-                          Rehab
-                        </Link>
-                      </li>
-                      <li className="nav-item">
-                        <Link to="/nicu-paed" className="nav-link active">
-                          Nicu Paed
-                        </Link>
-                      </li>
-                      <li className="nav-item">
-                        <Link to="/communityhealth" className="nav-link active">
-                          CommunityHealth
-                        </Link>
-                      </li>
-                      <li className="nav-item">
                         <Link to="/messages" className="nav-link active">
-                          messages
+                          Messages
                         </Link>
                       </li>
                       <li className="nav-item">

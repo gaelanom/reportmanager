@@ -8,28 +8,33 @@ import BioMechanical from '../../Images/BioMechanical.jpg'
 import Points from '../../Images/Points.jpg'
 
 
-function Maternity() {
+class Department extends React.Component<any, any> {
 
-    let currDate = new Date();
-    let month = currDate.getMonth() + 1;
-    let day = currDate.getDate();
-    let year = currDate.getFullYear();
-    let lastDay = new Date(year, month, 0);
-    let date = year+"/"+month+"/"+lastDay.getDate();
+    constructor(props: any) {
+        super(props);
 
-    return (
-        <>
-        <h1 className="display-1 text-center my-4">Maternity</h1>
+    }
+
+    render() {
+        let currDate = new Date();
+        let month = currDate.getMonth() + 1;
+        let day = currDate.getDate();
+        let year = currDate.getFullYear();
+        let lastDay = new Date(year, month, 0);
+        let date = year+"/"+month+"/"+lastDay.getDate();
+        return (
+            <>
+        <h1 className="display-1 text-center my-4">Community Health</h1>
         <div className="row row-cols-1 row-cols-md-3 g-4 mx-2">
             <div className="col">
                 <div className="card h-100">
                 <img src={CaseStudy} className="card-img-top img-responsive" />
                     <div className="card-body">
                         <h5 className="card-title">
-                            <Link to="/maternity/casestudyPg">Case Study</Link>
+                            <Link to="/communityhealth/casestudyPg">Case Study</Link>
                         </h5>
                         <p className="card-text">Next case study will be due on:
-                            <div>{date}</div>
+                            <div className="inner_mssg">{date}</div>
                         </p>
                     </div>
                 </div>
@@ -39,10 +44,10 @@ function Maternity() {
                 <img src={DataImage} className="card-img-top img-responsive" />
                     <div className="card-body">
                         <h5 className="card-title">
-                            <Link to="/maternity-data-input">Data</Link>
+                            <Link to="/communityhealth-data-input">Data</Link>
                         </h5>
                         <p className="card-text">Next data submission will be due on:
-                            <div>{date}</div>
+                            <div className="inner_mssg">{date}</div>
                         </p>
                     </div>
                 </div>
@@ -52,7 +57,7 @@ function Maternity() {
                 <img src={Employees} className="card-img-top img-responsive" />
                     <div className="card-body">
                         <h5 className="card-title">
-                            <Link to="/maternity/empofmthPg">Employees</Link>
+                            <Link to="/communityhealth/empofmthPg">Employees</Link>
                         </h5>
                         <p className="card-text">List of Employees</p>
                     </div>
@@ -63,7 +68,7 @@ function Maternity() {
                 <img src={BioMechanical} className="card-img-top img-responsive" />
                     <div className="card-body">
                         <h5 className="card-title">
-                            <Link to="/maternity/biomechPg">Bio Mech Support</Link>
+                            <Link to="/communityhealth/biomechPg">Bio Mech Support</Link>
                         </h5>
                         <p className="card-text">No Messages</p>
                     </div>
@@ -80,8 +85,9 @@ function Maternity() {
             </div>
         </div>
         </>
-    );
+        )
+    }
 }
 
 
-export default Maternity;
+export default Department;

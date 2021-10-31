@@ -4,10 +4,7 @@ import Home from "./Components/Home/Home";
 import Login from "./Components/Login/Login";
 import Employees from "./Components/Employees/Employees";
 import Navbar from "./Components/Navbar/Navbar";
-import Maternity from "./Components/Departments/Maternity";
-import Rehab from "./Components/Departments/Rehab";
-import NicuPaed from "./Components/Departments/NicuPaed";
-import CommunityHealth from "./Components/Departments/CommunityHealth";
+import Departments from "./Components/Departments/Departments";
 import DataInput from "./Components/Departments/DataInput";
 import Messages from "./Components/Messages/Messages";
 import Leaderboard from "./Components/Leaderboard/Leaderboard";
@@ -53,32 +50,20 @@ class App extends React.Component<any, any> {
               <DataInput department={"Maternity"} />
             </Route>
 
-            <Route path="/maternity">
-              <Maternity />
-            </Route>
-
             <Route path="/rehab-data-input">
               <DataInput department={"Rehab"} />
             </Route>
 
-            <Route path="/rehab">
-              <Rehab />
+            <Route exact path="/departments">
+              <Departments />
             </Route>
 
             <Route path="/nicu-paed-data-input">
               <DataInput department={"NICU-paed"} />
             </Route>
 
-            <Route path="/nicu-paed">
-              <NicuPaed />
-            </Route>
-
             <Route path="/communityhealth-data-input">
               <DataInput department={"CommunityHealth"} />
-            </Route>
-
-            <Route path="/communityhealth">
-              <CommunityHealth />
             </Route>
 
             <Route path="/messages">
