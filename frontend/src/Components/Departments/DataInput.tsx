@@ -69,13 +69,10 @@ class RecordEntry extends React.Component<Props, EntryState> {
         };
         switch (props.type) {
             case RecordType.written:
-                this.writtenQuestion();
+                this.state.entryField = this.writtenQuestion();
                 break;
             case RecordType.MCQ:
-                if (this.state.options.length === 0) {
-                    this.state.isEdit = true;
-                }
-                this.mcq();
+                this.state.entryField = this.mcq();
                 break;
         }
     }
@@ -95,7 +92,7 @@ class RecordEntry extends React.Component<Props, EntryState> {
                 if (this.state.type !== RecordType.MCQ) {
                     this.setState({type: RecordType.MCQ});
                     addMultipleChoiceQuestion(reportId, this.state.question).then((r: any) => {
-                        this.setState({id: r.id});
+                        this.setState({id: r.id, entryField: this.mcq()});
                     });
                 }
                 break;
@@ -103,7 +100,7 @@ class RecordEntry extends React.Component<Props, EntryState> {
                 if (this.state.type !== RecordType.written) {
                     this.setState({type: RecordType.written});
                     addQuestion(reportId, this.state.question).then((r: any) => {
-                        this.setState({id: r.id});
+                        this.setState({id: r.id, entryField: this.writtenQuestion()});
                     });
                 }
                 break;
@@ -128,10 +125,13 @@ class RecordEntry extends React.Component<Props, EntryState> {
                 }}/>
             </Grid>
         )];
-        this.setState({entryField: entryList});
+        return entryList;
     }
 
     mcq() {
+        if (this.state.options.length === 0) {
+            this.setState({isEdit: true});
+        }
         let entryList: any[] = [(
             <Grid item xs={10}>
                 <TextField fullWidth id="field" label="Field" variant="outlined"
@@ -150,6 +150,7 @@ class RecordEntry extends React.Component<Props, EntryState> {
                                        <InputAdornment position="end">
                                            <IconButton onClick={event => {
                                                this.setState({options: this.state.options.splice(index, 1)})
+                                               this.setState({entryField: this.mcq()});
                                                // update to server
                                            }}>
                                                <DeleteForeverIcon />
@@ -165,12 +166,16 @@ class RecordEntry extends React.Component<Props, EntryState> {
             entryList.push(
                 <Grid item xs={4}>
                     <IconButton onClick={event => {
-                        this.setState({options: [...this.state.options, ""]})
+                        this.setState({options: [...this.state.options, ""]});
+                        this.setState({entryField: this.mcq()});
                         // update to server
                     }}>
                         <AddIcon />
                     </IconButton>
-                    <IconButton onClick={event => {this.setState({isEdit: false})}}>
+                    <IconButton onClick={event => {
+                        this.setState({isEdit: false});
+                        this.setState({entryField: this.mcq()});
+                    }}>
                         <CheckIcon />
                     </IconButton>
                 </Grid>
@@ -186,7 +191,10 @@ class RecordEntry extends React.Component<Props, EntryState> {
                             {this.state.options.map((value, index) => {
                                 return (<FormControlLabel value={String.fromCharCode(65 + index)} control={<Radio />} label={value} />)
                             })}
-                            <IconButton onClick={event => {this.setState({isEdit: true})}}>
+                            <IconButton onClick={event => {
+                                this.setState({isEdit: true});
+                                this.setState({entryField: this.mcq()});
+                            }}>
                                 <EditIcon />
                             </IconButton>
                         </RadioGroup>
@@ -194,7 +202,7 @@ class RecordEntry extends React.Component<Props, EntryState> {
                 </Grid>
             );
         }
-        this.setState({entryField: entryList});
+        return entryList;
     }
 
     render() {
@@ -210,7 +218,7 @@ class RecordEntry extends React.Component<Props, EntryState> {
                                     id="question-type"
                                     value={this.state.type}
                                     label="Age"
-                                    onChange={this.changeType}
+                                    onChange={(event) => {this.changeType(event)}}
                                 >
                                     <MenuItem value={RecordType.written}>Written</MenuItem>
                                     <MenuItem value={RecordType.MCQ}>Multiple Choice</MenuItem>
@@ -234,7 +242,9 @@ class DataInput extends React.Component<any, any> {
 
     constructor(props: {department: string}) {
         super(props)
-        newReport(props.department)
+        newReport(props.department).catch(error => {
+            console.log(error.message);
+        })
         getReportByDeptName(props.department).then((r: any) => {
             let questionList: any[] = r.questions;
             let entryList: any[] = [];
