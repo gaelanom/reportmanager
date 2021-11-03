@@ -70,8 +70,14 @@ public class ReportController {
     @PostMapping("/reports")
     public ResponseEntity<Report> createReport(@RequestBody Report report) {
         try {
-            Report newReport = reportRepository
-                    .save(new Report(report.getDepartment(), LocalDate.now().getMonth(), report.getSubmitterUsername(), report.getSubmitterFirstName(), report.getSubmitterLastName(), report.isComplete(), report.isSaved(), report.isSubmitted(), report.isTemplate(), report.getQuestions(), report.getMultipleChoiceQuestions(), report.getPatientInfo()));
+            Report newReport;
+            if(Objects.nonNull(report.getMonth())){
+                newReport = reportRepository
+                        .save(new Report(report.getDepartment(), report.getMonth(), report.getSubmitterUsername(), report.getSubmitterFirstName(), report.getSubmitterLastName(), report.isComplete(), report.isSaved(), report.isSubmitted(), report.isTemplate(), report.getNumericalQuestions(), report.getWrittenQuestions(), report.getMultipleChoiceQuestions(), report.getPatientInfo()));
+            } else {
+                newReport = reportRepository
+                        .save(new Report(report.getDepartment(), report.getSubmitterUsername(), report.getSubmitterFirstName(), report.getSubmitterLastName(), report.isComplete(), report.isSaved(), report.isSubmitted(), report.isTemplate(), report.getNumericalQuestions(), report.getWrittenQuestions(), report.getMultipleChoiceQuestions(), report.getPatientInfo()));
+            }
             return new ResponseEntity<>(newReport, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -111,8 +117,8 @@ public class ReportController {
             if(Objects.nonNull(report.isTemplate())){
                 reportToChange.setTemplate(report.isTemplate());
             }
-            if(Objects.nonNull(report.getQuestions())){
-                reportToChange.setQuestions(report.getQuestions());
+            if(Objects.nonNull(report.getWrittenQuestions())){
+                reportToChange.setWrittenQuestions(report.getWrittenQuestions());
             }
             if(Objects.nonNull(report.getPatientInfo())){
                 reportToChange.setPatientInfo(report.getPatientInfo());
