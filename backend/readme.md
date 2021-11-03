@@ -648,7 +648,7 @@ Returns:
 
 Or: `404` if Question {questionid} does not exist.
 
-**Delete a Numerical Question** `DELETE` `.../api/reports/questions/written/{questionid}`
+**Delete a Numerical Question** `DELETE` `.../api/reports/questions/{questionid}`
 
 Returns: `204` or `404` if Question {questionid} does not exist.
 
