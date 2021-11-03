@@ -161,7 +161,7 @@ public class ReportController {
     }
 
     @PutMapping("/reports/questions/{id}")
-    public ResponseEntity<WrittenQuestion> editOrAnswerQuestion(@PathVariable("id") long id, @RequestBody WrittenQuestion writtenQuestion) {
+    public ResponseEntity<WrittenQuestion> editWrittenQuestion(@PathVariable("id") long id, @RequestBody WrittenQuestion writtenQuestion) {
         Optional<WrittenQuestion> questionData = writtenQuestionRepository.findById(id);
         if (questionData.isPresent()) {
             WrittenQuestion questionToUpdate = questionData.get();
@@ -171,8 +171,19 @@ public class ReportController {
             if(Objects.nonNull(writtenQuestion.getQuestion())) {
                 questionToUpdate.setQuestion(writtenQuestion.getQuestion());
             }
-            if(Objects.nonNull(writtenQuestion.getAnswer())){
-                questionToUpdate.setAnswer(writtenQuestion.getAnswer());
+            return new ResponseEntity<>(writtenQuestionRepository.save(questionToUpdate), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/reports/questions/{id}/answer")
+    public ResponseEntity<WrittenQuestion> answerWrittenQuestion(@PathVariable("id") long id, @RequestBody String answer) {
+        Optional<WrittenQuestion> questionData = writtenQuestionRepository.findById(id);
+        if (questionData.isPresent()) {
+            WrittenQuestion questionToUpdate = questionData.get();
+            if(Objects.nonNull(answer)){
+                questionToUpdate.setAnswer(answer);
             }
             return new ResponseEntity<>(writtenQuestionRepository.save(questionToUpdate), HttpStatus.OK);
         } else {
@@ -207,7 +218,7 @@ public class ReportController {
     }
 
     @PutMapping("/reports/questions/mcq/{id}")
-    public ResponseEntity<MultipleChoiceQuestion> editOrAnswerMCQuestion(@PathVariable("id") long id, @RequestBody MultipleChoiceQuestion multipleChoiceQuestion) {
+    public ResponseEntity<MultipleChoiceQuestion> editMCQuestion(@PathVariable("id") long id, @RequestBody MultipleChoiceQuestion multipleChoiceQuestion) {
         Optional<MultipleChoiceQuestion> questionData = multipleChoiceQuestionRepository.findById(id);
         if (questionData.isPresent()) {
             MultipleChoiceQuestion questionToUpdate = questionData.get();
@@ -217,14 +228,26 @@ public class ReportController {
             if(Objects.nonNull(multipleChoiceQuestion.getQuestion())) {
                 questionToUpdate.setQuestion(multipleChoiceQuestion.getQuestion());
             }
-            Map<Character, String> Choices = multipleChoiceQuestion.getChoices();
-            if(Objects.nonNull(Choices)){
-                for(Map.Entry<Character, String> choice : Choices.entrySet()){
-                    questionToUpdate.getChoices().put(choice.getKey(), choice.getValue());
-                }
+            if(Objects.nonNull(multipleChoiceQuestion.getChoices())){
+                questionToUpdate.setChoices(multipleChoiceQuestion.getChoices());
             }
-            if(Objects.nonNull(multipleChoiceQuestion.getChoice())){
-                questionToUpdate.setChoice(multipleChoiceQuestion.getChoice());
+            return new ResponseEntity<>(multipleChoiceQuestionRepository.save(questionToUpdate), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/reports/questions/mcq/{id}/answer")
+    public ResponseEntity<MultipleChoiceQuestion> answerMCQuestion(@PathVariable("id") long id, @RequestBody Character choice) {
+        Optional<MultipleChoiceQuestion> questionData = multipleChoiceQuestionRepository.findById(id);
+        if (questionData.isPresent()) {
+            MultipleChoiceQuestion questionToUpdate = questionData.get();
+            if(Objects.nonNull(choice)){
+                if(questionToUpdate.getChoices().containsKey(choice)){
+                    questionToUpdate.setChoice(choice);
+                } else {
+                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                }
             }
             return new ResponseEntity<>(multipleChoiceQuestionRepository.save(questionToUpdate), HttpStatus.OK);
         } else {
