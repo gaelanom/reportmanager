@@ -256,7 +256,7 @@ public class Report {
         return writtenQuestions;
     }
 
-    public void addQuestion(WrittenQuestion writtenQuestion){
+    public void addWrittenQuestion(WrittenQuestion writtenQuestion){
         this.writtenQuestions.add(writtenQuestion);
     }
 
