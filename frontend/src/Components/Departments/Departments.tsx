@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 import Api from "../../API/Api";
 
 type Department = {
+    id: number,
     name: string,
     blurb: string
 }
@@ -37,7 +38,24 @@ class Departments extends React.Component<any, any> {
                 <div className="card-body">
                 <ul className="list-group">
                     {departments.map(function(d: any, idx: number){ 
-                        return (<li className="list-group-item text-center display-6" key={idx}>{d.name}</li>)
+                         return (
+                            <li className="list-group-item text-center display-6" key={idx}>
+                                {
+                                <Link to={"/departments/"+d.id} 
+                                    // paramas={{departmentID: d.id}}          // It does not work
+                                >
+                                    {d.name}
+                                </Link> 
+                                // <Link to={{
+                                //     pathname:`/departments/${d.id}`,
+                                //     state:'${d.id}'
+                                // }}>
+                                //     {d.name}
+                                // </Link>
+                                }
+                                
+                            </li>
+                            )
                     })}
                 </ul>
                 </div>

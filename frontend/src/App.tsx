@@ -5,7 +5,7 @@ import Login from "./Components/Login/Login";
 import Employees from "./Components/Employees/Employees";
 import Navbar from "./Components/Navbar/Navbar";
 import Departments from "./Components/Departments/Departments";
-import DepartmentsLink from "./Components/Departments/DepartmentsLink";
+import DepartmentHomePageTemplate from "./Components/Departments/DepartmentHomePageTemplate";
 import DataInput from "./Components/Departments/DataInput";
 import Messages from "./Components/Messages/Messages";
 import Leaderboard from "./Components/Leaderboard/Leaderboard";
@@ -52,7 +52,6 @@ class App extends React.Component<any, any> {
           <Switch>
             <Route exact path="/">
               <Home />
-              <DepartmentsLink />
             </Route>
             <Route exact path="/login">
               <Login onLoggedIn={this.handleLoggedIn} />
@@ -82,17 +81,19 @@ class App extends React.Component<any, any> {
               <Departments />
             </Route>
 
-            <Route exact path="/departments/:id">
-              <DepartmentsLink />
+            <Route exact path="/departments/:departmentID">
+              <DepartmentHomePageTemplate />
             </Route>
 
-            <Route path="/messages">
+            {/* I did't touch the following 2 components */}
+            <Route path="/departments/:departmentID/messages">
               <Messages />
             </Route>
 
-            <Route path="/leaderboard">
+            <Route path="/departments/:departmentID/leaderboard">
               <Leaderboard />
             </Route>
+            
           </Switch>
         </Router>
       </>
