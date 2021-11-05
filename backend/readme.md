@@ -447,7 +447,8 @@ Requires:
     "saved": false,
     "submitted": false,
     "template": false,
-    "questions": [],
+    "numericalQuestions": [],
+    "writtenQuestions": [],
     "multipleChoiceQuestions": [],
     "patientInfo": []
 }
@@ -468,7 +469,8 @@ Returns: `201`
     "saved": false,
     "submitted": false,
     "template": false,
-    "questions": [],
+    "numericalQuestions": [],
+    "writtenQuestions": [],
     "multipleChoiceQuestions": [],
     "patientInfo": []
 }
@@ -495,7 +497,8 @@ Returns:
       "saved": false,
       "submitted": false,
       "template": false,
-      "questions": [],
+      "numericalQuestions": [],
+      "writtenQuestions": [],
       "multipleChoiceQuestions": [],
       "patientInfo": []
     },
@@ -521,7 +524,8 @@ Returns:
     "saved": false,
     "submitted": false,
     "template": false,
-    "questions": [],
+    "numericalQuestions": [],
+    "writtenQuestions": [],
     "multipleChoiceQuestions": [],
     "patientInfo": []
 }
@@ -558,7 +562,8 @@ Returns:
     "saved": false,
     "submitted": true,
     "template": false,
-    "questions": [],
+    "numericalQuestions": [],
+    "writtenQuestions": [],
     "multipleChoiceQuestions": [],
     "patientInfo": []
 }
@@ -566,7 +571,89 @@ Returns:
 
 Or: `404` if Report {reportid} does not exist.
 #
-**Add a Written Answer Question to a Report** `POST` `.../api/reports/{reportid}/questions`
+**Add a Numerical Answer Question to a Report** `POST` `.../api/reports/{reportid}/questions`
+
+Requires:
+
+```json
+{
+    "requiredByMSPP": true,
+    "question": "How many patients this month?",
+    "answer": 104
+}
+```
+
+Returns:
+
+`201`
+
+```json
+{
+    "id": 1,
+    "requiredByMSPP": true,
+    "question": "How many patients this month?",
+    "answer": 104.0
+}
+```
+
+Or: `404` if Report {reportid} does not exist.
+
+**Update Numerical Question** `PUT` `.../api/reports/questions/{questionid}`
+
+Requires:
+
+Any number of Numerical Question fields, but not the `answer`.
+
+Example given: Updating the Question of a Written Question.
+```json
+{
+  "Question": "How many patients were discharged this month?"
+}
+```
+Fields should be omitted if they are not being updated.
+
+Returns:
+
+`200`
+```json
+{
+    "id": {questionid},
+    "requiredByMSPP": true,
+    "question": "How many patients were discharged this month?",
+    "answer": 104.0
+}
+```
+
+Or: `404` if Question {questionid} does not exist.
+
+**Answer a Numerical Question** `PUT` `.../api/reports/questions/{questionid}/answer`
+
+Requires:
+
+A single `Double` for the Answer of the question.
+
+`"110"`
+
+Returns:
+
+`200`
+```json
+{
+    "id": {questionid},
+    "requiredByMSPP": true,
+    "question": "How many patients were discharged this month?",
+    "answer": 110.0
+}
+```
+
+Or: `404` if Question {questionid} does not exist.
+
+**Delete a Numerical Question** `DELETE` `.../api/reports/questions/{questionid}`
+
+Returns: `204` or `404` if Question {questionid} does not exist.
+
+#
+**Add a Written Answer Question to a Report** `POST` `.../api/reports/{reportid}/questions/written`
 
 Requires:
 
@@ -593,16 +680,16 @@ Returns:
 
 Or: `404` if Report {reportid} does not exist.
 
-**Update Written Question** `PUT` `.../api/reports/questions/{questionid}`
+**Update Written Question** `PUT` `.../api/reports/questions/written/{questionid}`
 
 Requires:
 
-Any number of Written Question fields.
+Any number of Written Question fields, but not the `answer`.
 
-Example given: Updating the answer of a Question.
+Example given: Updating the Question of a Written Question.
 ```json
 {
-  "answer": "Not as many as before."
+  "Question": "How are things this month?"
 }
 ```
 Fields should be omitted if they are not being updated.
@@ -614,14 +701,36 @@ Returns:
 {
     "id": {questionid},
     "requiredByMSPP": true,
-    "question": "How many patients this month?",
-    "answer": "Not as many as before."
+    "question": "How are things this month?",
+    "answer": "Lots!"
 }
 ```
 
 Or: `404` if Question {questionid} does not exist.
 
-**Delete a Written Question** `DELETE` `.../api/reports/questions/{questionid}`
+**Answer a Written Question** `PUT` `.../api/reports/questions/written/{questionid}/answer`
+
+Requires:
+
+A single `String` for the Answer of the question.
+
+`Not so bad.`
+
+Returns:
+
+`200`
+```json
+{
+    "id": {questionid},
+    "requiredByMSPP": true,
+    "question": "How are things this month?",
+    "answer": "Not so bad."
+}
+```
+
+Or: `404` if Question {questionid} does not exist.
+
+**Delete a Written Question** `DELETE` `.../api/reports/questions/written/{questionid}`
 
 Returns: `204` or `404` if Question {questionid} does not exist.
 
@@ -667,12 +776,15 @@ Or: `404` if Report {reportid} does not exist.
 
 Requires:
 
-Any number of Multiple Choice Question fields.
+Any number of Multiple Choice Question fields, but not the `choice`.
 
-Example given: Updating the choice of an MCQ.
+Example given: Updating the choices of an MCQ.
 ```json
 {
-  "choice": "b"
+  "choices": {
+    "a": "the first choice",
+    "b": "the second choice"
+  }
 }
 ```
 Fields should be omitted if they are not being updated.
@@ -693,6 +805,32 @@ Returns:
 ```
 
 Or: `404` if MCQ {mcq_id} does not exist.
+
+**Answer a Multiple Choice Question** `PUT` `.../api/reports/questions/mcq/{mcq_id}/answer`
+
+Requires:
+
+A single Character which is one of the possible `choices` for the MCQ.
+
+`"a"`
+
+Returns:
+
+```json
+{
+    "id": {mcq_id},
+    "requiredByMSPP": true,
+    "question": "How many patients this month?",
+    "choices": {
+        "a": "lots!",
+        "b": "the usual.",
+        "c": "none!"
+    },
+    "choice": "a"
+}
+```
+
+Or: `404` if MCQ {mcq_id} **or the choice** does not exist.
 
 **Delete a Multiple Choice Question** `DELETE` `.../api/reports/questions/mcq/{mcq_id}`
 

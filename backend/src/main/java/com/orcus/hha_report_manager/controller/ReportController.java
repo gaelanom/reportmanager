@@ -1,16 +1,12 @@
 package com.orcus.hha_report_manager.controller;
 
 import com.orcus.hha_report_manager.model.*;
-import com.orcus.hha_report_manager.repository.MultipleChoiceQuestionRepository;
-import com.orcus.hha_report_manager.repository.PatientInfoRepository;
-import com.orcus.hha_report_manager.repository.ReportRepository;
-import com.orcus.hha_report_manager.repository.WrittenQuestionRepository;
+import com.orcus.hha_report_manager.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.*;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -20,6 +16,9 @@ public class ReportController {
 
     @Autowired
     ReportRepository reportRepository;
+
+    @Autowired
+    NumericalQuestionRepository numericalQuestionRepository;
 
     @Autowired
     WrittenQuestionRepository writtenQuestionRepository;
@@ -70,8 +69,14 @@ public class ReportController {
     @PostMapping("/reports")
     public ResponseEntity<Report> createReport(@RequestBody Report report) {
         try {
-            Report newReport = reportRepository
-                    .save(new Report(report.getDepartment(), LocalDate.now().getMonth(), report.getSubmitterUsername(), report.getSubmitterFirstName(), report.getSubmitterLastName(), report.isComplete(), report.isSaved(), report.isSubmitted(), report.isTemplate(), report.getQuestions(), report.getMultipleChoiceQuestions(), report.getPatientInfo()));
+            Report newReport;
+            if(Objects.nonNull(report.getMonth())){
+                newReport = reportRepository
+                        .save(new Report(report.getDepartment(), report.getMonth(), report.getSubmitterUsername(), report.getSubmitterFirstName(), report.getSubmitterLastName(), report.isComplete(), report.isSaved(), report.isSubmitted(), report.isTemplate(), report.getNumericalQuestions(), report.getWrittenQuestions(), report.getMultipleChoiceQuestions(), report.getPatientInfo()));
+            } else {
+                newReport = reportRepository
+                        .save(new Report(report.getDepartment(), report.getSubmitterUsername(), report.getSubmitterFirstName(), report.getSubmitterLastName(), report.isComplete(), report.isSaved(), report.isSubmitted(), report.isTemplate(), report.getNumericalQuestions(), report.getWrittenQuestions(), report.getMultipleChoiceQuestions(), report.getPatientInfo()));
+            }
             return new ResponseEntity<>(newReport, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -111,8 +116,11 @@ public class ReportController {
             if(Objects.nonNull(report.isTemplate())){
                 reportToChange.setTemplate(report.isTemplate());
             }
-            if(Objects.nonNull(report.getQuestions())){
-                reportToChange.setQuestions(report.getQuestions());
+            if(Objects.nonNull(report.getNumericalQuestions())){
+                reportToChange.setNumericalQuestions(report.getNumericalQuestions());
+            }
+            if(Objects.nonNull(report.getWrittenQuestions())){
+                reportToChange.setWrittenQuestions(report.getWrittenQuestions());
             }
             if(Objects.nonNull(report.getPatientInfo())){
                 reportToChange.setPatientInfo(report.getPatientInfo());
@@ -144,15 +152,15 @@ public class ReportController {
 
     }
 
-    //Written Questions, with a String Question and a String Answer.
+    //Numeric questions, with a String question and a Double answer
 
     @PostMapping("/reports/{id}/questions")
-    public ResponseEntity<WrittenQuestion> addQuestionToReport(@PathVariable("id") long id, @RequestBody WrittenQuestion writtenQuestion) {
+    public ResponseEntity<NumericalQuestion> addQuestionToReport(@PathVariable("id") long id, @RequestBody NumericalQuestion numericalQuestion) {
         Optional<Report> reportData = reportRepository.findById(id);
         if (reportData.isPresent()) {
             Report report = reportData.get();
-            WrittenQuestion question = writtenQuestionRepository.save(writtenQuestion);
-            report.addQuestion(question);
+            NumericalQuestion question = numericalQuestionRepository.save(numericalQuestion);
+            report.addNumericalQuestion(question);
             reportRepository.save(report);
             return new ResponseEntity<>(question, HttpStatus.OK);
         } else {
@@ -161,7 +169,63 @@ public class ReportController {
     }
 
     @PutMapping("/reports/questions/{id}")
-    public ResponseEntity<WrittenQuestion> editOrAnswerQuestion(@PathVariable("id") long id, @RequestBody WrittenQuestion writtenQuestion) {
+    public ResponseEntity<NumericalQuestion> editQuestion(@PathVariable("id") long id, @RequestBody NumericalQuestion numericalQuestion) {
+        Optional<NumericalQuestion> questionData = numericalQuestionRepository.findById(id);
+        if (questionData.isPresent()) {
+            NumericalQuestion questionToUpdate = questionData.get();
+            if(Objects.nonNull(numericalQuestion.isRequiredByMSPP())){
+                questionToUpdate.setRequiredByMSPP(numericalQuestion.isRequiredByMSPP());
+            }
+            if(Objects.nonNull(numericalQuestion.getQuestion())) {
+                questionToUpdate.setQuestion(numericalQuestion.getQuestion());
+            }
+            return new ResponseEntity<>(numericalQuestionRepository.save(questionToUpdate), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/reports/questions/{id}/answer")
+    public ResponseEntity<NumericalQuestion> answerQuestion(@PathVariable("id") long id, @RequestBody Double answer) {
+        Optional<NumericalQuestion> questionData = numericalQuestionRepository.findById(id);
+        if (questionData.isPresent()) {
+            NumericalQuestion questionToUpdate = questionData.get();
+            if(Objects.nonNull(answer)){
+                questionToUpdate.setAnswer(answer);
+            }
+            return new ResponseEntity<>(numericalQuestionRepository.save(questionToUpdate), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/reports/questions/{id}")
+    public ResponseEntity<HttpStatus> deleteQuestion(@PathVariable("id") long id) {
+        try {
+            numericalQuestionRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    //Written Questions, with a String Question and a String Answer.
+
+    @PostMapping("/reports/{id}/questions/written")
+    public ResponseEntity<WrittenQuestion> addWrittenQuestionToReport(@PathVariable("id") long id, @RequestBody WrittenQuestion writtenQuestion) {
+        Optional<Report> reportData = reportRepository.findById(id);
+        if (reportData.isPresent()) {
+            Report report = reportData.get();
+            WrittenQuestion question = writtenQuestionRepository.save(writtenQuestion);
+            report.addWrittenQuestion(question);
+            reportRepository.save(report);
+            return new ResponseEntity<>(question, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/reports/questions/written/{id}")
+    public ResponseEntity<WrittenQuestion> editWrittenQuestion(@PathVariable("id") long id, @RequestBody WrittenQuestion writtenQuestion) {
         Optional<WrittenQuestion> questionData = writtenQuestionRepository.findById(id);
         if (questionData.isPresent()) {
             WrittenQuestion questionToUpdate = questionData.get();
@@ -171,8 +235,19 @@ public class ReportController {
             if(Objects.nonNull(writtenQuestion.getQuestion())) {
                 questionToUpdate.setQuestion(writtenQuestion.getQuestion());
             }
-            if(Objects.nonNull(writtenQuestion.getAnswer())){
-                questionToUpdate.setAnswer(writtenQuestion.getAnswer());
+            return new ResponseEntity<>(writtenQuestionRepository.save(questionToUpdate), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/reports/questions/written/{id}/answer")
+    public ResponseEntity<WrittenQuestion> answerWrittenQuestion(@PathVariable("id") long id, @RequestBody String answer) {
+        Optional<WrittenQuestion> questionData = writtenQuestionRepository.findById(id);
+        if (questionData.isPresent()) {
+            WrittenQuestion questionToUpdate = questionData.get();
+            if(Objects.nonNull(answer)){
+                questionToUpdate.setAnswer(answer);
             }
             return new ResponseEntity<>(writtenQuestionRepository.save(questionToUpdate), HttpStatus.OK);
         } else {
@@ -180,8 +255,8 @@ public class ReportController {
         }
     }
 
-    @DeleteMapping("/reports/questions/{id}")
-    public ResponseEntity<HttpStatus> deleteQuestion(@PathVariable("id") long id) {
+    @DeleteMapping("/reports/questions/written/{id}")
+    public ResponseEntity<HttpStatus> deleteWrittenQuestion(@PathVariable("id") long id) {
         try {
             writtenQuestionRepository.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -207,7 +282,7 @@ public class ReportController {
     }
 
     @PutMapping("/reports/questions/mcq/{id}")
-    public ResponseEntity<MultipleChoiceQuestion> editOrAnswerMCQuestion(@PathVariable("id") long id, @RequestBody MultipleChoiceQuestion multipleChoiceQuestion) {
+    public ResponseEntity<MultipleChoiceQuestion> editMCQuestion(@PathVariable("id") long id, @RequestBody MultipleChoiceQuestion multipleChoiceQuestion) {
         Optional<MultipleChoiceQuestion> questionData = multipleChoiceQuestionRepository.findById(id);
         if (questionData.isPresent()) {
             MultipleChoiceQuestion questionToUpdate = questionData.get();
@@ -217,14 +292,26 @@ public class ReportController {
             if(Objects.nonNull(multipleChoiceQuestion.getQuestion())) {
                 questionToUpdate.setQuestion(multipleChoiceQuestion.getQuestion());
             }
-            Map<Character, String> Choices = multipleChoiceQuestion.getChoices();
-            if(Objects.nonNull(Choices)){
-                for(Map.Entry<Character, String> choice : Choices.entrySet()){
-                    questionToUpdate.getChoices().put(choice.getKey(), choice.getValue());
-                }
+            if(Objects.nonNull(multipleChoiceQuestion.getChoices())){
+                questionToUpdate.setChoices(multipleChoiceQuestion.getChoices());
             }
-            if(Objects.nonNull(multipleChoiceQuestion.getChoice())){
-                questionToUpdate.setChoice(multipleChoiceQuestion.getChoice());
+            return new ResponseEntity<>(multipleChoiceQuestionRepository.save(questionToUpdate), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/reports/questions/mcq/{id}/answer")
+    public ResponseEntity<MultipleChoiceQuestion> answerMCQuestion(@PathVariable("id") long id, @RequestBody Character choice) {
+        Optional<MultipleChoiceQuestion> questionData = multipleChoiceQuestionRepository.findById(id);
+        if (questionData.isPresent()) {
+            MultipleChoiceQuestion questionToUpdate = questionData.get();
+            if(Objects.nonNull(choice)){
+                if(questionToUpdate.getChoices().containsKey(choice)){
+                    questionToUpdate.setChoice(choice);
+                } else {
+                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                }
             }
             return new ResponseEntity<>(multipleChoiceQuestionRepository.save(questionToUpdate), HttpStatus.OK);
         } else {
