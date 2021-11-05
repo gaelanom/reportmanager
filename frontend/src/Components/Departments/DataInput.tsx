@@ -237,11 +237,16 @@ class RecordEntry extends React.Component<Props, EntryState> {
 class DataInput extends React.Component<any, any> {
     state: RecordState = {
         entryList: [],
-        id: 0
-    }
+        id: 0,
+    };
 
     constructor(props: {department: string}) {
         super(props)
+        /**
+         * Todo: This is dangerous, need to fix in future.
+         * Your axios requests are async, so there's no guarantee there order of execution.
+         * You could try to get a dep before creating a dep. try chaining them toghether.
+         */
         newReport(props.department).catch(error => {
             console.log(error.message);
         })
@@ -251,6 +256,10 @@ class DataInput extends React.Component<any, any> {
             questionList.forEach(e => {
                 entryList = [...entryList, this.existEntry(e.id, e.question, e.answer)]
             })
+            /**
+             * Todo: this should be changed as well.
+             * What if you constantly get new data? your component will keep rerendering.
+             */
             this.setState({id: r.id, entryList: entryList});
             reportId = r.id;
         })
@@ -266,8 +275,8 @@ class DataInput extends React.Component<any, any> {
 
     createNewEntry() {
         addEmptyQuestion(this.state.id).then((r: any) => {
-            let entry: any = this.newEntry(r.id)
-            this.setState({entryList: [...this.state.entryList, entry]})
+            let entry: any = this.newEntry(r.id);
+            this.setState({entryList: [...this.state.entryList, entry]});
         })
     }
 

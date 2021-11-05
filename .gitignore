@@ -11,4 +11,5 @@
 **/.DS_Store
 **/Thumbs.db
 
+#ignore local frontend repo. 
 frontend/node_modules
