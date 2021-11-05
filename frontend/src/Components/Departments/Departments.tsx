@@ -41,17 +41,14 @@ class Departments extends React.Component<any, any> {
                          return (
                             <li className="list-group-item text-center display-6" key={idx}>
                                 {
-                                <Link to={"/departments/"+d.id} 
-                                    // paramas={{departmentID: d.id}}          // It does not work
-                                >
+                                <Link to={{
+                                    pathname: `/departments/${d.id}`,
+                                    state: {
+                                        name: d.name
+                                    }
+                                }}>
                                     {d.name}
                                 </Link> 
-                                // <Link to={{
-                                //     pathname:`/departments/${d.id}`,
-                                //     state:'${d.id}'
-                                // }}>
-                                //     {d.name}
-                                // </Link>
                                 }
                                 
                             </li>
