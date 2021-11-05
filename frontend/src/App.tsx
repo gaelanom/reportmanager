@@ -83,14 +83,9 @@ class App extends React.Component<any, any> {
 
             <Route exact path="/departments/:departmentID" component={DepartmentHomePageTemplate} />
 
-            {/* I did't touch the following 2 components */}
-            <Route path="/departments/:departmentID/messages">
-              <Messages />
-            </Route>
+            <Route path="/departments/:departmentID/messages" component={Messages} />
 
-            <Route path="/departments/:departmentID/leaderboard">
-              <Leaderboard />
-            </Route>
+            <Route path="/departments/:departmentID/leaderboard" component={Leaderboard} />
             
           </Switch>
         </Router>

@@ -7,9 +7,6 @@ import Employees from '../../Images/Employees.jpg'
 import BioMechanical from '../../Images/BioMechanical.jpg'
 import Points from '../../Images/Points.jpg'
 
-// I extract the departmentID by analysing the URL
-// But may want to get both the departmentID & departmentName by ReactComponents <-------- I don't really know how.
-
 
 class DepartmentHomePageTemplate extends React.Component<any, any> {
     constructor(props: any) {
@@ -38,8 +35,7 @@ class DepartmentHomePageTemplate extends React.Component<any, any> {
                     <img src={CaseStudy} className="card-img-top img-responsive" />
                         <div className="card-body">
                             <h5 className="card-title">
-                                {/* Dynamic URL */}
-                                {/* <Link to={departmentID+"/casestudyPage"}>Case Study</Link> */}
+                                <Link to={"/casestudyPage"}>Case Study</Link>
                             </h5>
                             <p className="card-text">Next case study will be due on:
                                 <div>{date}</div>
@@ -52,8 +48,7 @@ class DepartmentHomePageTemplate extends React.Component<any, any> {
                     <img src={DataImage} className="card-img-top img-responsive" />
                         <div className="card-body">
                             <h5 className="card-title">
-                                {/* Unchanged URL */}
-                                {/* <Link to="/maternity-data-input">Data</Link> */}
+                                <Link to="/data-input">Data</Link>
                             </h5>
                             <p className="card-text">Next data submission will be due on:
                                 <div>{date}</div>
@@ -66,8 +61,7 @@ class DepartmentHomePageTemplate extends React.Component<any, any> {
                     <img src={Employees} className="card-img-top img-responsive" />
                         <div className="card-body">
                             <h5 className="card-title">
-                                {/* Dynamic URL */}
-                                {/* <Link to={departmentID+"/employeesPage"}>Employees</Link> */}
+                                <Link to={"/employeesPage"}>Employees</Link>
                             </h5>
                             <p className="card-text">List of Employees</p>
                         </div>
@@ -78,8 +72,7 @@ class DepartmentHomePageTemplate extends React.Component<any, any> {
                     <img src={BioMechanical} className="card-img-top img-responsive" />
                         <div className="card-body">
                             <h5 className="card-title">
-                                {/* Dynamic URL */}
-                                {/* <Link to={departmentID+"/biomechPage"}>Bio Mech Support</Link> */}
+                                <Link to={"/biomech"}>Bio Mech Support</Link>
                             </h5>
                             <p className="card-text">No Messages</p>
                         </div>
