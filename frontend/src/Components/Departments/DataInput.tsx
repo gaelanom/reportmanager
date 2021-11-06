@@ -18,11 +18,16 @@ import IconButton from '@mui/material/IconButton';
 import CheckIcon from '@mui/icons-material/Check';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import {newReport, addEmptyQuestion, addQuestion, addMultipleChoiceQuestion, updateQuestion, getReportByDeptName} from '../../API/reports';
+import {newReport, getReportByDeptName,
+    addEmptyQuestion, addQuestion, updateQuestion, deleteQuestion, answerQuestion,
+    addMultipleChoiceQuestion, updateMultipleChoiceQuestion, updateMultipleChoiceQuestionChoice,
+    deleteMultipleChoiceQuestion, answerMultipleChoiceQuestion, addWrittenQuestion,
+    updateWrittenQuestion, deleteWrittenQuestion, answerWrittenQuestion} from '../../API/reports';
 
 enum RecordType {
     written = "Written",
     MCQ = "Multiple Choice",
+    numerical = "Numerical",
 }
 
 type Props = {
@@ -31,7 +36,7 @@ type Props = {
     question: string;
     answer: string;
     options: Map<string, string>;
-    choice: string;
+    num: number;
 };
 
 type EntryState = {
@@ -41,8 +46,8 @@ type EntryState = {
     type: RecordType;
     entryField: any[];
     options: string[];
-    choice: string;
     isEdit: boolean;
+    num: number;
 };
 
 type RecordState = {
@@ -61,13 +66,16 @@ class RecordEntry extends React.Component<Props, EntryState> {
             id: props.id,
             question: props.question,
             answer: props.answer,
+            num: props.num,
             type: props.type,
             entryField: [],
             options: Array.from(props.options.values()),
-            choice: props.choice,
             isEdit: false,
         };
         switch (props.type) {
+            case RecordType.numerical:
+                this.state.entryField = this.numericalQuestion();
+                break;
             case RecordType.written:
                 this.state.entryField = this.writtenQuestion();
                 break;
@@ -79,7 +87,45 @@ class RecordEntry extends React.Component<Props, EntryState> {
 
     // to do need change
     update() {
-        updateQuestion(this.state.id, this.state.question, this.state.answer)
+        switch (this.state.type) {
+            case RecordType.numerical:
+                updateQuestion(this.state.id, this.state.question);
+                break;
+            case RecordType.written:
+                updateWrittenQuestion(this.state.id, this.state.question);
+                break;
+            case RecordType.MCQ:
+                updateMultipleChoiceQuestion(this.state.id, this.state.question);
+                break;
+        }
+    }
+
+    updateAnswer() {
+        switch (this.state.type) {
+            case RecordType.numerical:
+                answerQuestion(this.state.id, this.state.num);
+                break;
+            case RecordType.written:
+                answerWrittenQuestion(this.state.id, this.state.answer);
+                break;
+            case RecordType.MCQ:
+                answerMultipleChoiceQuestion(this.state.id, this.state.answer);
+                break;
+        }
+    }
+
+    delete() {
+        switch (this.state.type) {
+            case RecordType.numerical:
+                deleteQuestion(this.state.id);
+                break;
+            case RecordType.written:
+                deleteWrittenQuestion(this.state.id);
+                break;
+            case RecordType.MCQ:
+                deleteMultipleChoiceQuestion(this.state.id);
+                break;
+        }
     }
 
     setQuestionAnswer(question: string, answer: string) {
@@ -87,24 +133,64 @@ class RecordEntry extends React.Component<Props, EntryState> {
     }
 
     changeType(event: SelectChangeEvent) {
+        if (this.state.type === event.target.value) {
+            return
+        }
+        this.delete();
         switch (event.target.value) {
             case RecordType.MCQ:
-                if (this.state.type !== RecordType.MCQ) {
-                    this.setState({type: RecordType.MCQ});
-                    addMultipleChoiceQuestion(reportId, this.state.question).then((r: any) => {
-                        this.setState({id: r.id, entryField: this.mcq()});
-                    });
-                }
+                this.setState({type: RecordType.MCQ, answer: ""});
+                addMultipleChoiceQuestion(reportId, this.state.question).then((r: any) => {
+                    this.setState({id: r.id, entryField: this.mcq()});
+                });
                 break;
             case RecordType.written:
-                if (this.state.type !== RecordType.written) {
-                    this.setState({type: RecordType.written});
-                    addQuestion(reportId, this.state.question).then((r: any) => {
-                        this.setState({id: r.id, entryField: this.writtenQuestion()});
-                    });
-                }
+                this.setState({type: RecordType.written, answer: ""});
+                addWrittenQuestion(reportId, this.state.question).then((r: any) => {
+                    this.setState({id: r.id, entryField: this.writtenQuestion()});
+                });
                 break;
+            case RecordType.numerical:
+                // todo
+                this.setState({type: RecordType.written, num: -1});
+                addQuestion(reportId, this.state.question).then((r: any) => {
+                    this.setState({id: r.id, entryField: this.numericalQuestion()});
+                });
         }
+    }
+
+    numericalQuestion() {
+        let entryList: any[] = [(
+            <Grid item xs={8}>
+                <TextField fullWidth id="field" label="Field" variant="outlined"
+                           defaultValue={this.state.question} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    this.setState({question: event.target.value});
+                    this.update();
+                }}/>
+            </Grid>
+        )];
+        if (this.state.num >= 0) {
+            entryList.push(
+                <Grid item xs={2}>
+                    <TextField fullWidth id="value" label="Value" variant="outlined" type="number"
+                               defaultValue={this.state.num} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                        this.setState({num: +event.target.value});
+                        this.updateAnswer();
+                    }}/>
+                </Grid>
+            )
+        } else {
+            entryList.push(
+                <Grid item xs={2}>
+                    <TextField fullWidth id="value" label="Value" variant="outlined" type="number"
+                               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                        this.setState({num: +event.target.value});
+                        this.updateAnswer();
+                    }}/>
+                </Grid>
+            )
+        }
+        return entryList;
     }
 
     writtenQuestion() {
@@ -121,7 +207,7 @@ class RecordEntry extends React.Component<Props, EntryState> {
                 <TextField fullWidth id="value" label="Value" variant="outlined"
                            defaultValue={this.state.answer} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                     this.setState({question: event.target.value});
-                    this.update();
+                    this.updateAnswer();
                 }}/>
             </Grid>
         )];
@@ -151,14 +237,14 @@ class RecordEntry extends React.Component<Props, EntryState> {
                                            <IconButton onClick={event => {
                                                this.setState({options: this.state.options.splice(index, 1)})
                                                this.setState({entryField: this.mcq()});
-                                               // update to server
+                                               updateMultipleChoiceQuestionChoice(this.state.id, this.getOptionMap());
                                            }}>
                                                <DeleteForeverIcon />
                                            </IconButton>
                                        </InputAdornment>)}}
                                    defaultValue={value} onChange={event => {
                             this.setState({options: this.state.options.splice(index, 1, event.target.value)})
-                            // this.update();
+                            updateMultipleChoiceQuestionChoice(this.state.id, this.getOptionMap());
                         }}/>
                     </Grid>
                 )
@@ -168,7 +254,7 @@ class RecordEntry extends React.Component<Props, EntryState> {
                     <IconButton onClick={event => {
                         this.setState({options: [...this.state.options, ""]});
                         this.setState({entryField: this.mcq()});
-                        // update to server
+                        updateMultipleChoiceQuestionChoice(this.state.id, this.getOptionMap());
                     }}>
                         <AddIcon />
                     </IconButton>
@@ -184,14 +270,14 @@ class RecordEntry extends React.Component<Props, EntryState> {
             entryList.push(
                 <Grid item xs={12}>
                     <FormControl component="fieldset">
-                        <RadioGroup row name="mcq-options" defaultValue={this.state.choice} onChange={event => {
-                            this.setState({choice: event.target.value});
-                            // push to server
+                        <RadioGroup row name="mcq-options" defaultValue={this.state.answer} onChange={event => {
+                            this.setState({answer: event.target.value});
+                            this.updateAnswer();
                         }}>
                             {this.state.options.map((value, index) => {
                                 return (<FormControlLabel value={String.fromCharCode(65 + index)} control={<Radio />} label={value} />)
                             })}
-                            <IconButton onClick={event => {
+                            <IconButton onClick={() => {
                                 this.setState({isEdit: true});
                                 this.setState({entryField: this.mcq()});
                             }}>
@@ -203,6 +289,14 @@ class RecordEntry extends React.Component<Props, EntryState> {
             );
         }
         return entryList;
+    }
+
+    getOptionMap() {
+        let optionMap = new Map<string, string>();
+        this.state.options.forEach((value, index) => {
+            optionMap.set(String.fromCharCode(65 + index), value);
+        })
+        return optionMap;
     }
 
     render() {
@@ -217,9 +311,10 @@ class RecordEntry extends React.Component<Props, EntryState> {
                                     labelId="question-type-select-label"
                                     id="question-type"
                                     value={this.state.type}
-                                    label="Age"
+                                    label="Type"
                                     onChange={(event) => {this.changeType(event)}}
                                 >
+                                    <MenuItem value={RecordType.numerical}>Numerical</MenuItem>
                                     <MenuItem value={RecordType.written}>Written</MenuItem>
                                     <MenuItem value={RecordType.MCQ}>Multiple Choice</MenuItem>
                                 </Select>
@@ -266,11 +361,11 @@ class DataInput extends React.Component<any, any> {
     }
 
     newEntry(id: number) {
-        return <RecordEntry id={id} type={RecordType.written} question={""} answer={""} choice={""} options={new Map<string, string>()}/>
+        return <RecordEntry id={id} type={RecordType.written} question={""} answer={""} num={-1} options={new Map<string, string>()}/>
     }
 
     existEntry(id: number, question: string, answer: string) {
-        return <RecordEntry id={id} type={RecordType.written} question={question} answer={answer} choice={""} options={new Map<string, string>()}/>
+        return <RecordEntry id={id} type={RecordType.written} question={question} answer={answer}  num={-1} options={new Map<string, string>()}/>
     }
 
     createNewEntry() {
