@@ -85,7 +85,6 @@ class RecordEntry extends React.Component<Props, EntryState> {
         }
     }
 
-    // to do need change
     update() {
         switch (this.state.type) {
             case RecordType.numerical:
@@ -337,35 +336,40 @@ class DataInput extends React.Component<any, any> {
 
     constructor(props: {department: string}) {
         super(props)
-        /**
-         * Todo: This is dangerous, need to fix in future.
-         * Your axios requests are async, so there's no guarantee there order of execution.
-         * You could try to get a dep before creating a dep. try chaining them toghether.
-         */
-        newReport(props.department).catch(error => {
+        newReport(props.department).then((r: any) => {
+                this.setState({id: r.id});
+                reportId = r.id;
+            }
+        ).catch(error => {
             console.log(error.message);
-        })
-        getReportByDeptName(props.department).then((r: any) => {
-            let questionList: any[] = r.questions;
-            let entryList: any[] = [];
-            questionList.forEach(e => {
-                entryList = [...entryList, this.existEntry(e.id, e.question, e.answer)]
-            })
-            /**
-             * Todo: this should be changed as well.
-             * What if you constantly get new data? your component will keep rerendering.
-             */
-            this.setState({id: r.id, entryList: entryList});
-            reportId = r.id;
-        })
+            getReportByDeptName(props.department).then((r: any) => {
+                let questionList: any[] = [...r.numericalQuestions, ...r.writtenQuestions, ...r.multipleChoiceQuestions];
+                questionList.sort(this.compareQuestion)
+                let entryList: any[] = [];
+                questionList.forEach(e => {
+                    if (r.numericalQuestions.includes(e)) {
+                        entryList = [...entryList, this.existEntry(e.id, RecordType.numerical, e.question, "", e.num)]
+                    } else if (r.writtenQuestions.includes(e)) {
+                        entryList = [...entryList, this.existEntry(e.id, RecordType.written, e.question, e.answer, -1)]
+                    } else if (r.multipleChoiceQuestions.includes(e)) {
+                        entryList = [...entryList, this.existEntry(e.id, RecordType.MCQ, e.question, e.choice, -1, e.choices)]
+                    }
+                })
+                this.setState({id: r.id, entryList: entryList});
+                reportId = r.id;
+        })})
+    }
+
+    private compareQuestion(a: { id: number; }, b: { id: number; }) {
+        return a.id - b.id;
     }
 
     newEntry(id: number) {
-        return <RecordEntry id={id} type={RecordType.written} question={""} answer={""} num={-1} options={new Map<string, string>()}/>
+        return <RecordEntry id={id} type={RecordType.numerical} question={""} answer={""} num={-1} options={new Map<string, string>()}/>
     }
 
-    existEntry(id: number, question: string, answer: string) {
-        return <RecordEntry id={id} type={RecordType.written} question={question} answer={answer}  num={-1} options={new Map<string, string>()}/>
+    existEntry(id: number, type: RecordType, question: string, answer: string, num: number, options: Map<string, string> = new Map<string, string>()) {
+        return <RecordEntry id={id} type={type} question={question} answer={answer}  num={num} options={options}/>
     }
 
     createNewEntry() {
