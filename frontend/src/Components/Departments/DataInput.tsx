@@ -150,7 +150,6 @@ class RecordEntry extends React.Component<Props, EntryState> {
                 });
                 break;
             case RecordType.numerical:
-                // todo
                 this.setState({type: RecordType.written, num: -1});
                 addQuestion(reportId, this.state.question).then((r: any) => {
                     this.setState({id: r.id, entryField: this.numericalQuestion()});

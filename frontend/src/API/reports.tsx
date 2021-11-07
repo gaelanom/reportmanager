@@ -31,7 +31,10 @@ export function updateQuestion(id: number, question: string) {
 }
 
 export function answerQuestion(id: number, answer: number) {
-    return axios.put(BASEURL + 'questions/' + id + '/answer', answer).then(res => res.data)
+    return axios.put(BASEURL + 'questions/' + id + '/answer', answer, {
+        headers: {
+            'Content-Type': 'application/json',
+        }}).then(res => res.data)
 }
 
 export function addMultipleChoiceQuestion(id: number, question: string) {
