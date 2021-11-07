@@ -57,7 +57,7 @@ class App extends React.Component<any, any> {
               <Login onLoggedIn={this.handleLoggedIn} />
             </Route>
 
-            <Route path="/employees">
+            <Route path="/departments/:departmentID/employees">
               <Employees />
             </Route>
 
@@ -83,7 +83,7 @@ class App extends React.Component<any, any> {
 
             <Route exact path="/departments/:departmentID" component={DepartmentHomePageTemplate} />
 
-            <Route path="/departments/:departmentID/messages" component={Messages} />
+            <Route path="/messages" component={Messages} />
 
             <Route path="/departments/:departmentID/leaderboard" component={Leaderboard} />
             

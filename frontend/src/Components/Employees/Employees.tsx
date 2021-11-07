@@ -34,12 +34,19 @@ export default class Employees extends React.Component <any, any> {
     render() {
 
         return (
-            
-            <ul>
-                {this.state.employees.map(function(d: any, idx: number){
-                    return (<li key={idx}>ID: {d.id} Name: {d.firstName} LastName: {d.lastName} Department: {d.department} Department Head: {d.departmentHead}</li>)
-                })}
-            </ul>
+            <div className="card mx-auto w-75 my-5">
+                <h1 className="card-header card-title text-center display-4">All Employees</h1>
+                <div className="card-body">
+                    <ul className="list-group">
+                        {this.state.employees.map(function(d: any, idx: number){
+                            return (
+                                <li className="list-group-item text-center display-6" key={idx}>
+                                    ID: {d.id} Name: {d.firstName} LastName: {d.lastName} Department: {d.department} Department Head: {d.departmentHead}
+                                </li>)
+                        })}
+                    </ul>
+                </div>
+            </div>
         )
     }
 }

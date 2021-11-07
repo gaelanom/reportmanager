@@ -12,10 +12,17 @@ class DepartmentHomePageTemplate extends React.Component<any, any> {
     constructor(props: any) {
         super(props);
 
-
+        
+        this.state = {
+            EmployeeimageClick: () => {
+                <Link to={"/departments/:departmentID/employees"}></Link>
+            }
+        }
     }
+    
 
     render() {
+         
 
         let currDate = new Date();
         let month = currDate.getMonth() + 1;
@@ -25,6 +32,7 @@ class DepartmentHomePageTemplate extends React.Component<any, any> {
         let date = year+"/"+month+"/"+lastDay.getDate();
 
         const name = this.props.location.state.name || null
+        const id = this.props.location.state.id || null
 
         return (
             <>
@@ -58,12 +66,16 @@ class DepartmentHomePageTemplate extends React.Component<any, any> {
                 </div>
                 <div className="col">
                     <div className="card h-100">
-                    <img src={Employees} className="card-img-top img-responsive" />
                         <div className="card-body">
                             <h5 className="card-title">
-                                <Link to={"/employeesPage"}>Employees</Link>
+                                <p className="card-text">List of Employees</p>
+                                {<Link to={{
+                                    pathname: `/departments/${id}/employees`
+                                    }}>
+                                    <img src={Employees} className="card-img-top img-responsive" onClick={this.state.EmployeeimageClick} />
+                                </Link>
+                                }
                             </h5>
-                            <p className="card-text">List of Employees</p>
                         </div>
                     </div>
                 </div>
