@@ -70,6 +70,9 @@ export function updateWrittenQuestion(id: number, question: string) {
 }
 
 export function answerWrittenQuestion(id: number, answer: string) {
-    return axios.put(BASEURL + 'questions/written/' + id + '/answer', answer).then(res => res.data)
+    return axios.put(BASEURL + 'questions/written/' + id + '/answer', answer, {
+        headers: {
+            'Content-Type': 'application/json',
+        }}).then(res => res.data)
 }
 
