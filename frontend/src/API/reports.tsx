@@ -30,7 +30,7 @@ export function updateQuestion(id: number, question: string) {
     return axios.put(BASEURL + 'questions/' + id, {"question":question}).then(res => res.data)
 }
 
-export function answerQuestion(id: number, answer: number) {
+export function answerQuestion(id: number, answer: string) {
     return axios.put(BASEURL + 'questions/' + id + '/answer', answer, {
         headers: {
             'Content-Type': 'application/json',

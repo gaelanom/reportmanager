@@ -36,7 +36,6 @@ type Props = {
     question: string;
     answer: string;
     options: Map<string, string>;
-    num: number;
 };
 
 type EntryState = {
@@ -47,7 +46,6 @@ type EntryState = {
     entryField: any[];
     options: string[];
     isEdit: boolean;
-    num: number;
 };
 
 type RecordState = {
@@ -66,12 +64,14 @@ class RecordEntry extends React.Component<Props, EntryState> {
             id: props.id,
             question: props.question,
             answer: props.answer,
-            num: props.num,
             type: props.type,
             entryField: [],
-            options: Array.from(props.options.values()),
+            options: [],
             isEdit: false,
         };
+        if (props.options.size > 0) {
+            this.state.options = Array.from(props.options.values());
+        }
         switch (props.type) {
             case RecordType.numerical:
                 this.state.entryField = this.numericalQuestion();
@@ -102,7 +102,7 @@ class RecordEntry extends React.Component<Props, EntryState> {
     updateAnswer() {
         switch (this.state.type) {
             case RecordType.numerical:
-                answerQuestion(this.state.id, this.state.num);
+                answerQuestion(this.state.id, this.state.answer);
                 break;
             case RecordType.written:
                 answerWrittenQuestion(this.state.id, this.state.answer);
@@ -150,7 +150,7 @@ class RecordEntry extends React.Component<Props, EntryState> {
                 });
                 break;
             case RecordType.numerical:
-                this.setState({type: RecordType.written, num: -1});
+                this.setState({type: RecordType.written, answer: ""});
                 addQuestion(reportId, this.state.question).then((r: any) => {
                     this.setState({id: r.id, entryField: this.numericalQuestion()});
                 });
@@ -167,27 +167,15 @@ class RecordEntry extends React.Component<Props, EntryState> {
                 }}/>
             </Grid>
         )];
-        if (this.state.num >= 0) {
-            entryList.push(
-                <Grid item xs={2}>
-                    <TextField fullWidth id="value" label="Value" variant="outlined" type="number"
-                               defaultValue={this.state.num} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                        this.setState({num: +event.target.value});
-                        this.updateAnswer();
-                    }}/>
-                </Grid>
-            )
-        } else {
-            entryList.push(
-                <Grid item xs={2}>
-                    <TextField fullWidth id="value" label="Value" variant="outlined" type="number"
-                               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                        this.setState({num: +event.target.value});
-                        this.updateAnswer();
-                    }}/>
-                </Grid>
-            )
-        }
+        entryList.push(
+            <Grid item xs={2}>
+                <TextField fullWidth id="value" label="Value" variant="outlined" type="number"
+                           defaultValue={this.state.answer} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    this.setState({answer: event.target.value});
+                    this.updateAnswer();
+                }}/>
+            </Grid>
+        )
         return entryList;
     }
 
@@ -364,11 +352,11 @@ class DataInput extends React.Component<any, any> {
     }
 
     newEntry(id: number) {
-        return <RecordEntry id={id} type={RecordType.numerical} question={""} answer={""} num={-1} options={new Map<string, string>()}/>
+        return <RecordEntry id={id} type={RecordType.numerical} question={""} answer={""} options={new Map<string, string>()}/>
     }
 
     existEntry(id: number, type: RecordType, question: string, answer: string, num: number, options: Map<string, string> = new Map<string, string>()) {
-        return <RecordEntry id={id} type={type} question={question} answer={answer}  num={num} options={options}/>
+        return <RecordEntry id={id} type={type} question={question} answer={answer} options={options}/>
     }
 
     createNewEntry() {
