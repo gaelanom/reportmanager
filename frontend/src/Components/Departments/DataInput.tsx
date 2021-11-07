@@ -162,8 +162,9 @@ class RecordEntry extends React.Component<Props, EntryState> {
             <Grid item xs={8}>
                 <TextField fullWidth id="field" label="Field" variant="outlined"
                            defaultValue={this.state.question} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    this.setState({question: event.target.value});
-                    this.update();
+                    this.setState({question: event.target.value}, () => {
+                        this.update();
+                    });
                 }}/>
             </Grid>
         )];
@@ -171,8 +172,9 @@ class RecordEntry extends React.Component<Props, EntryState> {
             <Grid item xs={2}>
                 <TextField fullWidth id="value" label="Value" variant="outlined" type="number"
                            defaultValue={this.state.answer} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    this.setState({answer: event.target.value});
-                    this.updateAnswer();
+                    this.setState({answer: event.target.value}, () => {
+                        this.updateAnswer();
+                    });
                 }}/>
             </Grid>
         )
@@ -184,16 +186,18 @@ class RecordEntry extends React.Component<Props, EntryState> {
             <Grid item xs={10}>
                 <TextField fullWidth id="field" label="Field" variant="outlined"
                            defaultValue={this.state.question} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    this.setState({question: event.target.value});
-                    this.update();
+                    this.setState({question: event.target.value}, () => {
+                        this.update();
+                    });
                 }}/>
             </Grid>
         ), (
             <Grid item xs={12}>
                 <TextField fullWidth id="value" label="Value" variant="outlined"
                            defaultValue={this.state.answer} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    this.setState({question: event.target.value});
-                    this.updateAnswer();
+                    this.setState({answer: event.target.value}, () => {
+                        this.updateAnswer();
+                    });
                 }}/>
             </Grid>
         )];
@@ -208,8 +212,9 @@ class RecordEntry extends React.Component<Props, EntryState> {
             <Grid item xs={10}>
                 <TextField fullWidth id="field" label="Field" variant="outlined"
                            defaultValue={this.state.question} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    this.setState({question: event.target.value});
-                    this.update();
+                    this.setState({question: event.target.value}, () => {
+                        this.update();
+                    });
                 }}/>
             </Grid>
         )];
@@ -221,16 +226,18 @@ class RecordEntry extends React.Component<Props, EntryState> {
                                    InputProps={{endAdornment: (
                                        <InputAdornment position="end">
                                            <IconButton onClick={event => {
-                                               this.setState({options: this.state.options.splice(index, 1)})
-                                               this.setState({entryField: this.mcq()});
-                                               updateMultipleChoiceQuestionChoice(this.state.id, this.getOptionMap());
+                                               this.setState({options: this.state.options.splice(index, 1)}, () => {
+                                                   this.setState({entryField: this.mcq()});
+                                                   updateMultipleChoiceQuestionChoice(this.state.id, this.getOptionMap());
+                                               })
                                            }}>
                                                <DeleteForeverIcon />
                                            </IconButton>
                                        </InputAdornment>)}}
                                    defaultValue={value} onChange={event => {
-                            this.setState({options: this.state.options.splice(index, 1, event.target.value)})
-                            updateMultipleChoiceQuestionChoice(this.state.id, this.getOptionMap());
+                            this.setState({options: this.state.options.splice(index, 1, event.target.value)}, () => {
+                                updateMultipleChoiceQuestionChoice(this.state.id, this.getOptionMap());
+                            })
                         }}/>
                     </Grid>
                 )
@@ -238,15 +245,17 @@ class RecordEntry extends React.Component<Props, EntryState> {
             entryList.push(
                 <Grid item xs={4}>
                     <IconButton onClick={event => {
-                        this.setState({options: [...this.state.options, ""]});
-                        this.setState({entryField: this.mcq()});
-                        updateMultipleChoiceQuestionChoice(this.state.id, this.getOptionMap());
+                        this.setState({options: [...this.state.options, ""]}, () => {
+                            this.setState({entryField: this.mcq()});
+                            updateMultipleChoiceQuestionChoice(this.state.id, this.getOptionMap());
+                        });
                     }}>
                         <AddIcon />
                     </IconButton>
                     <IconButton onClick={event => {
-                        this.setState({isEdit: false});
-                        this.setState({entryField: this.mcq()});
+                        this.setState({isEdit: false}, () => {
+                            this.setState({entryField: this.mcq()});
+                        });
                     }}>
                         <CheckIcon />
                     </IconButton>
@@ -257,15 +266,17 @@ class RecordEntry extends React.Component<Props, EntryState> {
                 <Grid item xs={12}>
                     <FormControl component="fieldset">
                         <RadioGroup row name="mcq-options" defaultValue={this.state.answer} onChange={event => {
-                            this.setState({answer: event.target.value});
-                            this.updateAnswer();
+                            this.setState({answer: event.target.value}, () => {
+                                this.updateAnswer();
+                            });
                         }}>
                             {this.state.options.map((value, index) => {
                                 return (<FormControlLabel value={String.fromCharCode(65 + index)} control={<Radio />} label={value} />)
                             })}
                             <IconButton onClick={() => {
-                                this.setState({isEdit: true});
-                                this.setState({entryField: this.mcq()});
+                                this.setState({isEdit: true}, () => {
+                                    this.setState({entryField: this.mcq()});
+                                });
                             }}>
                                 <EditIcon />
                             </IconButton>
@@ -335,11 +346,15 @@ class DataInput extends React.Component<any, any> {
                 let entryList: any[] = [];
                 questionList.forEach(e => {
                     if (r.numericalQuestions.includes(e)) {
-                        entryList = [...entryList, this.existEntry(e.id, RecordType.numerical, e.question, "", e.num)]
+                        let stringAns: string = "";
+                        if (e.answer != null) {
+                            stringAns = e.answer.toString();
+                        }
+                        entryList = [...entryList, this.existEntry(e.id, RecordType.numerical, e.question, stringAns)]
                     } else if (r.writtenQuestions.includes(e)) {
-                        entryList = [...entryList, this.existEntry(e.id, RecordType.written, e.question, e.answer, -1)]
+                        entryList = [...entryList, this.existEntry(e.id, RecordType.written, e.question, e.answer)]
                     } else if (r.multipleChoiceQuestions.includes(e)) {
-                        entryList = [...entryList, this.existEntry(e.id, RecordType.MCQ, e.question, e.choice, -1, e.choices)]
+                        entryList = [...entryList, this.existEntry(e.id, RecordType.MCQ, e.question, e.choice, e.choices)]
                     }
                 })
                 this.setState({id: r.id, entryList: entryList});
@@ -355,7 +370,7 @@ class DataInput extends React.Component<any, any> {
         return <RecordEntry id={id} type={RecordType.numerical} question={""} answer={""} options={new Map<string, string>()}/>
     }
 
-    existEntry(id: number, type: RecordType, question: string, answer: string, num: number, options: Map<string, string> = new Map<string, string>()) {
+    existEntry(id: number, type: RecordType, question: string, answer: string, options: Map<string, string> = new Map<string, string>()) {
         return <RecordEntry id={id} type={type} question={question} answer={answer} options={options}/>
     }
 
