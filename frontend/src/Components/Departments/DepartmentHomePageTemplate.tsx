@@ -14,10 +14,14 @@ class DepartmentHomePageTemplate extends React.Component<any, any> {
 
         
         this.state = {
-            EmployeeimageClick: () => {
+            EmployeeImageClick: () => {
                 <Link to={"/departments/:departmentID/employees"}></Link>
+            },
+            DataImageClick: () =>{
+                <Link to={"/communityhealth-data-input"}></Link>
             }
         }
+        
     }
     
 
@@ -53,10 +57,14 @@ class DepartmentHomePageTemplate extends React.Component<any, any> {
                 </div>
                 <div className="col">
                     <div className="card h-100">
-                    <img src={DataImage} className="card-img-top img-responsive" />
+                    
                         <div className="card-body">
                             <h5 className="card-title">
-                                <Link to="/data-input">Data</Link>
+                                <Link to={{
+                                    pathname: `/communityhealth-data-input`
+                                }}>
+                                    <img src={DataImage} className="card-img-top img-responsive" onClick={this.state.DataImageClick} />
+                                </Link>
                             </h5>
                             <p className="card-text">Next data submission will be due on:
                                 <div>{date}</div>
@@ -68,11 +76,11 @@ class DepartmentHomePageTemplate extends React.Component<any, any> {
                     <div className="card h-100">
                         <div className="card-body">
                             <h5 className="card-title">
-                                <p className="card-text">List of Employees</p>
+                                <p className="card-text">Employees</p>
                                 {<Link to={{
                                     pathname: `/departments/${id}/employees`
                                     }}>
-                                    <img src={Employees} className="card-img-top img-responsive" onClick={this.state.EmployeeimageClick} />
+                                    <img src={Employees} className="card-img-top img-responsive" onClick={this.state.EmployeeImageClick} />
                                 </Link>
                                 }
                             </h5>
