@@ -61,25 +61,9 @@ class App extends React.Component<any, any> {
               <Employees />
             </Route>
 
-            <Route path="/maternity-data-input">
-              <DataInput department={"Maternity"} />
-            </Route>
 
-            <Route path="/rehab-data-input">
-              <DataInput department={"Rehab"} />
-            </Route>
-
-            <Route path="/nicu-paed-data-input">
-              <DataInput department={"NICU-paed"} />
-            </Route>
-
-            <Route path="/communityhealth-data-input">
-              <DataInput department={"CommunityHealth"} />
-            </Route>
-
-            <Route path="/departments/:departmentID/datainput">
-              <DataInput />
-            </Route>
+            <Route path="/departments/:departmentID/datainput" component={DataInput} />
+              
 
             <Route exact path="/departments">
               <Departments />

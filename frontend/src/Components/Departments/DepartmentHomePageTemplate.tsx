@@ -18,7 +18,7 @@ class DepartmentHomePageTemplate extends React.Component<any, any> {
                 <Link to={"/departments/:departmentID/employees"}></Link>
             },
             DataImageClick: () =>{
-                <Link to={"/communityhealth-data-input"}></Link>
+                <Link to={"/departments/:departmentID/datainput"}></Link>
             }
         }
         
@@ -61,7 +61,11 @@ class DepartmentHomePageTemplate extends React.Component<any, any> {
                         <div className="card-body">
                             <h5 className="card-title">
                                 <Link to={{
-                                    pathname: `/communityhealth-data-input`
+                                    pathname: `/departments/${id}/datainput`,
+                                    state: {
+                                        department: name,
+                                        id: id
+                                    }
                                 }}>
                                     <img src={DataImage} className="card-img-top img-responsive" onClick={this.state.DataImageClick} />
                                 </Link>
