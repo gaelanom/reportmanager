@@ -57,33 +57,19 @@ class App extends React.Component<any, any> {
               <Login onLoggedIn={this.handleLoggedIn} />
             </Route>
 
-            <Route path="/employees">
+            <Route path="/departments/:departmentID/employees">
               <Employees />
             </Route>
 
-            <Route path="/maternity-data-input">
-              <DataInput department={"Maternity"} />
-            </Route>
-
-            <Route path="/rehab-data-input">
-              <DataInput department={"Rehab"} />
-            </Route>
-
-            <Route path="/nicu-paed-data-input">
-              <DataInput department={"NICU-paed"} />
-            </Route>
-
-            <Route path="/communityhealth-data-input">
-              <DataInput department={"CommunityHealth"} />
-            </Route>
-
+            <Route path="/departments/:departmentID/datainput" component={DataInput} />
+              
             <Route exact path="/departments">
               <Departments />
             </Route>
 
             <Route exact path="/departments/:departmentID" component={DepartmentHomePageTemplate} />
 
-            <Route path="/departments/:departmentID/messages" component={Messages} />
+            <Route path="/messages" component={Messages} />
 
             <Route path="/departments/:departmentID/leaderboard" component={Leaderboard} />
             

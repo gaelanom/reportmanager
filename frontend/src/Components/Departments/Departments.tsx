@@ -44,7 +44,8 @@ class Departments extends React.Component<any, any> {
                                 <Link to={{
                                     pathname: `/departments/${d.id}`,
                                     state: {
-                                        name: d.name
+                                        name: d.name,
+                                        id: d.id
                                     }
                                 }}>
                                     {d.name}
