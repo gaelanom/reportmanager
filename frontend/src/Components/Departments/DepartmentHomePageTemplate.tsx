@@ -19,6 +19,12 @@ class DepartmentHomePageTemplate extends React.Component<any, any> {
             },
             DataImageClick: () =>{
                 <Link to={"/departments/:departmentID/datainput"}></Link>
+            },
+            CaseStudyImageClick: () => {
+                <Link to={"/departments/:departmentID/casestudyPage"}></Link>
+            },
+            BioMechImageClick: () => {
+                <Link to={"/departments/:departmentID/biomech"}></Link>
             }
         }
         
@@ -44,10 +50,15 @@ class DepartmentHomePageTemplate extends React.Component<any, any> {
             <div className="row row-cols-1 row-cols-md-3 g-4 mx-2">
                 <div className="col">
                     <div className="card h-100">
-                    <img src={CaseStudy} className="card-img-top img-responsive" />
+                    
                         <div className="card-body">
                             <h5 className="card-title">
-                                <Link to={"/casestudyPage"}>Case Study</Link>
+                                <p className="card-text">Case Study</p>
+                                <Link to={{
+                                    pathname:`/departments/${id}/casestudyPage`
+                            }}>
+                                <img src={CaseStudy} className="card-img-top img-responsive" onClick={this.state.CaseStudyImageClick} />
+                                </Link>
                             </h5>
                             <p className="card-text">Next case study will be due on:
                                 <div>{date}</div>
@@ -60,6 +71,7 @@ class DepartmentHomePageTemplate extends React.Component<any, any> {
                     
                         <div className="card-body">
                             <h5 className="card-title">
+                                <p className="card-text">Data Input</p>
                                 <Link to={{
                                     pathname: `/departments/${id}/datainput`,
                                     state: {
@@ -93,10 +105,14 @@ class DepartmentHomePageTemplate extends React.Component<any, any> {
                 </div>
                 <div className="col">
                     <div className="card h-100">
-                    <img src={BioMechanical} className="card-img-top img-responsive" />
                         <div className="card-body">
                             <h5 className="card-title">
-                                <Link to={"/biomech"}>Bio Mech Support</Link>
+                                <p className="card-text">BioMech Support</p>
+                                <Link to={{
+                                    pathname: `/departments/${id}/biomech`
+                                    }}>
+                                    <img src={BioMechanical} className="card-img-top img-responsive" onClick={this.state.BioMechImageClick} />
+                                </Link>
                             </h5>
                             <p className="card-text">No Messages</p>
                         </div>
@@ -104,11 +120,13 @@ class DepartmentHomePageTemplate extends React.Component<any, any> {
                 </div>
                 <div className="col">
                     <div className="card h-100">
-                    <img src={Points} className="card-img-top img-responsive" />
                         <div className="card-body">
-                            <h5 className="card-title">Your current Points Tally Is</h5>
-                            <p className="card-text">Employee's score:</p>
-                        </div>
+                            <h5 className="card-title">
+                                <p className="card-text">Your Current Points Tally</p>
+                                    <img src={Points} className="card-img-top img-responsive" />
+                            </h5>
+                            <p className="card-text">Employee's score:</p>    
+                        </div>    
                     </div>
                 </div>
             </div>

@@ -61,10 +61,8 @@ class App extends React.Component<any, any> {
               <Employees />
             </Route>
 
-
             <Route path="/departments/:departmentID/datainput" component={DataInput} />
               
-
             <Route exact path="/departments">
               <Departments />
             </Route>
