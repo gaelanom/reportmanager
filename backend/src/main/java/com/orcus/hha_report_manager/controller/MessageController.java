@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:8081")
@@ -24,6 +25,7 @@ public class MessageController {
 
     @Autowired
     ReplyRepository replyRepository;
+
 
     @GetMapping("/messages")
     public ResponseEntity<List<Message>> getAllMessages(@RequestParam(required = false) String department, String username) {
@@ -70,36 +72,31 @@ public class MessageController {
         }
     }
 
-    @PostMapping("/messages/{id}")
-    public ResponseEntity<Message> replyToMessage(@PathVariable("id") long id, @RequestBody Reply reply) {
-        Optional<Message> messageData = messageRepository.findById(id);
-        reply.setTimestamp(LocalDateTime.now());
-//        try {
-//            replyRepository.save(new Reply(reply.getUsername(), reply.getFirstName(), reply.getLastName(), reply.getDepartment(), reply.getTimestamp(), reply.getContent()));
-//            } catch (Exception e) {
-//            return  new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-        if (messageData.isPresent()) {
-            Message parent = messageData.get();
-            parent.getReplies().add(reply);
-            return new ResponseEntity<>(messageRepository.save(parent), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
     @PutMapping("/messages/{id}")
     public ResponseEntity<Message> updateMessage(@PathVariable("id") long id, @RequestBody Message message) {
         Optional<Message> messageData = messageRepository.findById(id);
 
         if (messageData.isPresent()) {
             Message messageToChange = messageData.get();
-            messageToChange.setUsername(message.getUsername());
-            messageToChange.setFirstName(message.getFirstName());
-            messageToChange.setLastName(message.getLastName());
-            messageToChange.setDepartment(message.getDepartment());
+            if(Objects.nonNull(message.getUsername())){
+                messageToChange.setUsername(message.getUsername());
+            }
+            if(Objects.nonNull(message.getFirstName())){
+                messageToChange.setFirstName(message.getFirstName());
+            }
+            if(Objects.nonNull(message.getLastName())){
+                messageToChange.setLastName(message.getLastName());
+            }
+            if(Objects.nonNull(message.getDepartment())){
+                messageToChange.setDepartment(message.getDepartment());
+            }
+            if(Objects.nonNull(message.getContent())){
+                messageToChange.setContent(message.getContent());
+            }
+            if(Objects.nonNull(message.getReplies())){
+                messageToChange.setReplies(message.getReplies());
+            }
             messageToChange.setTimestamp(LocalDateTime.now());
-            messageToChange.setContent(message.getContent());
             return new ResponseEntity<>(messageRepository.save(messageToChange), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -124,6 +121,60 @@ public class MessageController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
 
+
+    //Replies to Messages (like Messages, but without their own Replies i.e. not Message -> Replies -> Replies to Replies)
+
+    @PostMapping("/messages/{id}/replies")
+    public ResponseEntity<Message> replyToMessage(@PathVariable("id") long id, @RequestBody Reply reply) {
+        Optional<Message> messageData = messageRepository.findById(id);
+        reply.setTimestamp(LocalDateTime.now());
+        if (messageData.isPresent()) {
+            Message parent = messageData.get();
+            parent.getReplies().add(reply);
+            return new ResponseEntity<>(messageRepository.save(parent), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/messages/replies/{id}")
+    public ResponseEntity<Reply> updateReply(@PathVariable("id") long id, @RequestBody Reply reply) {
+        Optional<Reply> replyData = replyRepository.findById(id);
+
+        if (replyData.isPresent()) {
+            Reply replyToChange = replyData.get();
+            if(Objects.nonNull(reply.getUsername())){
+                replyToChange.setUsername(reply.getUsername());
+            }
+            if(Objects.nonNull(reply.getFirstName())){
+                replyToChange.setFirstName(reply.getFirstName());
+            }
+            if(Objects.nonNull(reply.getLastName())){
+                replyToChange.setLastName(reply.getLastName());
+            }
+            if(Objects.nonNull(reply.getDepartment())){
+                replyToChange.setDepartment(reply.getDepartment());
+            }
+            if(Objects.nonNull(reply.getContent())){
+                replyToChange.setContent(reply.getContent());
+            }
+            replyToChange.setTimestamp(LocalDateTime.now());
+            return new ResponseEntity<>(replyRepository.save(replyToChange), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+
+    @DeleteMapping("/messages/replies/{id}")
+    public ResponseEntity<HttpStatus> deleteReply(@PathVariable("id") long id) {
+        try {
+            replyRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

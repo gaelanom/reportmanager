@@ -3,8 +3,8 @@ package com.orcus.hha_report_manager.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "WrittenQuestion")
-public class WrittenQuestion  {
+@Table(name = "NumericalQuestion")
+public class NumericalQuestion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -17,17 +17,17 @@ public class WrittenQuestion  {
     private String question;
 
     @Column(name = "answer")
-    private String answer;
+    private Double answer;
 
-    public WrittenQuestion(){
+    public NumericalQuestion(){
 
     }
 
-    public WrittenQuestion(String question){
+    public NumericalQuestion(String question){
         this.question = question;
     }
 
-    public WrittenQuestion(Boolean requiredByMSPP, String question, String answer){
+    public NumericalQuestion(Boolean requiredByMSPP, String question, Double answer){
         this.requiredByMSPP = requiredByMSPP;
         this.question = question;
         this.answer = answer;
@@ -53,11 +53,11 @@ public class WrittenQuestion  {
         this.question = question;
     }
 
-    public String getAnswer() {
+    public Double getAnswer() {
         return answer;
     }
 
-    public void setAnswer(String answer) {
+    public void setAnswer(Double answer) {
         this.answer = answer;
     }
 

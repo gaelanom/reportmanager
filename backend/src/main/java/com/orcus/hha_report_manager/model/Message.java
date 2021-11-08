@@ -5,7 +5,9 @@ import org.apache.tomcat.jni.Local;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = "messages")
@@ -88,9 +90,13 @@ public class Message {
 
     public void setContent(String content) { this.content = content; }
 
-    public void addReply(Reply reply) { replies.add(reply); }
+    //public void addReply(Reply reply) { replies.add(reply); }
 
     public List<Reply> getReplies() { return this.replies; }
+
+    public void setReplies(List<Reply> replies) {
+        this.replies = replies;
+    }
 
     @Override
     public String toString() {

@@ -42,10 +42,15 @@ public class Report {
     @Column(name = "template")
     private boolean template;
 
-    @Column(name = "questions")
+    @Column(name = "NumericalQuestions")
+    @OneToMany(targetEntity = NumericalQuestion.class, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "report_id", referencedColumnName = "id")
+    private List<NumericalQuestion> numericalQuestions;
+
+    @Column(name = "WrittenQuestions")
     @OneToMany(targetEntity = WrittenQuestion.class, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "report_id", referencedColumnName = "id")
-    private List<WrittenQuestion> questions;
+    private List<WrittenQuestion> writtenQuestions;
 
     @Column(name = "multipleChoiceQuestions")
     @OneToMany(targetEntity = MultipleChoiceQuestion.class, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -69,7 +74,8 @@ public class Report {
         this.saved = false;
         this.submitted = false;
         this.template = false;
-        this.questions = new ArrayList<WrittenQuestion>();
+        this.numericalQuestions = new ArrayList<NumericalQuestion>();
+        this.writtenQuestions = new ArrayList<WrittenQuestion>();
         this.multipleChoiceQuestions = new ArrayList<MultipleChoiceQuestion>();
         this.patientInfo = new ArrayList<PatientInfo>();
     }
@@ -81,44 +87,45 @@ public class Report {
         this.saved = false;
         this.submitted = false;
         this.template = false;
-        this.questions = new ArrayList<WrittenQuestion>();
+        this.numericalQuestions = new ArrayList<NumericalQuestion>();
+        this.writtenQuestions = new ArrayList<WrittenQuestion>();
         this.multipleChoiceQuestions = new ArrayList<MultipleChoiceQuestion>();
     }
 
-    public Report(String department, List<WrittenQuestion> questions, List<MultipleChoiceQuestion> multipleChoiceQuestions){
+    public Report(String department, String monthName, String submitterUsername, String submitterFirstName, String submitterLastName){
         this.department = department;
-        this.month = LocalDateTime.now().getMonth();
+        this.month = LocalDateTime.parse(monthName).getMonth();
+        this.submitterUsername = submitterUsername;
+        this.submitterFirstName = submitterFirstName;
+        this.submitterLastName = submitterLastName;
         this.complete = false;
         this.saved = false;
         this.submitted = false;
         this.template = false;
-        this.questions = questions;
+        this.numericalQuestions = new ArrayList<NumericalQuestion>();
+        this.writtenQuestions = new ArrayList<WrittenQuestion>();
+        this.multipleChoiceQuestions = new ArrayList<MultipleChoiceQuestion>();
     }
 
-    public Report(String department, String monthName, List<WrittenQuestion> questions, List<MultipleChoiceQuestion> multipleChoiceQuestions, List<PatientInfo> patientInfo) {
+    //Constructor without month argument, which uses the current month instead.
+    public Report(String department, String submitterUsername, String submitterFirstName, String submitterLastName, boolean complete, boolean saved, boolean submitted, boolean template, List<NumericalQuestion> numericalQuestions, List<WrittenQuestion> writtenQuestions, List<MultipleChoiceQuestion> multipleChoiceQuestions, List<PatientInfo> patientInfo) {
         this.department = department;
-        this.month = LocalDateTime.parse(monthName).getMonth();
-        this.complete = false;
-        this.saved = false;
-        this.submitted = false;
-        this.questions = questions;
-        this.multipleChoiceQuestions = multipleChoiceQuestions;
-    }
-
-    public Report(String department, Month month, String submitterUsername, String submitterFirstName, String submitterLastName, boolean complete, boolean saved, boolean submitted, List<WrittenQuestion> questions, List<MultipleChoiceQuestion> multipleChoiceQuestions) {
-        this.department = department;
-        this.month = month;
+        this.month = LocalDateTime.now().getMonth();
         this.submitterUsername = submitterUsername;
         this.submitterFirstName = submitterFirstName;
         this.submitterLastName = submitterLastName;
         this.complete = complete;
         this.saved = saved;
         this.submitted = submitted;
-        this.questions = questions;
+        this.template = template;
+        this.numericalQuestions = numericalQuestions;
+        this.writtenQuestions = writtenQuestions;
         this.multipleChoiceQuestions = multipleChoiceQuestions;
+        this.patientInfo = patientInfo;
     }
 
-    public Report(String department, Month month, String submitterUsername, String submitterFirstName, String submitterLastName, boolean complete, boolean saved, boolean submitted, boolean template, List<WrittenQuestion> questions, List<MultipleChoiceQuestion> multipleChoiceQuestions, List<PatientInfo> patientInfo) {
+    //Constructor including Month, for creating a report for a specific month.
+    public Report(String department, Month month, String submitterUsername, String submitterFirstName, String submitterLastName, boolean complete, boolean saved, boolean submitted, boolean template, List<NumericalQuestion> numericalQuestions, List<WrittenQuestion> writtenQuestions, List<MultipleChoiceQuestion> multipleChoiceQuestions, List<PatientInfo> patientInfo) {
         this.department = department;
         this.month = month;
         this.submitterUsername = submitterUsername;
@@ -128,10 +135,30 @@ public class Report {
         this.saved = saved;
         this.submitted = submitted;
         this.template = template;
-        this.questions = questions;
+        this.numericalQuestions = numericalQuestions;
+        this.writtenQuestions = writtenQuestions;
         this.multipleChoiceQuestions = multipleChoiceQuestions;
         this.patientInfo = patientInfo;
     }
+
+    //Copy constructor
+    public Report(Report otherReport, String submitterUsername, String submitterFirstName, String submitterLastName){
+        this.department = otherReport.getDepartment();
+        this.month = LocalDateTime.now().getMonth();
+        this.submitterUsername = submitterUsername;
+        this.submitterFirstName = submitterFirstName;
+        this.submitterLastName = submitterLastName;
+        this.complete = otherReport.isComplete();
+        this.saved = otherReport.isSaved();
+        this.submitted = otherReport.isSubmitted();
+        this.template = otherReport.isTemplate();
+        this.numericalQuestions = otherReport.getNumericalQuestions();
+        this.writtenQuestions = otherReport.getWrittenQuestions();
+        this.multipleChoiceQuestions = otherReport.getMultipleChoiceQuestions();
+        this.patientInfo = otherReport.getPatientInfo();
+
+    }
+
 
     public long getId() {
         return id;
@@ -209,16 +236,28 @@ public class Report {
         this.template = template;
     }
 
-    public void setQuestions(List<WrittenQuestion> questions) {
-        this.questions = questions;
+    public List<NumericalQuestion> getNumericalQuestions() {
+        return numericalQuestions;
     }
 
-    public List<WrittenQuestion> getQuestions() {
-        return questions;
+    public void setNumericalQuestions(List<NumericalQuestion> numericalQuestions) {
+        this.numericalQuestions = numericalQuestions;
     }
 
-    public void addQuestion(WrittenQuestion writtenQuestion){
-        this.questions.add(writtenQuestion);
+    public void addNumericalQuestion(NumericalQuestion numericalQuestion) {
+        this.numericalQuestions.add(numericalQuestion);
+    }
+
+    public void setWrittenQuestions(List<WrittenQuestion> writtenQuestions) {
+        this.writtenQuestions = writtenQuestions;
+    }
+
+    public List<WrittenQuestion> getWrittenQuestions() {
+        return writtenQuestions;
+    }
+
+    public void addWrittenQuestion(WrittenQuestion writtenQuestion){
+        this.writtenQuestions.add(writtenQuestion);
     }
 
     public List<MultipleChoiceQuestion> getMultipleChoiceQuestions() {
