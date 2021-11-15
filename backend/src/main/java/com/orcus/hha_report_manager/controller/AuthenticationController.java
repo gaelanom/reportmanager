@@ -1,5 +1,6 @@
 package com.orcus.hha_report_manager.controller;
 
+import com.orcus.hha_report_manager.repository.EmployeeRepository;
 import com.orcus.hha_report_manager.security.SignedJwt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,7 +26,8 @@ public class AuthenticationController {
     private UserDetailsService userDetailsService;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private EmployeeRepository employeeRepository;
+
 
     @PostMapping("/authenticate")
     public ResponseEntity<AuthResponse> authenticate(@RequestBody AuthRequest authRequest) throws Exception {
@@ -32,9 +35,14 @@ public class AuthenticationController {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             authRequest.getUsername(),
-                           authRequest.getPassword()));
+                            authRequest.getPassword()));
             var userDetails = userDetailsService.loadUserByUsername(authRequest.getUsername());
-            return new ResponseEntity<>(new AuthResponse(SignedJwt.make(userDetails), "tbd"), HttpStatus.OK);
+            var employee = employeeRepository.findByUsername(userDetails.getUsername());
+            if (employee.isEmpty())
+                throw new UsernameNotFoundException(userDetails.getUsername());
+
+            return new ResponseEntity<>(new AuthResponse(SignedJwt.make(userDetails), employee.get(0).getDepartment()),
+                    HttpStatus.OK);
         } catch (AuthenticationException e) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }

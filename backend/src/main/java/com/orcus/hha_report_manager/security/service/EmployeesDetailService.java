@@ -22,10 +22,10 @@ public class EmployeesDetailService implements UserDetailsService {
     final String DEV_PASSWORD = "12345";
 
     @Autowired
-    EmployeeRepository employeeRepository;
+    private EmployeeRepository employeeRepository;
 
     @Autowired
-    PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -48,7 +48,7 @@ public class EmployeesDetailService implements UserDetailsService {
         if (employee.isDepartmentHead())
             auths.add(new SimpleGrantedAuthority("DEPARTMENT_HEAD"));
         if (auths.isEmpty())
-            auths.add(new SimpleGrantedAuthority("NA"));
+            auths.add(new SimpleGrantedAuthority("N/A"));
         return auths;
     }
 
