@@ -17,6 +17,9 @@ type State = {
   loggingIn: boolean;
   loggedIn: boolean;
   authResCode: number;
+  redirectDepId: number;
+  redirectDepName: string;
+  // Used to automatically center login form.
   windowHeight: number;
   onLoggedIn?(): void;
 };
@@ -33,6 +36,8 @@ class WrappedLogin extends React.Component<Property, State> {
       loggingIn: false,
       loggedIn: false,
       authResCode: 0,
+      redirectDepId: -1,
+      redirectDepName: "",
       windowHeight: window.innerHeight,
     };
 
@@ -67,29 +72,46 @@ class WrappedLogin extends React.Component<Property, State> {
   private validateLogin = () => {
     this.setState({ loggingIn: true });
     Api.Authorization.login(this.state.username, this.state.password)
-      .then((data: any) => this.handleSuccessfulLogin(data.jwt))
-      .catch((error) => this.handleFailedLogin(error))
-      .finally(() => {
-        /*
-        Note: this will throw an exception on succesful login beacuse we will then redirect, causing this component to be killed.
-        However, this setState called would still be called on an unmounted component.
-        This sometimes cause a crash, so need to check for component unmounted. 
-        */
-        // this.setState({ loggingIn: false });
-      });
+      .then((data: any) => this.handleSuccessfulLogin(data))
+      .catch((error) => this.handleFailedLogin(error));
   };
 
-  private handleSuccessfulLogin = (token: string) => {
+  private handleSuccessfulLogin = (resJson: any) => {
     if (axios.defaults.headers === undefined) {
       console.error("Axios undefined");
       return;
     }
-    axios.defaults.headers.common["Authorization"] = "Bearer " + token;
-    this.setState({ authResCode: 200, loggedIn: true, loggingIn: false });
+    axios.defaults.headers.common["Authorization"] = "Bearer " + resJson.jwt;
+    const STATE = {
+      authResCode: 200,
+      loggedIn: true,
+      loggingIn: false,
+      redirectDepId: resJson.departmentId,
+      redirectDepName: resJson.department,
+    };
+    this.setState(STATE);
     if (this.onLoggedIn !== undefined) this.onLoggedIn();
+    this.redirect();
+  };
+
+  private redirect = () => {
+    return (
+      <>
+        <Redirect
+          to={{
+            pathname: `/departments/${this.state.redirectDepId}`,
+            state: {
+              name: this.state.redirectDepName,
+              id: this.state.redirectDepId,
+            },
+          }}
+        />
+      </>
+    );
   };
 
   private handleFailedLogin = (error: any) => {
+    console.log("fail");
     this.setState({
       authResCode: error.response.status,
       loggedIn: false,
@@ -149,10 +171,6 @@ class WrappedLogin extends React.Component<Property, State> {
     if (CODE == 408) return "Request Timeout";
     if (CODE < 500) return "Invalid Credentials";
     else return "Unknown Error";
-  };
-
-  private redirect = () => {
-    return <Redirect to="/" />;
   };
 
   private renderLoginForm = () => {
