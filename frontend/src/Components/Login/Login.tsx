@@ -4,6 +4,7 @@ import Api from "../../API/Api";
 import axios from "axios";
 import "./Login.css";
 import { width } from "@mui/system";
+import { Thermostat } from "@mui/icons-material";
 
 type Property = {
   onLoggedIn?(): void;
@@ -25,9 +26,10 @@ type State = {
 };
 
 class WrappedLogin extends React.Component<Property, State> {
+  private mounted: boolean;
   constructor(props: Property) {
     super(props);
-    // this.isMounted = true;
+    this.mounted = true;
 
     this.onLoggedIn = props.onLoggedIn;
     this.state = {
@@ -89,23 +91,29 @@ class WrappedLogin extends React.Component<Property, State> {
       redirectDepId: resJson.departmentId,
       redirectDepName: resJson.department,
     };
-    this.setState(STATE);
     if (this.onLoggedIn !== undefined) this.onLoggedIn();
-    this.redirect();
+    console.log("1");
+    this.setState(STATE);
+    console.log("3");
   };
 
   private redirect = () => {
+    console.log("redirect");
     return (
       <>
-        <Redirect
-          to={{
-            pathname: `/departments/${this.state.redirectDepId}`,
-            state: {
-              name: this.state.redirectDepName,
-              id: this.state.redirectDepId,
-            },
-          }}
-        />
+        {this.state.redirectDepName == "admin" ? (
+          <Redirect to="/" />
+        ) : (
+          <Redirect
+            to={{
+              pathname: `/departments/${this.state.redirectDepId}`,
+              state: {
+                name: this.state.redirectDepName,
+                id: this.state.redirectDepId,
+              },
+            }}
+          />
+        )}
       </>
     );
   };
@@ -117,12 +125,15 @@ class WrappedLogin extends React.Component<Property, State> {
       loggedIn: false,
       loggingIn: false,
     });
+    console.log("Login mounted: " + this.mounted);
   };
 
   render() {
     const style: any = {
       marginTop: this.state.windowHeight * 0.25 + "px",
     };
+    console.log("render");
+
     return (
       <section className="vh-100 vh-100 gradient-custom">
         <div className="container py-5 h-100">
@@ -246,8 +257,8 @@ class WrappedLogin extends React.Component<Property, State> {
   };
 
   componentWillUnmount() {
-    // console.log("login kill");
-    // this.isMounted = false;
+    console.log("login kill");
+    this.mounted = false;
   }
 }
 

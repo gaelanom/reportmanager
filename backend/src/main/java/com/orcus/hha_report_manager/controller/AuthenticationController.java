@@ -1,5 +1,6 @@
 package com.orcus.hha_report_manager.controller;
 
+import com.orcus.hha_report_manager.model.Department;
 import com.orcus.hha_report_manager.model.Employee;
 import com.orcus.hha_report_manager.repository.DepartmentRepository;
 import com.orcus.hha_report_manager.repository.EmployeeRepository;
@@ -56,13 +57,21 @@ public class AuthenticationController {
         var employees = employeeRepository.findByUsername(userDetails.getUsername());
         if (employees.isEmpty())
             throw new UsernameNotFoundException(userDetails.getUsername());
-        var departments = departmentRepository.findByName(employees.get(0).getDepartment());
-        if (departments.isEmpty())
-            throw new UsernameNotFoundException(userDetails.getUsername());
+        var employee = employees.get(0);
+
+        final Department department;
+        if (employee.isAdmin()) {
+            department = new Department("admin", "");
+        } else {
+            var departments = departmentRepository.findByName(employees.get(0).getDepartment());
+            if (departments.isEmpty())
+                throw new UsernameNotFoundException(userDetails.getUsername());
+            department = departments.get(0);
+        }
 
         return new AuthResponse(SignedJwt.make(userDetails),
-                employees.get(0).getDepartment(),
-                departments.get(0).getId());
+                department.getName(),
+                department.getId());
     }
 
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
