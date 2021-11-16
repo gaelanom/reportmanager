@@ -58,7 +58,9 @@ class WrappedLogin extends React.Component<Property, State> {
     this.setState({ password: event.currentTarget.value });
   };
 
-  private handleOnClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  private handleOnClick = (event: React.FormEvent<any>) => {
+    event.preventDefault();
+    event.stopPropagation();
     this.setState({ authResCode: 0 });
     this.login();
   };
@@ -218,40 +220,44 @@ class WrappedLogin extends React.Component<Property, State> {
   private renderInputs = () => {
     return (
       <>
-        <div className="form-outline form-white mb-4">
-          <input
-            className="form-label form-control form-control-lg"
-            type="text"
-            name="username"
+        <form onSubmit={this.handleOnClick}>
+          {" "}
+          <div className="form-outline form-white mb-4">
+            <input
+              className="form-label form-control form-control-lg"
+              type="text"
+              name="username"
+              disabled={this.state.loggingIn}
+              value={this.state.username}
+              onChange={this.handleUsernameChange}
+              placeholder="Username"
+            />
+          </div>
+          <div className="form-outline form-white mb-4">
+            <input
+              className="form-label form-control form-control-lg"
+              type="password"
+              name="password"
+              disabled={this.state.loggingIn}
+              value={this.state.password}
+              onChange={this.handlePasswordChange}
+              placeholder="Password"
+            />
+          </div>
+          <p className="small mb-3 pb-lg-2">
+            <a className="text-white-50" href="#!">
+              Forgot password?
+            </a>
+          </p>
+          <button
+            type="submit"
+            className="btn btn-outline-light btn-lg px-5"
             disabled={this.state.loggingIn}
-            value={this.state.username}
-            onChange={this.handleUsernameChange}
-            placeholder="Username"
-          />
-        </div>
-        <div className="form-outline form-white mb-4">
-          <input
-            className="form-label form-control form-control-lg"
-            type="password"
-            name="password"
-            disabled={this.state.loggingIn}
-            value={this.state.password}
-            onChange={this.handlePasswordChange}
-            placeholder="Password"
-          />
-        </div>
-        <p className="small mb-3 pb-lg-2">
-          <a className="text-white-50" href="#!">
-            Forgot password?
-          </a>
-        </p>
-        <button
-          className="btn btn-outline-light btn-lg px-5"
-          disabled={this.state.loggingIn}
-          onClick={this.handleOnClick}
-        >
-          Login
-        </button>{" "}
+            // onClick={this.handleOnClick}
+          >
+            Login
+          </button>{" "}
+        </form>
       </>
     );
   };
