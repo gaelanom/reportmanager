@@ -94,13 +94,10 @@ class WrappedLogin extends React.Component<Property, State> {
       redirectDepName: resJson.department,
     };
     if (this.onLoggedIn !== undefined) this.onLoggedIn();
-    console.log("1");
     this.setState(STATE);
-    console.log("3");
   };
 
   private redirect = () => {
-    console.log("redirect");
     return (
       <>
         {this.state.redirectDepName == "admin" ? (
@@ -121,7 +118,6 @@ class WrappedLogin extends React.Component<Property, State> {
   };
 
   private handleFailedLogin = (error: any) => {
-    console.log("fail");
     this.setState({
       authResCode: error.response.status,
       loggedIn: false,
@@ -263,7 +259,6 @@ class WrappedLogin extends React.Component<Property, State> {
   };
 
   componentWillUnmount() {
-    console.log("login kill");
     this.mounted = false;
   }
 }

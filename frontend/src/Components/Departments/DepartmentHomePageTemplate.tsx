@@ -37,7 +37,6 @@ class DepartmentHomePageTemplate extends React.Component<any, any> {
 
     const name = this.props.location.state.name || null;
     const id = this.props.location.state.id || null;
-    console.log("Dep Template");
 
     return (
       <>
