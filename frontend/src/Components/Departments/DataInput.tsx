@@ -366,15 +366,16 @@ class DataInput extends React.Component<any, any> {
         id: 0,
     };
 
-    constructor(props: {department: string}) {
+    constructor(props: any) {
         super(props)
-        newReport(props.department).then((r: any) => {
+        const name = this.props.location.state.name || null
+        newReport(name).then((r: any) => {
                 this.setState({id: r.id});
                 reportId = r.id;
             }
         ).catch(error => {
             console.log(error.message);
-            getReportByDeptName(props.department).then((r: any) => {
+            getReportByDeptName(name).then((r: any) => {
                 let questionList: any[] = [...r.numericalQuestions, ...r.writtenQuestions, ...r.multipleChoiceQuestions];
                 questionList.sort(this.compareQuestion)
                 let entryList: any[] = [];
@@ -416,9 +417,10 @@ class DataInput extends React.Component<any, any> {
     }
 
     render() {
+      const name = this.props.location.state.name || null
         return (
             <div className="DataInput">
-                <h1 style={{marginLeft: "1em", marginRight: "1em"}}>{ this.props.department } Department Data Input</h1>
+                <h1 style={{marginLeft: "1em", marginRight: "1em"}}>{ name } Department Data Input</h1>
                 <List style={{marginLeft: "1em", marginRight: "1em"}}>
                     {this.state.entryList}
                     <ListItem>

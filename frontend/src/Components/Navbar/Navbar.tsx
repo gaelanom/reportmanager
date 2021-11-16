@@ -40,8 +40,13 @@ class Navbar extends React.Component {
                           Departments
                         </Link>
                       </li>
+                      {/* <li className="nav-item">
+                        <Link to="/departments/8/employees" className="nav-link active">
+                          Employees
+                        </Link>
+                      </li> */}
                       <li className="nav-item">
-                        <Link to="/employees" className="nav-link active">
+                        <Link to="/communityhealth-data-input" className="nav-link active">
                           Employees
                         </Link>
                       </li>
