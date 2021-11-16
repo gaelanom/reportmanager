@@ -368,7 +368,7 @@ class DataInput extends React.Component<any, any> {
 
     constructor(props: any) {
         super(props)
-        const name = this.props.location.state.name || null
+        const name = this.props.location.state.department || null
         newReport(name).then((r: any) => {
                 this.setState({id: r.id});
                 reportId = r.id;
@@ -417,7 +417,7 @@ class DataInput extends React.Component<any, any> {
     }
 
     render() {
-      const name = this.props.location.state.name || null
+      const name = this.props.location.state.department || null
         return (
             <div className="DataInput">
                 <h1 style={{marginLeft: "1em", marginRight: "1em"}}>{ name } Department Data Input</h1>
