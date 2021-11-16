@@ -31,6 +31,9 @@ public class Employee {
     @Column(name = "isDepartmentHead")
     private boolean isDepartmentHead;
 
+    @Column(name = "isAdmin")
+    private boolean isAdmin;
+
     @Column(name = "score")
     private Integer score;
 
@@ -101,5 +104,9 @@ public class Employee {
     @Override
     public String toString() {
         return "Employee [id=" + id + ", username=" + username + " , first name=" + firstName + ", last name=" + lastName + ", department=" + department + ", department head=" + isDepartmentHead+ "]";
+    }
+
+    public boolean isAdmin() {
+        return this.isAdmin;
     }
 }
