@@ -17,10 +17,6 @@ import java.util.List;
 @Service
 public class EmployeesDetailService implements UserDetailsService {
 
-    //Todo: delete this.
-    final String DEV_USERNAME = "dev";
-    final String DEV_PASSWORD = "12345";
-
     @Autowired
     private EmployeeRepository employeeRepository;
 
@@ -29,8 +25,6 @@ public class EmployeesDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        if (username.equals(DEV_USERNAME))
-            return makeDevUser();
 
         var found = employeeRepository.findByUsername(username);
         if (found.isEmpty())
@@ -50,11 +44,5 @@ public class EmployeesDetailService implements UserDetailsService {
         if (auths.isEmpty())
             auths.add(new SimpleGrantedAuthority("N/A"));
         return auths;
-    }
-
-    private UserDetails makeDevUser() {
-        return new User(DEV_USERNAME, passwordEncoder.encode(DEV_PASSWORD),
-                true, true, true, true,
-                List.of(new SimpleGrantedAuthority("DEPARTMENT_HEAD")));
     }
 }
