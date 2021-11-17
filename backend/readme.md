@@ -166,7 +166,7 @@ Returns:
 
 **Get all Employees** `GET` `.../api/employees`
 
-Optional filter parameters: `username`
+Optional filter parameters: `department`
 
 
 Returns:

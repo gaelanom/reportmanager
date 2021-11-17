@@ -36,14 +36,14 @@ public class EmployeeController {
     private PasswordEncoder passwordEncoder;
 
     @GetMapping("/employees")
-    public ResponseEntity<List<Employee>> getAllEmployees(@RequestParam(required = false) String title) {
+    public ResponseEntity<List<Employee>> getAllEmployees(@RequestParam(required = false) String departmentName) {
         try {
             List<Employee> employees = new ArrayList<Employee>();
 
-            if (title == null)
+            if (departmentName == null)
                 employeeRepository.findAll().forEach(employees::add);
             else
-                employeeRepository.findByDepartmentContains(title).forEach(employees::add);
+                employeeRepository.findByDepartmentContains(departmentName).forEach(employees::add);
 
             if (employees.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -101,6 +101,19 @@ public class EmployeeController {
             if(Objects.nonNull(employee.isDepartmentHead())){
                 employeeToChange.setDepartmentHead(employee.isDepartmentHead());
             }
+            return new ResponseEntity<>(employeeRepository.save(employeeToChange), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/employees/{id}/score")
+    public ResponseEntity<Employee> incrementEmployeeScore(@PathVariable("id") long id) {
+        Optional<Employee> employeeData = employeeRepository.findById(id);
+
+        if (employeeData.isPresent()) {
+            Employee employeeToChange = employeeData.get();
+            employeeToChange.setScore(employeeToChange.getScore() + 1);
             return new ResponseEntity<>(employeeRepository.save(employeeToChange), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
