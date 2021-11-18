@@ -15,7 +15,9 @@ class Departments extends React.Component<any, any> {
         super(props);
 
         this.state = {
-            departments: []
+            departments: [],
+            name: "",
+            blurb: ""
         }
     }
 
@@ -27,6 +29,32 @@ class Departments extends React.Component<any, any> {
             })
         })
 
+    }
+
+    handleDepartmentNameOnChange(e: any) {
+        this.setState({
+            name: e.target.value
+        })
+    }
+
+    handleDepartmentBlurbOnChange(e: any) {
+        this.setState({
+            blurb: e.target.value
+        })
+    }
+
+    handleSubmit() {
+        const name = this.state.name
+        const blurb = this.state.blurb
+        
+        const obj = {
+            "name": name,
+            "blurb": blurb
+        }
+
+        Api.Departments.addDepartment(obj).then((data: any) => {
+            console.log("Successfully added department!")
+        }).catch((error) => console.log(error));
     }
 
     render() {
@@ -74,13 +102,17 @@ class Departments extends React.Component<any, any> {
                     </div>
                     <div className="modal-body">
                         <div className="mb-3">
-                            <label htmlFor="department-name-input" className="form-label">Password</label>
-                            <input className="form-control" id="department-name-input" />
+                            <label htmlFor="department-name-input" className="form-label">Department Name</label>
+                            <input className="form-control" id="department-name-input" onChange={this.handleDepartmentNameOnChange.bind(this)} />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="department-blurb-input" className="form-label">Text Blurb</label>
+                            <input className="form-control" id="department-blurb-input" onChange={this.handleDepartmentBlurbOnChange.bind(this)} />
                         </div>
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" className="btn btn-primary">Submit</button>
+                        <button type="button" className="btn btn-primary" onClick={this.handleSubmit.bind(this)}>Submit</button>
                     </div>
                     </div>
                 </div>
