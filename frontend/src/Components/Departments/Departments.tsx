@@ -34,8 +34,13 @@ class Departments extends React.Component<any, any> {
         return (
             <>
             <div className="card mx-auto w-75 my-5">
+                
                 <h1 className="card-header card-title text-center display-4">Departments</h1>
                 <div className="card-body">
+                <div className="d-grid gap-2 col-6 mx-auto mb-3">
+                    <button className="btn btn-primary" type="button">Add New Department</button>
+                </div>
+                
                 <ul className="list-group">
                     {departments.map(function(d: any, idx: number){ 
                          return (
