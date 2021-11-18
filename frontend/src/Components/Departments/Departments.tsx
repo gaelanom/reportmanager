@@ -53,7 +53,7 @@ class Departments extends React.Component<any, any> {
         }
 
         Api.Departments.addDepartment(obj).then((data: any) => {
-            console.log("Successfully added department!")
+            ($('#add-departments-modal') as any).modal('hide');
         }).catch((error) => console.log(error));
     }
 
