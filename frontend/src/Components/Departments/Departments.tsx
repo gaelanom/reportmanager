@@ -3,12 +3,6 @@ import '../../Departments.css'
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 import Api from "../../API/Api";
 
-type Department = {
-    id: number,
-    name: string,
-    blurb: string
-}
-
 class Departments extends React.Component<any, any> {
 
     constructor(props: any) {
@@ -54,6 +48,7 @@ class Departments extends React.Component<any, any> {
 
         Api.Departments.addDepartment(obj).then((data: any) => {
             ($('#add-departments-modal') as any).modal('hide');
+            ($('#complete-modal') as any).modal('show');
         }).catch((error) => console.log(error));
     }
 
@@ -92,7 +87,7 @@ class Departments extends React.Component<any, any> {
                 </div>
             </div>
 
-            {/* Modal */}
+            {/* Forms Modal */}
             <div className="modal fade" id="add-departments-modal" aria-labelledby="modal-label" aria-hidden="true">
                 <div className="modal-dialog">
                     <div className="modal-content">
@@ -113,6 +108,21 @@ class Departments extends React.Component<any, any> {
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="button" className="btn btn-primary" onClick={this.handleSubmit.bind(this)}>Submit</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Successful Request Made Modal */}
+            <div className="modal fade" id="complete-modal" aria-labelledby="form-complete-modal" aria-hidden="true">
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title" id="form-complete-modal">Successfully Added New Department!</h5>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div className="modal-footer">
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                     </div>
                 </div>
