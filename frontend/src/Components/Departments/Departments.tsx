@@ -13,6 +13,7 @@ class Departments extends React.Component<any, any> {
             name: "",
             blurb: ""
         }
+        
     }
 
     componentDidMount() {
@@ -52,8 +53,16 @@ class Departments extends React.Component<any, any> {
         }).catch((error) => console.log(error));
     }
 
+    handleDelete(id: number) {
+        Api.Departments.deleteDepartment(id).then((data: any) => {
+            ($('#delete-modal') as any).modal('show');
+        }).catch((error) => console.log(error))
+    }
+ 
+
     render() {
         const departments = this.state.departments
+        const component = this
         return (
             <>
             <div className="card mx-auto w-75 my-5">
@@ -80,6 +89,9 @@ class Departments extends React.Component<any, any> {
                                 </Link> 
                                 }
                                 
+                                <div className="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <button className="btn btn-primary" type="button" onClick={() => component.handleDelete(d.id)}>Delete</button>
+                                </div>
                             </li>
                             )
                     })}
@@ -119,6 +131,21 @@ class Departments extends React.Component<any, any> {
                     <div className="modal-content">
                     <div className="modal-header">
                         <h5 className="modal-title" id="form-complete-modal">Successfully Added New Department!</h5>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div className="modal-footer">
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Successfully Deleted Modal */}
+            <div className="modal fade" id="delete-modal" aria-labelledby="form-delete-modal" aria-hidden="true">
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title" id="form-delete-modal">Successfully Deleted Department!</h5>
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div className="modal-footer">
