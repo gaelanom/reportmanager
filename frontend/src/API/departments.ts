@@ -6,3 +6,6 @@ export function getDepartments() {
     return axios.get(BASE_URL + "departments").then(res => res.data)
 }
 
+export function addDepartment(params: object) {
+    return axios.post(BASE_URL + "departments", params).then((res) => res.data)
+}
