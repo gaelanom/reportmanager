@@ -85,7 +85,42 @@ class Metadata extends React.Component<{name: String, value: String}, {name: Str
                 </Box>
             )
         }
-        return undefined;
+    }
+}
+
+class MetadataArea extends React.Component<{month: String, user: String, submitted: boolean}, {month: String, user: String, submitted: boolean}> {
+
+    constructor(props: {month: String, user: String, submitted: boolean}) {
+        super(props);
+        this.state = {
+            month: props.month,
+            user: props.user,
+            submitted: props.submitted
+        }
+    }
+
+    render() {
+        return (
+            <Grid item xs={6}>
+                <Box sx={{
+                    bgcolor: "#EAEAEA",
+                    borderRadius: 3,
+                    p: 2,
+                }}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={4}>
+                            <Metadata name={"Month"} value={this.state.month}/>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Metadata name={"User"} value={this.state.user}/>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Metadata name={"Submitted"} value={this.state.submitted.toString()}/>
+                        </Grid>
+                    </Grid>
+                </Box>
+            </Grid>
+        )
     }
 }
 
