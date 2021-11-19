@@ -52,6 +52,9 @@ type EntryState = {
 type RecordState = {
     id: number;
     entryList: RecordEntry[];
+    month: string;
+    user: string;
+    submitted: boolean;
 };
 
 let reportId: number;
@@ -399,13 +402,16 @@ class DataInput extends React.Component<any, any> {
     state: RecordState = {
         entryList: [],
         id: 0,
+        month: "",
+        user: "",
+        submitted: false,
     };
 
     constructor(props: any) {
         super(props)
         const name = this.props.location.state.department || null
         newReport(name).then((r: any) => {
-                this.setState({id: r.id});
+                this.setState({id: r.id, month: r.month, user: r.submitterUsername});
                 reportId = r.id;
             }
         ).catch(error => {
@@ -427,7 +433,7 @@ class DataInput extends React.Component<any, any> {
                         entryList = [...entryList, this.existEntry(e.id, RecordType.MCQ, e.question, e.choice, e.choices)]
                     }
                 })
-                this.setState({id: r.id, entryList: entryList});
+                this.setState({id: r.id, entryList: entryList, month: r.month, user: r.submitterUsername});
                 reportId = r.id;
         })})
     }
@@ -455,7 +461,12 @@ class DataInput extends React.Component<any, any> {
       const name = this.props.location.state.department || null
         return (
             <div className="DataInput">
-                <h1 style={{marginLeft: "1em", marginRight: "1em"}}>{ name } Department Data Input</h1>
+                <Grid container spacing={2}>
+                    <Grid item xs={6}>
+                        <h1 style={{marginLeft: "1em", marginRight: "1em"}}>{ name } Department Data Input</h1>
+                    </Grid>
+                    <MetadataArea month={this.state.month} user={this.state.user} submitted={this.state.submitted}/>
+                </Grid>
                 <List style={{marginLeft: "1em", marginRight: "1em"}}>
                     {this.state.entryList}
                     <ListItem>
