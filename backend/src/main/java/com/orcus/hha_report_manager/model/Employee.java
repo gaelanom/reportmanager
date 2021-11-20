@@ -109,4 +109,8 @@ public class Employee {
     public boolean isAdmin() {
         return this.isAdmin;
     }
+
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
+    }
 }
