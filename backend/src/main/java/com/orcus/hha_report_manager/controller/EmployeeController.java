@@ -39,6 +39,7 @@ public class EmployeeController {
     public ResponseEntity<List<Employee>> getAllEmployees(@RequestParam(required = false) String department, String username) {
         try {
             List<Employee> employees = new ArrayList<Employee>();
+
             if(department != null && username != null){
                 return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
             }
@@ -113,12 +114,17 @@ public class EmployeeController {
     }
 
     @PutMapping("/employees/{id}/score")
-    public ResponseEntity<Employee> incrementEmployeeScore(@PathVariable("id") long id) {
+    public ResponseEntity<Employee> incrementEmployeeScore(@PathVariable("id") long id, @RequestParam(required = false) Integer amount) {
         Optional<Employee> employeeData = employeeRepository.findById(id);
 
         if (employeeData.isPresent()) {
             Employee employeeToChange = employeeData.get();
-            employeeToChange.setScore(employeeToChange.getScore() + 1);
+            if(amount != null){
+                employeeToChange.setScore(employeeToChange.getScore() + amount);
+            }
+            else {
+                employeeToChange.setScore(employeeToChange.getScore() + 1);
+            }
             return new ResponseEntity<>(employeeRepository.save(employeeToChange), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

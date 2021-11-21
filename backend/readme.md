@@ -166,7 +166,7 @@ Returns:
 
 **Get all Employees** `GET` `.../api/employees`
 
-Optional filter parameters: `department`
+Optional filter parameters: `department`, `username`
 
 
 Returns:
@@ -233,6 +233,35 @@ Returns:
     "departmentHead": false
 }
 ```
+Or: `404` if Employee {id} does not exist.
+
+**Increment Employee Score by ID** `PUT` `.../api/employees/{id}/score`
+
+A simple endpoint which increments an Employee's score by `1`, or by an optional `amount`.
+
+Optional request parameters:
+
+`amount`
+
+Requires:
+
+`Nothing.`
+
+Returns:
+
+```json
+{
+    "id": {id},
+    "username": "user",
+    "firstName": "John",
+    "lastName": "Smith",
+    "department": "Placeholder",
+    "score": (previous score + 1 or + amount),
+    "admin": false,
+    "departmentHead": false
+}
+```
+
 Or: `404` if Employee {id} does not exist.
 
 **Delete Employee by ID** `DELETE` `.../api/employees/{id}`
