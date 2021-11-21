@@ -52,6 +52,7 @@
     ]
   },
   "devDependencies": {
+    "@types/jquery": "^3.5.8",
     "@types/material-ui": "^0.21.9"
   }
 }
