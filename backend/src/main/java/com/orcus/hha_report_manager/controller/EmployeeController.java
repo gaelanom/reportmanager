@@ -119,6 +119,9 @@ public class EmployeeController {
 
         if (employeeData.isPresent()) {
             Employee employeeToChange = employeeData.get();
+            if(employeeToChange.getScore() == null){
+                employeeToChange.setScore(0);
+            }
             if(amount != null){
                 employeeToChange.setScore(employeeToChange.getScore() + amount);
             }
