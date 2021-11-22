@@ -59,20 +59,18 @@ type RecordState = {
 
 let reportId: number;
 
-class Metadata extends React.Component<{name: String, value: String}, {name: String, value: String, isEdit: boolean}> {
+class Metadata extends React.Component<{name: string, value: string}, {isEdit: boolean}> {
 
-    constructor(props: {name: String, value: String}) {
+    constructor(props: {name: string, value: string}) {
         super(props);
         this.state = {
-            name: props.name,
-            value: props.value,
             isEdit: false
         }
     }
 
     render() {
         if (this.state.isEdit) {
-            return (<TextField fullWidth variant="standard" label={this.state.name} defaultValue={this.state.value}/>)
+            return (<TextField fullWidth variant="standard" label={this.props.name} defaultValue={this.props.value}/>)
         } else {
             return (
                 <Box
@@ -84,23 +82,14 @@ class Metadata extends React.Component<{name: String, value: String}, {name: Str
                         m: 1,
                     }}
                 >
-                    {this.state.name}: {this.state.value}
+                    {this.props.name}: {this.props.value}
                 </Box>
             )
         }
     }
 }
 
-class MetadataArea extends React.Component<{month: String, user: String, submitted: boolean}, {month: String, user: String, submitted: boolean}> {
-
-    constructor(props: {month: String, user: String, submitted: boolean}) {
-        super(props);
-        this.state = {
-            month: props.month,
-            user: props.user,
-            submitted: props.submitted
-        }
-    }
+class MetadataArea extends React.Component<{month: string, user: string, submitted: boolean}, any> {
 
     render() {
         return (
@@ -112,13 +101,13 @@ class MetadataArea extends React.Component<{month: String, user: String, submitt
                 }}>
                     <Grid container spacing={2}>
                         <Grid item xs={4}>
-                            <Metadata name={"Month"} value={this.state.month}/>
+                            <Metadata name={"Month"} value={this.props.month}/>
                         </Grid>
                         <Grid item xs={4}>
-                            <Metadata name={"User"} value={this.state.user}/>
+                            <Metadata name={"User"} value={this.props.user}/>
                         </Grid>
                         <Grid item xs={4}>
-                            <Metadata name={"Submitted"} value={this.state.submitted.toString()}/>
+                            <Metadata name={"Submitted"} value={this.props.submitted.toString()}/>
                         </Grid>
                     </Grid>
                 </Box>
