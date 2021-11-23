@@ -59,18 +59,30 @@ type RecordState = {
 
 let reportId: number;
 
-class Metadata extends React.Component<{name: string, value: string}, {isEdit: boolean}> {
+class Metadata extends React.Component<{name: string, value: string}, {isEdit: boolean, isShown: boolean}> {
 
     constructor(props: {name: string, value: string}) {
         super(props);
         this.state = {
-            isEdit: false
+            isEdit: false,
+            isShown: false
         }
     }
 
     render() {
         if (this.state.isEdit) {
-            return (<TextField fullWidth variant="standard" label={this.props.name} defaultValue={this.props.value}/>)
+            return (<TextField fullWidth variant="standard" label={this.props.name} defaultValue={this.props.value}
+                               InputProps={{
+                                   endAdornment: (
+                                       <InputAdornment position="end">
+                                           <IconButton onClick={() => {
+                                               this.setState({isEdit: false})
+                                           }}>
+                                               <CheckIcon />
+                                           </IconButton>
+                                       </InputAdornment>
+                                   ),
+                               }}/>)
         } else {
             return (
                 <Box
@@ -81,8 +93,16 @@ class Metadata extends React.Component<{name: string, value: string}, {isEdit: b
                         p: 1,
                         m: 1,
                     }}
+                    onMouseEnter={() => {
+                        this.setState({isShown: true});
+                    }}
+                    onMouseLeave={() => {
+                        this.setState({isShown: false});
+                    }}
                 >
-                    {this.props.name}: {this.props.value}
+                    {this.props.name}: {this.props.value} <IconButton onClick={() => {
+                        this.setState({isEdit: true})
+                    }}> <EditIcon /> </IconButton>
                 </Box>
             )
         }
