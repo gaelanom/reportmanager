@@ -2,7 +2,9 @@ package com.orcus.hha_report_manager.controller;
 
 import com.orcus.hha_report_manager.model.*;
 import com.orcus.hha_report_manager.repository.*;
+import com.orcus.hha_report_manager.security.beans.HTTPRequestUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,20 +17,22 @@ import java.util.*;
 public class ReportController {
 
     @Autowired
-    ReportRepository reportRepository;
+    private ReportRepository reportRepository;
 
     @Autowired
-    NumericalQuestionRepository numericalQuestionRepository;
+    private NumericalQuestionRepository numericalQuestionRepository;
 
     @Autowired
-    WrittenQuestionRepository writtenQuestionRepository;
+    private WrittenQuestionRepository writtenQuestionRepository;
 
     @Autowired
-    MultipleChoiceQuestionRepository multipleChoiceQuestionRepository;
+    private MultipleChoiceQuestionRepository multipleChoiceQuestionRepository;
 
     @Autowired
-    PatientInfoRepository patientInfoRepository;
+    private PatientInfoRepository patientInfoRepository;
 
+    @Autowired
+    private HTTPRequestUser httpRequestUser;
 
     //Reports; collections of some Metadata, some Written Questions, some Multiple Choice Questions, and some PatientInfo.
 
@@ -68,9 +72,10 @@ public class ReportController {
 
     @PostMapping("/reports")
     public ResponseEntity<Report> createReport(@RequestBody Report report) {
+        checkReportSubmitterUsername(report);
         try {
             Report newReport;
-            if(Objects.nonNull(report.getMonth())){
+            if (Objects.nonNull(report.getMonth())) {
                 newReport = reportRepository
                         .save(new Report(report.getDepartment(), report.getMonth(), report.getSubmitterUsername(), report.getSubmitterFirstName(), report.getSubmitterLastName(), report.isComplete(), report.isSaved(), report.isSubmitted(), report.isTemplate(), report.getNumericalQuestions(), report.getWrittenQuestions(), report.getMultipleChoiceQuestions(), report.getPatientInfo()));
             } else {
@@ -83,46 +88,55 @@ public class ReportController {
         }
     }
 
+    private void checkReportSubmitterUsername(Report report) {
+        if(report.getSubmitterUsername() == null){
+            var employee = httpRequestUser.getEmployee();
+            report.setSubmitterUsername(employee.getUsername());
+            report.setSubmitterFirstName(employee.getFirstName());
+            report.setSubmitterLastName(employee.getLastName());
+        }
+    }
+
     @PutMapping("/reports/{id}")
     public ResponseEntity<Report> updateReportDetails(@PathVariable("id") long id, @RequestBody Report report) {
         Optional<Report> reportData = reportRepository.findById(id);
 
         if (reportData.isPresent()) {
             Report reportToChange = reportData.get();
-            if(Objects.nonNull(report.getDepartment())){
+            if (Objects.nonNull(report.getDepartment())) {
                 reportToChange.setDepartment(report.getDepartment());
             }
-            if(Objects.nonNull(report.getMonth())){
+            if (Objects.nonNull(report.getMonth())) {
                 reportToChange.setMonth(report.getMonth());
             }
-            if(Objects.nonNull(report.getSubmitterUsername())){
+            if (Objects.nonNull(report.getSubmitterUsername())) {
                 reportToChange.setSubmitterUsername(report.getSubmitterUsername());
             }
-            if(Objects.nonNull(report.getSubmitterFirstName())){
+            if (Objects.nonNull(report.getSubmitterFirstName())) {
                 reportToChange.setSubmitterFirstName(report.getSubmitterFirstName());
             }
-            if(Objects.nonNull(report.getSubmitterLastName())){
+            if (Objects.nonNull(report.getSubmitterLastName())) {
                 reportToChange.setSubmitterLastName(report.getSubmitterLastName());
             }
-            if(Objects.nonNull(report.isSaved())){
+            if (Objects.nonNull(report.isSaved())) {
                 reportToChange.setSaved(report.isSaved());
             }
-            if(Objects.nonNull(report.isComplete())){
+            if (Objects.nonNull(report.isComplete())) {
                 reportToChange.setComplete(report.isComplete());
             }
-            if(Objects.nonNull(report.isSubmitted())){
+            if (Objects.nonNull(report.isSubmitted())) {
                 reportToChange.setSubmitted(report.isSubmitted());
             }
-            if(Objects.nonNull(report.isTemplate())){
+            if (Objects.nonNull(report.isTemplate())) {
                 reportToChange.setTemplate(report.isTemplate());
             }
-            if(Objects.nonNull(report.getNumericalQuestions())){
+            if (Objects.nonNull(report.getNumericalQuestions())) {
                 reportToChange.setNumericalQuestions(report.getNumericalQuestions());
             }
-            if(Objects.nonNull(report.getWrittenQuestions())){
+            if (Objects.nonNull(report.getWrittenQuestions())) {
                 reportToChange.setWrittenQuestions(report.getWrittenQuestions());
             }
-            if(Objects.nonNull(report.getPatientInfo())){
+            if (Objects.nonNull(report.getPatientInfo())) {
                 reportToChange.setPatientInfo(report.getPatientInfo());
             }
             return new ResponseEntity<>(reportRepository.save(reportToChange), HttpStatus.OK);
@@ -173,10 +187,10 @@ public class ReportController {
         Optional<NumericalQuestion> questionData = numericalQuestionRepository.findById(id);
         if (questionData.isPresent()) {
             NumericalQuestion questionToUpdate = questionData.get();
-            if(Objects.nonNull(numericalQuestion.isRequiredByMSPP())){
+            if (Objects.nonNull(numericalQuestion.isRequiredByMSPP())) {
                 questionToUpdate.setRequiredByMSPP(numericalQuestion.isRequiredByMSPP());
             }
-            if(Objects.nonNull(numericalQuestion.getQuestion())) {
+            if (Objects.nonNull(numericalQuestion.getQuestion())) {
                 questionToUpdate.setQuestion(numericalQuestion.getQuestion());
             }
             return new ResponseEntity<>(numericalQuestionRepository.save(questionToUpdate), HttpStatus.OK);
@@ -190,7 +204,7 @@ public class ReportController {
         Optional<NumericalQuestion> questionData = numericalQuestionRepository.findById(id);
         if (questionData.isPresent()) {
             NumericalQuestion questionToUpdate = questionData.get();
-            if(Objects.nonNull(answer)){
+            if (Objects.nonNull(answer)) {
                 questionToUpdate.setAnswer(answer);
             }
             return new ResponseEntity<>(numericalQuestionRepository.save(questionToUpdate), HttpStatus.OK);
@@ -229,10 +243,10 @@ public class ReportController {
         Optional<WrittenQuestion> questionData = writtenQuestionRepository.findById(id);
         if (questionData.isPresent()) {
             WrittenQuestion questionToUpdate = questionData.get();
-            if(Objects.nonNull(writtenQuestion.isRequiredByMSPP())){
+            if (Objects.nonNull(writtenQuestion.isRequiredByMSPP())) {
                 questionToUpdate.setRequiredByMSPP(writtenQuestion.isRequiredByMSPP());
             }
-            if(Objects.nonNull(writtenQuestion.getQuestion())) {
+            if (Objects.nonNull(writtenQuestion.getQuestion())) {
                 questionToUpdate.setQuestion(writtenQuestion.getQuestion());
             }
             return new ResponseEntity<>(writtenQuestionRepository.save(questionToUpdate), HttpStatus.OK);
@@ -246,7 +260,7 @@ public class ReportController {
         Optional<WrittenQuestion> questionData = writtenQuestionRepository.findById(id);
         if (questionData.isPresent()) {
             WrittenQuestion questionToUpdate = questionData.get();
-            if(Objects.nonNull(answer)){
+            if (Objects.nonNull(answer)) {
                 questionToUpdate.setAnswer(answer);
             }
             return new ResponseEntity<>(writtenQuestionRepository.save(questionToUpdate), HttpStatus.OK);
@@ -286,13 +300,13 @@ public class ReportController {
         Optional<MultipleChoiceQuestion> questionData = multipleChoiceQuestionRepository.findById(id);
         if (questionData.isPresent()) {
             MultipleChoiceQuestion questionToUpdate = questionData.get();
-            if(Objects.nonNull(multipleChoiceQuestion.getRequiredByMSPP())){
+            if (Objects.nonNull(multipleChoiceQuestion.getRequiredByMSPP())) {
                 questionToUpdate.setRequiredByMSPP(multipleChoiceQuestion.getRequiredByMSPP());
             }
-            if(Objects.nonNull(multipleChoiceQuestion.getQuestion())) {
+            if (Objects.nonNull(multipleChoiceQuestion.getQuestion())) {
                 questionToUpdate.setQuestion(multipleChoiceQuestion.getQuestion());
             }
-            if(Objects.nonNull(multipleChoiceQuestion.getChoices())){
+            if (Objects.nonNull(multipleChoiceQuestion.getChoices())) {
                 questionToUpdate.setChoices(multipleChoiceQuestion.getChoices());
             }
             return new ResponseEntity<>(multipleChoiceQuestionRepository.save(questionToUpdate), HttpStatus.OK);
@@ -306,8 +320,8 @@ public class ReportController {
         Optional<MultipleChoiceQuestion> questionData = multipleChoiceQuestionRepository.findById(id);
         if (questionData.isPresent()) {
             MultipleChoiceQuestion questionToUpdate = questionData.get();
-            if(Objects.nonNull(choice)){
-                if(questionToUpdate.getChoices().containsKey(choice)){
+            if (Objects.nonNull(choice)) {
+                if (questionToUpdate.getChoices().containsKey(choice)) {
                     questionToUpdate.setChoice(choice);
                 } else {
                     return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -350,7 +364,7 @@ public class ReportController {
         Optional<PatientInfo> patientData = patientInfoRepository.findById(id);
         if (patientData.isPresent()) {
             PatientInfo patientInfoToUpdate = patientData.get();
-            if(Objects.nonNull(patientInfo.getInformation())) {
+            if (Objects.nonNull(patientInfo.getInformation())) {
                 patientInfoToUpdate.setInformation(patientInfo.getInformation());
             }
             return new ResponseEntity<>(patientInfoRepository.save(patientInfoToUpdate), HttpStatus.OK);

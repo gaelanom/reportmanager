@@ -465,13 +465,11 @@ Returns: `204` Or: `404` if Reply {replyid} does not exist.
 
 **Create Report** `POST` `.../api/reports`
 
-Requires:
+Create a report with the submitter being the token's owner. 
+
 ```json
 {
     "department": "Placeholder",
-    "submitterUsername": "user",
-    "submitterFirstName": "John",
-    "submitterLastName": "Smith",
     "complete": false,
     "saved": false,
     "submitted": false,
