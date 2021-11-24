@@ -59,6 +59,24 @@ Returns:
   "blurb": "Placeholder information!"
 }
 ```
+
+**Get Department**
+`GET` `.../api/department`
+
+Get the token's owner department.
+
+Requires: Authentication token in request
+
+Returns:
+`200`
+```json
+{
+  "id": 1,
+  "name": "NICU",
+  "blurb": "some blurb"
+}
+```
+
 **Get Departments**
 `GET` `.../api/departments`
 
@@ -131,6 +149,27 @@ Or: `404` if Department {id} does not exist.
 
 #
 ### Employees
+
+
+**Create Employee** `GET` `.../api/employee`
+
+Get token's owner
+
+Requires: Authentication token in request.
+
+Returns:
+```json
+{
+  "id": 1,
+  "username": "dev",
+  "firstName": "John",
+  "lastName": "Doe",
+  "department": "NICU",
+  "score": null,
+  "admin": false,
+  "departmentHead": true
+}
+```
 
 **Create Employee** `POST` `.../api/employees`
 
@@ -275,7 +314,7 @@ Returns:
 
 **Create new Message** `POST` `.../api/messages`
 
-Uses the token's user.
+Uses the token's owner info.
 
 Requires:
 ```json
@@ -383,7 +422,7 @@ Returns: `204` Or: `404` if Message {id} does not exist.
 
 **Add a Reply to a Message** `POST` `.../api/messages/{messageid}/replies`
 
-Uses the token's user info.
+Uses the token's owner info.
 
 Requires:
 
