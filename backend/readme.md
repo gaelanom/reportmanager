@@ -275,6 +275,8 @@ Returns:
 
 **Create new Message** `POST` `.../api/messages`
 
+Uses the token's user.
+
 Requires:
 ```json
 {
@@ -283,7 +285,6 @@ Requires:
 }
 ```
 
-Create a new message. User info are taken from token. 
 
 Returns:
 
@@ -382,17 +383,17 @@ Returns: `204` Or: `404` if Message {id} does not exist.
 
 **Add a Reply to a Message** `POST` `.../api/messages/{messageid}/replies`
 
+Uses the token's user info.
+
 Requires:
 
 ```json
 {
-    "username": "user2",
-    "firstName": "Smith",
-    "lastName": "John",
     "department": "Placeholder",
     "content": "Hi, John!"
 }
 ```
+
 
 Returns:
 

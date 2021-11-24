@@ -109,15 +109,6 @@ public class ReportController {
             if (Objects.nonNull(report.getMonth())) {
                 reportToChange.setMonth(report.getMonth());
             }
-            if (Objects.nonNull(report.getSubmitterUsername())) {
-                reportToChange.setSubmitterUsername(report.getSubmitterUsername());
-            }
-            if (Objects.nonNull(report.getSubmitterFirstName())) {
-                reportToChange.setSubmitterFirstName(report.getSubmitterFirstName());
-            }
-            if (Objects.nonNull(report.getSubmitterLastName())) {
-                reportToChange.setSubmitterLastName(report.getSubmitterLastName());
-            }
             if (Objects.nonNull(report.isSaved())) {
                 reportToChange.setSaved(report.isSaved());
             }

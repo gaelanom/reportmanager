@@ -130,6 +130,10 @@ public class MessageController {
         Optional<Message> messageData = messageRepository.findById(id);
         reply.setTimestamp(LocalDateTime.now());
         if (messageData.isPresent()) {
+            var employee = httpRequestUser.getEmployee();
+            reply.setUsername(employee.getUsername());
+            reply.setFirstName(employee.getFirstName());
+            reply.setLastName(employee.getLastName());
             Message parent = messageData.get();
             parent.getReplies().add(reply);
             return new ResponseEntity<>(messageRepository.save(parent), HttpStatus.OK);
@@ -144,15 +148,6 @@ public class MessageController {
 
         if (replyData.isPresent()) {
             Reply replyToChange = replyData.get();
-            if(Objects.nonNull(reply.getUsername())){
-                replyToChange.setUsername(reply.getUsername());
-            }
-            if(Objects.nonNull(reply.getFirstName())){
-                replyToChange.setFirstName(reply.getFirstName());
-            }
-            if(Objects.nonNull(reply.getLastName())){
-                replyToChange.setLastName(reply.getLastName());
-            }
             if(Objects.nonNull(reply.getDepartment())){
                 replyToChange.setDepartment(reply.getDepartment());
             }
