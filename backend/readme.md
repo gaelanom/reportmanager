@@ -278,13 +278,12 @@ Returns:
 Requires:
 ```json
 {
-    "username": "user",
-    "firstName": "John",
-    "lastName": "Smith",
     "department": "Placeholder",
     "content": "Hello!"
 }
 ```
+
+Create a new message. User info are taken from token. 
 
 Returns:
 

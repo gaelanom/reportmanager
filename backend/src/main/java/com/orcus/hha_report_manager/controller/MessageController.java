@@ -4,6 +4,7 @@ import com.orcus.hha_report_manager.model.Message;
 import com.orcus.hha_report_manager.model.Reply;
 import com.orcus.hha_report_manager.repository.MessageRepository;
 import com.orcus.hha_report_manager.repository.ReplyRepository;
+import com.orcus.hha_report_manager.security.beans.HTTPRequestUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,8 @@ public class MessageController {
     @Autowired
     ReplyRepository replyRepository;
 
+    @Autowired
+    private HTTPRequestUser httpRequestUser;
 
     @GetMapping("/messages")
     public ResponseEntity<List<Message>> getAllMessages(@RequestParam(required = false) String department, String username) {
@@ -63,6 +66,11 @@ public class MessageController {
 
     @PostMapping("/messages")
     public ResponseEntity<Message> createMessage(@RequestBody Message message) {
+        var employee = httpRequestUser.getEmployee();
+        message.setUsername(employee.getUsername());
+        message.setFirstName(employee.getFirstName());
+        message.setLastName(employee.getLastName());
+
         try {
             Message newMessage = messageRepository
                     .save(new Message(message.getUsername(), message.getFirstName(), message.getLastName(), message.getDepartment(), LocalDateTime.now(), message.getContent()));
@@ -78,15 +86,6 @@ public class MessageController {
 
         if (messageData.isPresent()) {
             Message messageToChange = messageData.get();
-            if(Objects.nonNull(message.getUsername())){
-                messageToChange.setUsername(message.getUsername());
-            }
-            if(Objects.nonNull(message.getFirstName())){
-                messageToChange.setFirstName(message.getFirstName());
-            }
-            if(Objects.nonNull(message.getLastName())){
-                messageToChange.setLastName(message.getLastName());
-            }
             if(Objects.nonNull(message.getDepartment())){
                 messageToChange.setDepartment(message.getDepartment());
             }
