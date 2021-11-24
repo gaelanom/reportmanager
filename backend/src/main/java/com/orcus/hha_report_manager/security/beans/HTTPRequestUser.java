@@ -3,34 +3,62 @@ package com.orcus.hha_report_manager.security.beans;
 import com.orcus.hha_report_manager.model.Department;
 import com.orcus.hha_report_manager.model.Employee;
 import com.orcus.hha_report_manager.repository.DepartmentRepository;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
+import com.orcus.hha_report_manager.repository.EmployeeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
 @Component
 @RequestScope
 public class HTTPRequestUser {
-    private String token;
+    private String username;
 
     private Department department;
 
     private Employee employee;
 
-    public String getToken() {
-        return token;
+    @Autowired
+    private DepartmentRepository departmentRepository;
+
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
+    public String getUsername() {
+        return username;
     }
 
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public void setDepartment(Department department){
-        this.department = department;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Department getDepartment() {
-        return null;
+        // Lazy instantiation
+        if(this.department == null){
+            this.department = getDepartmentByName();
+        }
+        return this.department;
+    }
+
+    private Department getDepartmentByName() {
+        var employee = getEmployee();
+        var departments = departmentRepository.findByName(employee.getDepartment());
+        if(departments.isEmpty())
+            return new Department();
+        return departments.get(0);
+    }
+
+    public Employee getEmployee() {
+        // Lazy instantiation
+        if(this.employee == null){
+            this.employee = getEmployeeByName();
+        }
+        return this.employee;
+    }
+
+    private Employee getEmployeeByName() {
+        var employees = employeeRepository.findByUsername(this.username);
+        if(employees.isEmpty())
+            return new Employee();
+        return employees.get(0);
     }
 }

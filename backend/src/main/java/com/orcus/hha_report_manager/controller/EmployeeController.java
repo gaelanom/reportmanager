@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.orcus.hha_report_manager.security.beans.HTTPRequestUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,14 @@ public class EmployeeController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private HTTPRequestUser httpRequestUser;
+
+    @GetMapping("/employee")
+    public ResponseEntity<HTTPRequestUser> getEmployee(){
+        return new ResponseEntity<>(httpRequestUser, HttpStatus.OK);
+    }
 
     @GetMapping("/employees")
     public ResponseEntity<List<Employee>> getAllEmployees(@RequestParam(required = false) String department, String username) {
@@ -86,31 +95,47 @@ public class EmployeeController {
         }
     }
 
+    @PutMapping("/employee")
+    public ResponseEntity<Employee> updateEmployee(@RequestBody Employee newEmployee){
+        var oldEmployee = httpRequestUser.getEmployee();
+        var updatedEmployee = updateEmployee(newEmployee, oldEmployee);
+        return new ResponseEntity<>(employeeRepository.save(updatedEmployee), HttpStatus.OK);
+    }
+
     @PutMapping("/employees/{id}")
     public ResponseEntity<Employee> updateEmployee(@PathVariable("id") long id, @RequestBody Employee employee) {
         Optional<Employee> employeeData = employeeRepository.findById(id);
 
         if (employeeData.isPresent()) {
             Employee employeeToChange = employeeData.get();
-            if(Objects.nonNull(employee.getFirstName())){
-                employeeToChange.setFirstName(employee.getFirstName());
-            }
-            if(Objects.nonNull(employee.getLastName())){
-                employeeToChange.setLastName(employee.getLastName());
-            }
-            if(Objects.nonNull(employee.getDepartment())){
-                employeeToChange.setDepartment(employee.getDepartment());
-            }
-            if(Objects.nonNull(employee.getScore())){
-                employeeToChange.setScore(employee.getScore());
-            }
-            if(Objects.nonNull(employee.isDepartmentHead())){
-                employeeToChange.setDepartmentHead(employee.isDepartmentHead());
-            }
-            return new ResponseEntity<>(employeeRepository.save(employeeToChange), HttpStatus.OK);
+            var updatedEmployee = updateEmployee(employee, employeeToChange);
+            return new ResponseEntity<>(employeeRepository.save(updatedEmployee), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    /**
+     * Update oldEmployee is newEmployee's values except id and username.
+     * Null values are skipped.
+     * */
+    private Employee updateEmployee(Employee newEmployee, Employee oldEmployee) {
+        if(Objects.nonNull(newEmployee.getFirstName())){
+            oldEmployee.setFirstName(newEmployee.getFirstName());
+        }
+        if(Objects.nonNull(newEmployee.getLastName())){
+            oldEmployee.setLastName(newEmployee.getLastName());
+        }
+        if(Objects.nonNull(newEmployee.getDepartment())){
+            oldEmployee.setDepartment(newEmployee.getDepartment());
+        }
+        if(Objects.nonNull(newEmployee.getScore())){
+            oldEmployee.setScore(newEmployee.getScore());
+        }
+        if(Objects.nonNull(newEmployee.isDepartmentHead())){
+            oldEmployee.setDepartmentHead(newEmployee.isDepartmentHead());
+        }
+        return oldEmployee;
     }
 
     @PutMapping("/employees/{id}/score")

@@ -26,7 +26,7 @@ public class DepartmentController {
 
     @GetMapping("/department")
     public ResponseEntity<Department> getDepartment() {
-        return new ResponseEntity<Department>(httpRequestUser.getDepartment(), HttpStatus.OK);
+        return new ResponseEntity<>(httpRequestUser.getDepartment(), HttpStatus.OK);
     }
 
     @GetMapping("/departments")
