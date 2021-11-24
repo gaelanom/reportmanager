@@ -40,8 +40,8 @@ public class EmployeeController {
     private HTTPRequestUser httpRequestUser;
 
     @GetMapping("/employee")
-    public ResponseEntity<HTTPRequestUser> getEmployee(){
-        return new ResponseEntity<>(httpRequestUser, HttpStatus.OK);
+    public ResponseEntity<Employee> getEmployee(){
+        return new ResponseEntity<>(httpRequestUser.getEmployee(), HttpStatus.OK);
     }
 
     @GetMapping("/employees")
