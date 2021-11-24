@@ -21,18 +21,15 @@ public class NewReportController {
     @Autowired
     QuestionRepository questionRepository;
 
-    @GetMapping("/newreports")
-    public ResponseEntity<List<NewReport>> getAllReports(@RequestParam(required = false) String department, String username) {
+    @GetMapping("/newReports")
+    public ResponseEntity<List<NewReport>> getAllReports(@RequestParam(required = false) Integer departmentId){
         try {
             List<NewReport> reports = new ArrayList<NewReport>();
 
-            if (department == null && username == null)
+            if (departmentId == null)
                 newReportRepository.findAll().forEach(reports::add);
-            else if (department != null)
-                newReportRepository.findByDepartmentContains(department).forEach(reports::add);
-            else if (username != null)
-                newReportRepository.findBySubmitterUsername(username).forEach(reports::add);
-
+            else if (departmentId != null)
+                newReportRepository.findByDepartmentId(departmentId).forEach(reports::add);
             if (reports.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }

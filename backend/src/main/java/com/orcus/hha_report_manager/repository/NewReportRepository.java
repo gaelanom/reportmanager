@@ -7,9 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface NewReportRepository extends JpaRepository<NewReport, Long> {
-    List<Report> findBySubmitted(boolean submitted);
+    List<NewReport> findBySubmitted(boolean submitted);
 
-    List<Report> findByDepartmentContains(String departmentName);
+    List<NewReport> findByDepartmentContains(String departmentName);
 
-    List<Report> findBySubmitterUsername(String username);
+    List<NewReport> findBySubmitterUsername(String username);
+
+    List<NewReport> findByDepartmentId(Integer departmentId);
 }

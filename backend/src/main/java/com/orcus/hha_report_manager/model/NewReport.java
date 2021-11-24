@@ -17,7 +17,7 @@ public class NewReport {
     private String name;
 
     @Column(name = "departmentId")
-    private String departmentId;
+    private Integer departmentId;
 
     @Column(name = "month")
     private Month month;
@@ -37,6 +37,14 @@ public class NewReport {
 
     }
 
+    public NewReport(String name, Integer departmentId, Month month, List<Question> questions, Map<String, Integer> groupings) {
+        this.name = name;
+        this.departmentId = departmentId;
+        this.month = month;
+        this.questions = questions;
+        this.groupings = groupings;
+    }
+
     public String getName() {
         return name;
     }
@@ -49,11 +57,11 @@ public class NewReport {
         return id;
     }
 
-    public String getDepartmentId() {
+    public Integer getDepartmentId() {
         return departmentId;
     }
 
-    public void setDepartmentId(String departmentId) {
+    public void setDepartmentId(Integer departmentId) {
         this.departmentId = departmentId;
     }
 
