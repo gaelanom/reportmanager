@@ -9,7 +9,7 @@ import java.util.List;
 public interface NewReportRepository extends JpaRepository<NewReport, Long> {
     //List<NewReport> findBySubmitted(boolean submitted);
 
-    //List<NewReport> findByDepartmentContains(String departmentName);
+    List<NewReport> findByDepartmentNameContains(String departmentName);
 
     //List<NewReport> findBySubmitterUsername(String username);
 
