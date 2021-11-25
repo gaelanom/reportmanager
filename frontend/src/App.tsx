@@ -71,7 +71,7 @@ class App extends React.Component<any, any> {
 
             <Route path="/messages" component={Messages} />
 
-            <Route path="/departments/:departmentID/leaderboard" component={Leaderboard} />
+            <Route path="/leaderboard" component={Leaderboard} />
             
           </Switch>
         </Router>

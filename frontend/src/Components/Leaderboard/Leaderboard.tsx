@@ -1,35 +1,44 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
+import Api from "../../API/Api";
 
-function Leaderboard() {
+class Leaderboard extends React.Component <any, any>  {
 
-    return (
-       <div id="container">
-           <div style={{display: 'flex',  justifyContent:'center', alignItems:'center', height: '85vh'}}>
-               <h1>
-                    <div className="row">
-                        <div className="name">Employee1</div><div className="score">5 points</div>
-                    </div>
+    constructor(props: any) {
+        super(props)
 
-                    <div className="row">
-                       <div className="name">Employee2</div><div className="score">15 points</div>
-                   </div>
+        this.state = {
+          employees: []
+        };
+      }
 
-                   <div className="row">
-                       <div className="name">Employee3</div><div className="score">2 points</div>
-                   </div>
+    componentDidMount() {
+        
+        Api.Employees.getAllEmployees().then(data => {
+            this.setState({
+                employees: data
+            })
+        })
 
-                   <div className="row">
-                       <div className="name">Employee4</div><div className="score">10 points</div>
-                   </div>
+    }
 
-                   <div className="row">
-                       <div className="name">Employee5</div><div className="score">3 points</div>
-                   </div>
-               </h1>
-           </div>
-       </div>
-    )
+    render() {
+
+        return (
+            <div className="card mx-auto w-75 my-5">
+                <h1 className="card-header card-title text-center display-4">Leaderboards</h1>
+                <div className="card-body">
+                    <ul className="list-group">
+                        {this.state.employees.map(function(d: any, idx: number){
+                            return (
+                                <li className="list-group-item text-center display-6" key={idx}>
+                                    ID: {d.id} Name: {d.firstName} LastName: {d.lastName} Department: {d.department} Department Head: {d.departmentHead}
+                                </li>)
+                        })}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
 }
 
 
