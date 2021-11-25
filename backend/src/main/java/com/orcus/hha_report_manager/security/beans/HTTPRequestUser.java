@@ -33,7 +33,7 @@ public class HTTPRequestUser {
 
     public Department getDepartment() {
         // Lazy instantiation
-        if(this.department == null){
+        if (this.department == null) {
             this.department = getDepartmentByName();
         }
         return this.department;
@@ -42,14 +42,14 @@ public class HTTPRequestUser {
     private Department getDepartmentByName() {
         var employee = getEmployee();
         var departments = departmentRepository.findByName(employee.getDepartment());
-        if(departments.isEmpty())
-            return new Department();
+        if (departments.isEmpty())
+            throw new HTTPRequestUserException("User department " + employee.getDepartment() + " not found");
         return departments.get(0);
     }
 
     public Employee getEmployee() {
         // Lazy instantiation
-        if(this.employee == null){
+        if (this.employee == null) {
             this.employee = getEmployeeByName();
         }
         return this.employee;
@@ -57,8 +57,14 @@ public class HTTPRequestUser {
 
     private Employee getEmployeeByName() {
         var employees = employeeRepository.findByUsername(this.username);
-        if(employees.isEmpty())
-            return new Employee();
+        if (employees.isEmpty())
+            throw new HTTPRequestUserException("Username " + this.username +" not found");
         return employees.get(0);
+    }
+
+    public static class HTTPRequestUserException extends RuntimeException {
+        public HTTPRequestUserException(String message) {
+            super(message);
+        }
     }
 }
