@@ -39,10 +39,6 @@ public class EmployeeController {
     public ResponseEntity<List<Employee>> getAllEmployees(@RequestParam(required = false) String department, String username) {
         try {
             List<Employee> employees = new ArrayList<Employee>();
-
-            if(department != null && username != null){
-                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-            }
             if (department == null && username == null)
                 employeeRepository.findAll().forEach(employees::add);
             else if (username == null && department != null) {
@@ -50,6 +46,9 @@ public class EmployeeController {
             }
             else if (username != null && department == null){
                 employeeRepository.findByUsername(username).forEach(employees::add);
+            }
+            else if(department != null && username != null){
+                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
             }
             if (employees.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
