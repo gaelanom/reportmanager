@@ -29,7 +29,7 @@ class Leaderboard extends React.Component <any, any>  {
             <div className="card mx-auto w-75 my-5">
                 <h1 className="card-header card-title text-center display-4">Leaderboards</h1>
                 <div className="card-body">
-                    <table className="table table-striped">
+                    <table className="table table-hover table-responsive">
                     <thead>
                         <tr>
                         <th scope="col">First Name</th>
@@ -40,6 +40,7 @@ class Leaderboard extends React.Component <any, any>  {
                     </thead>
                     <tbody>
                         {employeesData.map(function(d: any, idx: number) {
+                            // necessary to get rid of the default / incorrect data 
                             if (d.firstName && d.lastName) {
                                 return (
                                     <tr>
