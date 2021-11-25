@@ -38,14 +38,16 @@ class Leaderboard extends React.Component <any, any>  {
                     </thead>
                     <tbody>
                         {this.state.employees.map(function(d: any, idx: number) {
-                            return (
-                                <tr>
-                                    <th scope="row">{d.firstName}</th>
-                                    <td>{d.lastName}</td>
-                                    <td>{d.department}</td>
-                                    <td>{d.score}</td>
-                                </tr>
-                            )
+                            if (d.firstName && d.lastName) {
+                                return (
+                                    <tr>
+                                        <th scope="row">{d.firstName}</th>
+                                        <td>{d.lastName}</td>
+                                        <td>{d.department}</td>
+                                        <td>{d.score}</td>
+                                    </tr>
+                                )
+                            }
                         })}
                     </tbody>
                     </table>
