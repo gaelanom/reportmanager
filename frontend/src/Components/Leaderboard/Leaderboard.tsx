@@ -22,12 +22,14 @@ class Leaderboard extends React.Component <any, any>  {
     }
 
     render() {
+        let employeesData = [...this.state.employees]
+        employeesData.sort((a: any, b: any) => b.score - a.score)
 
         return (
             <div className="card mx-auto w-75 my-5">
                 <h1 className="card-header card-title text-center display-4">Leaderboards</h1>
                 <div className="card-body">
-                    <table className="table">
+                    <table className="table table-striped">
                     <thead>
                         <tr>
                         <th scope="col">First Name</th>
@@ -37,7 +39,7 @@ class Leaderboard extends React.Component <any, any>  {
                         </tr>
                     </thead>
                     <tbody>
-                        {this.state.employees.map(function(d: any, idx: number) {
+                        {employeesData.map(function(d: any, idx: number) {
                             if (d.firstName && d.lastName) {
                                 return (
                                     <tr>
