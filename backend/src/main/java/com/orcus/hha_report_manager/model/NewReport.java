@@ -6,14 +6,14 @@ import java.util.List;
 import java.util.Map;
 
 @Entity
-@Table(name = "reports", uniqueConstraints = @UniqueConstraint(columnNames = {"month", "departmentId"}))
+@Table(name = "newReports", uniqueConstraints = @UniqueConstraint(columnNames = {"month", "departmentId"}))
 public class NewReport {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(name = "name")
+    @Column(name = "reportName")
     private String name;
 
     @Column(name = "departmentId")
@@ -24,20 +24,20 @@ public class NewReport {
 
     @Column(name = "questions")
     @OneToMany(targetEntity = Question.class, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "report_id", referencedColumnName = "id")
+    @JoinColumn(name = "newReport_id", referencedColumnName = "id")
     private List<Question> questions;
 
     @ElementCollection (fetch = FetchType.EAGER)
-    @CollectionTable(name = "groupings", joinColumns = @JoinColumn(name = "question_id", referencedColumnName = "id"))
-    @MapKeyColumn(name = "name")
-    @Column(name = "order")
-    private Map<String, Integer> groupings;
+    @CollectionTable(name = "groupings", joinColumns = @JoinColumn(name = "newReport_id", referencedColumnName = "id"))
+    @MapKeyColumn(name = "groupName")
+    @Column(name = "groupOrder")
+    private Map<String, String> groupings;
 
     public NewReport(){
 
     }
 
-    public NewReport(String name, Integer departmentId, Month month, List<Question> questions, Map<String, Integer> groupings) {
+    public NewReport(String name, Integer departmentId, Month month, List<Question> questions, Map<String, String> groupings) {
         this.name = name;
         this.departmentId = departmentId;
         this.month = month;
@@ -81,11 +81,11 @@ public class NewReport {
         this.questions = questions;
     }
 
-    public Map<String, Integer> getGroupings() {
+    public Map<String, String> getGroupings() {
         return groupings;
     }
 
-    public void setGroupings(Map<String, Integer> groupings) {
+    public void setGroupings(Map<String, String> groupings) {
         this.groupings = groupings;
     }
 }

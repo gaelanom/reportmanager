@@ -14,10 +14,10 @@ public class Question {
     @Column(name = "departmentId")
     private String departmentId;
 
-    @Column(name = "group")
+    @Column(name = "questionGroup")
     private String group;
 
-    @Column(name = "order")
+    @Column(name = "questionOrder")
     private int order;
 
     @Column(name = "question")
@@ -26,7 +26,7 @@ public class Question {
     @Column(name = "answer")
     private String answer;
 
-    @Column(name = "type")
+    @Column(name = "questionType")
     private String type;
 
     @Column(name = "choices")

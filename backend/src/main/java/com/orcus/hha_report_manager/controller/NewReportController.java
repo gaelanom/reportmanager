@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -35,6 +36,23 @@ public class NewReportController {
             }
 
             return new ResponseEntity<>(reports, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/newReports")
+    public ResponseEntity<NewReport> createReport(@RequestBody NewReport report) {
+        try {
+            NewReport newNewReport;
+            if(Objects.nonNull(report.getMonth())){
+                newNewReport = NewReportRepository
+                        .save(new Report());
+            } else {
+                newReport = reportRepository
+                        .save(new Report(report.getDepartment(), report.getSubmitterUsername(), report.getSubmitterFirstName(), report.getSubmitterLastName(), report.isComplete(), report.isSaved(), report.isSubmitted(), report.isTemplate(), report.getNumericalQuestions(), report.getWrittenQuestions(), report.getMultipleChoiceQuestions(), report.getPatientInfo()));
+            }
+            return new ResponseEntity<>(newReport, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
