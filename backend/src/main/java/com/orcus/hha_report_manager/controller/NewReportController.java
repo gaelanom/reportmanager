@@ -78,7 +78,7 @@ public class NewReportController {
                 reportName = report.getDepartmentName() + " " + currentMonth;
             }
             newNewReport = newReportRepository
-                    .save(new NewReport(reportName, report.getDepartmentName(), report.getDepartmentId(), currentMonth, report.getQuestions(), report.getGroupings()));
+                    .save(new NewReport(reportName, report.getDepartmentName(), report.getDepartmentId(), currentMonth, report.getCreator(), report.getLastContributor(), report.getQuestions(), report.getGroupings()));
             return new ResponseEntity<>(newNewReport, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -99,6 +99,12 @@ public class NewReportController {
             }
             if(Objects.nonNull(report.getMonth())){
                 reportToChange.setMonth(report.getMonth());
+            }
+            if(Objects.nonNull(report.getCreator())){
+                reportToChange.setCreator(report.getCreator());
+            }
+            if(Objects.nonNull(report.getLastContributor())){
+                reportToChange.setLastContributor(report.getLastContributor());
             }
             if(Objects.nonNull(report.getQuestions())){
                 reportToChange.setQuestions(report.getQuestions());

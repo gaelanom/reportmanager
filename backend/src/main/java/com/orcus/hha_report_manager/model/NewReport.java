@@ -25,6 +25,12 @@ public class NewReport {
     @Column(name = "month")
     private Month month;
 
+    @Column(name = "creator")
+    private String creator;
+
+    @Column(name = "lastContributor")
+    private String lastContributor;
+
     @Column(name = "questions")
     @OneToMany(targetEntity = Question.class, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "newReport_id", referencedColumnName = "id")
@@ -40,11 +46,13 @@ public class NewReport {
 
     }
 
-    public NewReport(String name, String departmentName, Integer departmentId, Month month, List<Question> questions, Map<String, String> groupings) {
+    public NewReport(String name, String departmentName, Integer departmentId, Month month, String creator, String lastContributor, List<Question> questions, Map<String, String> groupings) {
         this.name = name;
         this.departmentName = departmentName;
         this.departmentId = departmentId;
         this.month = month;
+        this.creator = creator;
+        this.lastContributor = lastContributor;
         this.questions = questions;
         this.groupings = groupings;
     }
@@ -83,6 +91,22 @@ public class NewReport {
 
     public void setMonth(Month month) {
         this.month = month;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
+
+    public String getLastContributor() {
+        return lastContributor;
+    }
+
+    public void setLastContributor(String lastContributor) {
+        this.lastContributor = lastContributor;
     }
 
     public List<Question> getQuestions() {

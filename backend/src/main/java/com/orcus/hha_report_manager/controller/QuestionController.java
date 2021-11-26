@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -84,6 +81,38 @@ public class QuestionController {
             return new ResponseEntity<>(questionRepository.save(questionToUpdate), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/newreports/questions/{id}/answer")
+    public ResponseEntity<Question> answerQuestion(@PathVariable("id") long id, @RequestBody String answer) {
+        Optional<Question> questionData = questionRepository.findById(id);
+        if (questionData.isPresent()) {
+            Question questionToUpdate = questionData.get();
+            if(Objects.nonNull(answer)){
+                if(questionToUpdate.getType().equals("choices")){
+                    List<String> choices = Arrays.asList(questionToUpdate.getChoices().split(","));
+                    if(choices.contains(answer)){
+                        questionToUpdate.setAnswer(answer);
+                    } else {
+                        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                    }
+                }
+                questionToUpdate.setAnswer(answer);
+            }
+            return new ResponseEntity<>(questionRepository.save(questionToUpdate), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/newreports/questions/{id}")
+    public ResponseEntity<HttpStatus> deleteQuestion(@PathVariable("id") long id) {
+        try {
+            questionRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
