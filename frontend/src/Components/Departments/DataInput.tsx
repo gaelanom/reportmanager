@@ -442,7 +442,7 @@ class DataInput extends React.Component<any, any> {
                 reportId = r.id;
             }
         ).catch(error => {
-            getReportByDeptName(name).then((r: any) => {
+            getReportByDeptName(name).then((r: any[]) => {
                 let report: any;
                 r.forEach((rep: any) => {
                     if (rep.month === curr_month) {

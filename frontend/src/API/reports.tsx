@@ -11,7 +11,7 @@ export function getReportById(id: number) {
 }
 
 export function getReportByDeptName(department: string) {
-    return axios.get(BASEURL, {params: {department: department}}).then(res => res.data[0])
+    return axios.get(BASEURL, {params: {department: department}}).then(res => res.data)
 }
 
 export function addEmptyQuestion(id: number) {
