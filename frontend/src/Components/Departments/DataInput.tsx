@@ -25,6 +25,9 @@ import {newReport, getReportByDeptName,
     deleteMultipleChoiceQuestion, answerMultipleChoiceQuestion, addWrittenQuestion,
     updateWrittenQuestion, deleteWrittenQuestion, answerWrittenQuestion} from '../../API/reports';
 
+const monthNames = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
+                    "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+
 enum RecordType {
     written = "Written",
     MCQ = "Multiple Choice",
@@ -59,30 +62,39 @@ type RecordState = {
 
 let reportId: number;
 
-class Metadata extends React.Component<{name: string, value: string}, {isEdit: boolean, isShown: boolean}> {
+class Metadata extends React.Component<{name: string, value: string, callback: any}, {isEdit: boolean, isShown: boolean}> {
+    private changedValue: string;
 
-    constructor(props: {name: string, value: string}) {
+    constructor(props: {name: string, value: string, callback: any}) {
         super(props);
         this.state = {
             isEdit: false,
             isShown: false
         }
+        this.changedValue = props.value;
     }
 
     render() {
         if (this.state.isEdit) {
+            this.changedValue = this.props.value;
             return (<TextField fullWidth variant="standard" label={this.props.name} defaultValue={this.props.value}
                                InputProps={{
                                    endAdornment: (
                                        <InputAdornment position="end">
                                            <IconButton onClick={() => {
                                                this.setState({isEdit: false})
+                                               if (this.props.callback != null) {
+                                                   this.props.callback(this.changedValue);
+                                               }
                                            }}>
                                                <CheckIcon />
                                            </IconButton>
                                        </InputAdornment>
                                    ),
-                               }}/>)
+                               }} onChange={event => {
+                                   this.changedValue = event.target.value;
+                               }
+            }/>)
         } else {
             return (
                 <Box
@@ -100,7 +112,7 @@ class Metadata extends React.Component<{name: string, value: string}, {isEdit: b
                         this.setState({isShown: false});
                     }}
                 >
-                    {this.props.name}: {this.props.value} <IconButton onClick={() => {
+                    {this.props.name}: {this.props.value} <IconButton sx={{p: 0.5}} onClick={() => {
                         this.setState({isEdit: true})
                     }}> <EditIcon /> </IconButton>
                 </Box>
@@ -109,7 +121,7 @@ class Metadata extends React.Component<{name: string, value: string}, {isEdit: b
     }
 }
 
-class MetadataArea extends React.Component<{month: string, user: string, submitted: boolean}, any> {
+class MetadataArea extends React.Component<{month: string, user: string, submitted: boolean, changeMonth: any}, any> {
 
     render() {
         return (
@@ -121,13 +133,13 @@ class MetadataArea extends React.Component<{month: string, user: string, submitt
                 }}>
                     <Grid container spacing={2}>
                         <Grid item xs={4}>
-                            <Metadata name={"Month"} value={this.props.month}/>
+                            <Metadata name={"Month"} value={this.props.month} callback={this.props.changeMonth}/>
                         </Grid>
                         <Grid item xs={4}>
-                            <Metadata name={"User"} value={this.props.user}/>
+                            <Metadata name={"User"} value={this.props.user} callback={null}/>
                         </Grid>
                         <Grid item xs={4}>
-                            <Metadata name={"Submitted"} value={this.props.submitted.toString()}/>
+                            <Metadata name={"Submitted"} value={this.props.submitted.toString()} callback={null}/>
                         </Grid>
                     </Grid>
                 </Box>
@@ -418,33 +430,50 @@ class DataInput extends React.Component<any, any> {
 
     constructor(props: any) {
         super(props)
+        const curr_month: string = monthNames[new Date().getMonth()]
+        this.getData(curr_month);
+    }
+
+    private getData(curr_month: string) {
         const name = this.props.location.state.department || null
+
         newReport(name).then((r: any) => {
                 this.setState({id: r.id, month: r.month, user: r.submitterUsername});
                 reportId = r.id;
             }
         ).catch(error => {
-            console.log(error.message);
             getReportByDeptName(name).then((r: any) => {
-                let questionList: any[] = [...r.numericalQuestions, ...r.writtenQuestions, ...r.multipleChoiceQuestions];
+                let report: any;
+                r.forEach((rep: any) => {
+                    if (rep.month === curr_month) {
+                        report = rep;
+                    }
+                })
+                let questionList: any[] = [...report.numericalQuestions, ...report.writtenQuestions, ...report.multipleChoiceQuestions];
                 questionList.sort(this.compareQuestion)
                 let entryList: any[] = [];
                 questionList.forEach(e => {
-                    if (r.numericalQuestions.includes(e)) {
+                    if (report.numericalQuestions.includes(e)) {
                         let stringAns: string = "";
                         if (e.answer != null) {
                             stringAns = e.answer.toString();
                         }
                         entryList = [...entryList, this.existEntry(e.id, RecordType.numerical, e.question, stringAns)]
-                    } else if (r.writtenQuestions.includes(e)) {
+                    } else if (report.writtenQuestions.includes(e)) {
                         entryList = [...entryList, this.existEntry(e.id, RecordType.written, e.question, e.answer)]
-                    } else if (r.multipleChoiceQuestions.includes(e)) {
+                    } else if (report.multipleChoiceQuestions.includes(e)) {
                         entryList = [...entryList, this.existEntry(e.id, RecordType.MCQ, e.question, e.choice, e.choices)]
                     }
                 })
-                this.setState({id: r.id, entryList: entryList, month: r.month, user: r.submitterUsername});
-                reportId = r.id;
-        })})
+                this.setState({
+                    id: report.id,
+                    entryList: entryList,
+                    month: report.month,
+                    user: report.submitterUsername
+                });
+                reportId = report.id;
+            })
+        })
     }
 
     private compareQuestion(a: { id: number; }, b: { id: number; }) {
@@ -474,7 +503,7 @@ class DataInput extends React.Component<any, any> {
                     <Grid item xs={6}>
                         <h1 style={{marginLeft: "1em", marginRight: "1em"}}>{ name } Department Data Input</h1>
                     </Grid>
-                    <MetadataArea month={this.state.month} user={this.state.user} submitted={this.state.submitted}/>
+                    <MetadataArea month={this.state.month} user={this.state.user} submitted={this.state.submitted} changeMonth={this.getData}/>
                 </Grid>
                 <List style={{marginLeft: "1em", marginRight: "1em"}}>
                     {this.state.entryList}
