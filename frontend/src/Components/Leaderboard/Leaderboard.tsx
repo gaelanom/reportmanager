@@ -1,35 +1,63 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
+import Api from "../../API/Api";
 
-function Leaderboard() {
+class Leaderboard extends React.Component <any, any>  {
 
-    return (
-       <div id="container">
-           <div style={{display: 'flex',  justifyContent:'center', alignItems:'center', height: '85vh'}}>
-               <h1>
-                    <div className="row">
-                        <div className="name">Employee1</div><div className="score">5 points</div>
-                    </div>
+    constructor(props: any) {
+        super(props)
 
-                    <div className="row">
-                       <div className="name">Employee2</div><div className="score">15 points</div>
-                   </div>
+        this.state = {
+          employees: []
+        };
+      }
 
-                   <div className="row">
-                       <div className="name">Employee3</div><div className="score">2 points</div>
-                   </div>
+    componentDidMount() {
+        
+        Api.Employees.getAllEmployees().then(data => {
+            this.setState({
+                employees: data
+            })
+        })
 
-                   <div className="row">
-                       <div className="name">Employee4</div><div className="score">10 points</div>
-                   </div>
+    }
 
-                   <div className="row">
-                       <div className="name">Employee5</div><div className="score">3 points</div>
-                   </div>
-               </h1>
-           </div>
-       </div>
-    )
+    render() {
+        let employeesData = [...this.state.employees]
+        employeesData.sort((a: any, b: any) => b.score - a.score)
+
+        return (
+            <div className="card mx-auto w-75 my-5">
+                <h1 className="card-header card-title text-center display-4">Leaderboards</h1>
+                <div className="card-body">
+                    <table className="table table-hover table-responsive">
+                    <thead>
+                        <tr>
+                        <th scope="col">First Name</th>
+                        <th scope="col">Last Name</th>
+                        <th scope="col">Department</th>
+                        <th scope="col">Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {employeesData.map(function(d: any, idx: number) {
+                            // necessary to get rid of the default / incorrect data 
+                            if (d.firstName && d.lastName) {
+                                return (
+                                    <tr>
+                                        <th scope="row">{d.firstName}</th>
+                                        <td>{d.lastName}</td>
+                                        <td>{d.department}</td>
+                                        <td>{d.score}</td>
+                                    </tr>
+                                )
+                            }
+                        })}
+                    </tbody>
+                    </table>
+                </div>
+            </div>
+        )
+    }
 }
 
 
