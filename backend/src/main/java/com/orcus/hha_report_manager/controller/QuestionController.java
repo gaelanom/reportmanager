@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
@@ -78,6 +79,7 @@ public class QuestionController {
             if(Objects.nonNull(question.getChoices())){
                 questionToUpdate.setChoices(question.getChoices());
             }
+            questionToUpdate.setEditedAt(Instant.now().toEpochMilli());
             return new ResponseEntity<>(questionRepository.save(questionToUpdate), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

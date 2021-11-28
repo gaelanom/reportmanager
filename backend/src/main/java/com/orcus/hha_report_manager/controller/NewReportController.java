@@ -1,13 +1,14 @@
 package com.orcus.hha_report_manager.controller;
 
+import com.orcus.hha_report_manager.ReportUtility;
 import com.orcus.hha_report_manager.model.*;
 import com.orcus.hha_report_manager.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
@@ -19,6 +20,8 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api")
 public class NewReportController {
+
+    ReportUtility reportUtility;
 
     @Autowired
     NewReportRepository newReportRepository;
@@ -63,56 +66,22 @@ public class NewReportController {
     public ResponseEntity<NewReport> createNewReport(@RequestBody NewReport report) {
         try {
             NewReport newNewReport;
-            Month currentMonth;
-            String reportName;
-            if(Objects.nonNull(report.getMonth())) {
-                currentMonth = report.getMonth();
-            }
-            else {
-                currentMonth = LocalDate.now().getMonth();
-            }
-            if(Objects.nonNull(report.getName())) {
-                reportName = report.getName();
-            }
-            else {
-                reportName = report.getDepartmentName() + " " + currentMonth;
-            }
             newNewReport = newReportRepository
-                    .save(new NewReport(reportName, report.getDepartmentName(), report.getDepartmentId(), currentMonth, report.getCreator(), report.getLastContributor(), report.getQuestions(), report.getGroupings()));
+                    .save(reportUtility.checkForAndReplaceNullReportFields(report));
             return new ResponseEntity<>(newNewReport, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+
     @PutMapping("/newreports/{id}")
     public ResponseEntity<NewReport> updateNewReportDetails(@PathVariable("id") long id, @RequestBody NewReport report) {
         Optional<NewReport> reportData = newReportRepository.findById(id);
 
         if (reportData.isPresent()) {
-            NewReport reportToChange = reportData.get();
-            if(Objects.nonNull(report.getName())){
-                reportToChange.setName(report.getName());
-            }
-            if(Objects.nonNull(report.getDepartmentName())){
-                reportToChange.setDepartmentName(report.getDepartmentName());
-            }
-            if(Objects.nonNull(report.getMonth())){
-                reportToChange.setMonth(report.getMonth());
-            }
-            if(Objects.nonNull(report.getCreator())){
-                reportToChange.setCreator(report.getCreator());
-            }
-            if(Objects.nonNull(report.getLastContributor())){
-                reportToChange.setLastContributor(report.getLastContributor());
-            }
-            if(Objects.nonNull(report.getQuestions())){
-                reportToChange.setQuestions(report.getQuestions());
-            }
-            if(Objects.nonNull(report.getGroupings())){
-                reportToChange.setGroupings(report.getGroupings());
-            }
-            return new ResponseEntity<>(newReportRepository.save(reportToChange), HttpStatus.OK);
+            NewReport finishedReport = reportUtility.replaceNonNullReportFields(report, reportData.get());
+            return new ResponseEntity<>(newReportRepository.save(finishedReport), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -136,6 +105,5 @@ public class NewReportController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
 }

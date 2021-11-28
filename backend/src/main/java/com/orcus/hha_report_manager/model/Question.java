@@ -1,6 +1,7 @@
 package com.orcus.hha_report_manager.model;
 
 import javax.persistence.*;
+import java.time.Instant;
 
 
 @Entity
@@ -10,6 +11,12 @@ public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+
+    @Column(name = "createdAt")
+    private long createdAt;
+
+    @Column(name = "editedAt")
+    private long editedAt;
 
     @Column(name = "departmentId")
     private String departmentId;
@@ -41,6 +48,8 @@ public class Question {
     }
 
     public Question(String departmentId, String group, int order, String question, String answer, String type, String choices) {
+        this.createdAt = Instant.now().toEpochMilli();
+        this.editedAt = Instant.now().toEpochMilli();
         this.departmentId = departmentId;
         this.group = group;
         this.order = order;
@@ -52,6 +61,22 @@ public class Question {
 
     public long getId() {
         return id;
+    }
+
+    public long getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(long createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public long getEditedAt() {
+        return editedAt;
+    }
+
+    public void setEditedAt(long editedAt) {
+        this.editedAt = editedAt;
     }
 
     public String getQuestion(){

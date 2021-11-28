@@ -1,9 +1,9 @@
 package com.orcus.hha_report_manager.model;
 
 import javax.persistence.*;
+import java.time.Instant;
 import java.time.Month;
 import java.util.List;
-import java.util.Map;
 
 @Entity
 @Table(name = "newReports")
@@ -25,11 +25,17 @@ public class NewReport {
     @Column(name = "month")
     private Month month;
 
-    @Column(name = "creator")
-    private String creator;
+    @Column(name = "createdAt")
+    private long createdAt;
 
-    @Column(name = "lastContributor")
-    private String lastContributor;
+    @Column(name = "editedAt")
+    private long editedAt;
+
+    @Column(name = "createdBy")
+    private String createdBy;
+
+    @Column(name = "editedBy")
+    private String editedBy;
 
     @Column(name = "questions")
     @OneToMany(targetEntity = Question.class, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -43,13 +49,15 @@ public class NewReport {
 
     }
 
-    public NewReport(String name, String departmentName, Integer departmentId, Month month, String creator, String lastContributor, List<Question> questions, String groupings) {
+    public NewReport(String name, String departmentName, Integer departmentId, Month month, String createdBy, String editedBy, List<Question> questions, String groupings) {
+        this.createdAt = Instant.now().toEpochMilli();
+        this.editedAt = Instant.now().toEpochMilli();
         this.name = name;
         this.departmentName = departmentName;
         this.departmentId = departmentId;
         this.month = month;
-        this.creator = creator;
-        this.lastContributor = lastContributor;
+        this.createdBy = createdBy;
+        this.editedBy = editedBy;
         this.questions = questions;
         this.groupings = groupings;
     }
@@ -90,20 +98,36 @@ public class NewReport {
         this.month = month;
     }
 
-    public String getCreator() {
-        return creator;
+    public long getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreator(String creator) {
-        this.creator = creator;
+    public void setCreatedAt(long createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public String getLastContributor() {
-        return lastContributor;
+    public long getEditedAt() {
+        return editedAt;
     }
 
-    public void setLastContributor(String lastContributor) {
-        this.lastContributor = lastContributor;
+    public void setEditedAt(long editedAt) {
+        this.editedAt = editedAt;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public String getEditedBy() {
+        return editedBy;
+    }
+
+    public void setEditedBy(String editedBy) {
+        this.editedBy = editedBy;
     }
 
     public List<Question> getQuestions() {
