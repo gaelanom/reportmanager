@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 @Entity
-@Table(name = "newReports", uniqueConstraints = @UniqueConstraint(columnNames = {"month", "departmentId"}))
+@Table(name = "newReports")
 public class NewReport {
 
     @Id
