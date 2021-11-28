@@ -11,7 +11,7 @@ public class Employee {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private long id = -1;
 
     @Column(name = "username", unique = true)
     private String username;
@@ -25,11 +25,15 @@ public class Employee {
     @Column(name = "lastname")
     private String lastName;
 
+    //Todo: should be foreign key.
     @Column(name = "department")
     private String department;
 
     @Column(name = "isDepartmentHead")
     private boolean isDepartmentHead;
+
+    @Column(name = "isAdmin")
+    private boolean isAdmin;
 
     @Column(name = "score")
     private Integer score;
@@ -101,5 +105,13 @@ public class Employee {
     @Override
     public String toString() {
         return "Employee [id=" + id + ", username=" + username + " , first name=" + firstName + ", last name=" + lastName + ", department=" + department + ", department head=" + isDepartmentHead+ "]";
+    }
+
+    public boolean isAdmin() {
+        return this.isAdmin;
+    }
+
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
     }
 }

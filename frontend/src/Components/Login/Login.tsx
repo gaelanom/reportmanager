@@ -4,6 +4,7 @@ import Api from "../../API/Api";
 import axios from "axios";
 import "./Login.css";
 import { width } from "@mui/system";
+import { Thermostat } from "@mui/icons-material";
 
 type Property = {
   onLoggedIn?(): void;
@@ -17,14 +18,18 @@ type State = {
   loggingIn: boolean;
   loggedIn: boolean;
   authResCode: number;
+  redirectDepId: number;
+  redirectDepName: string;
+  // Used to automatically center login form.
   windowHeight: number;
   onLoggedIn?(): void;
 };
 
 class WrappedLogin extends React.Component<Property, State> {
+  private mounted: boolean;
   constructor(props: Property) {
     super(props);
-    // this.isMounted = true;
+    this.mounted = true;
 
     this.onLoggedIn = props.onLoggedIn;
     this.state = {
@@ -33,6 +38,8 @@ class WrappedLogin extends React.Component<Property, State> {
       loggingIn: false,
       loggedIn: false,
       authResCode: 0,
+      redirectDepId: -1,
+      redirectDepName: "",
       windowHeight: window.innerHeight,
     };
 
@@ -51,7 +58,9 @@ class WrappedLogin extends React.Component<Property, State> {
     this.setState({ password: event.currentTarget.value });
   };
 
-  private handleOnClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  private handleOnClick = (event: React.FormEvent<any>) => {
+    event.preventDefault();
+    event.stopPropagation();
     this.setState({ authResCode: 0 });
     this.login();
   };
@@ -67,26 +76,45 @@ class WrappedLogin extends React.Component<Property, State> {
   private validateLogin = () => {
     this.setState({ loggingIn: true });
     Api.Authorization.login(this.state.username, this.state.password)
-      .then((data: any) => this.handleSuccessfulLogin(data.jwt))
-      .catch((error) => this.handleFailedLogin(error))
-      .finally(() => {
-        /*
-        Note: this will throw an exception on succesful login beacuse we will then redirect, causing this component to be killed.
-        However, this setState called would still be called on an unmounted component.
-        This sometimes cause a crash, so need to check for component unmounted. 
-        */
-        // this.setState({ loggingIn: false });
-      });
+      .then((data: any) => this.handleSuccessfulLogin(data))
+      .catch((error) => this.handleFailedLogin(error));
   };
 
-  private handleSuccessfulLogin = (token: string) => {
+  private handleSuccessfulLogin = (resJson: any) => {
     if (axios.defaults.headers === undefined) {
       console.error("Axios undefined");
       return;
     }
-    axios.defaults.headers.common["Authorization"] = "Bearer " + token;
-    this.setState({ authResCode: 200, loggedIn: true, loggingIn: false });
+    axios.defaults.headers.common["Authorization"] = "Bearer " + resJson.jwt;
+    const STATE = {
+      authResCode: 200,
+      loggedIn: true,
+      loggingIn: false,
+      redirectDepId: resJson.departmentId,
+      redirectDepName: resJson.department,
+    };
     if (this.onLoggedIn !== undefined) this.onLoggedIn();
+    this.setState(STATE);
+  };
+
+  private redirect = () => {
+    return (
+      <>
+        {this.state.redirectDepName == "admin" ? (
+          <Redirect to="/" />
+        ) : (
+          <Redirect
+            to={{
+              pathname: `/departments/${this.state.redirectDepId}`,
+              state: {
+                name: this.state.redirectDepName,
+                id: this.state.redirectDepId,
+              },
+            }}
+          />
+        )}
+      </>
+    );
   };
 
   private handleFailedLogin = (error: any) => {
@@ -95,12 +123,15 @@ class WrappedLogin extends React.Component<Property, State> {
       loggedIn: false,
       loggingIn: false,
     });
+    console.log("Login mounted: " + this.mounted);
   };
 
   render() {
     const style: any = {
       marginTop: this.state.windowHeight * 0.25 + "px",
     };
+    console.log("render");
+
     return (
       <section className="vh-100 vh-100 gradient-custom">
         <div className="container py-5 h-100">
@@ -151,10 +182,6 @@ class WrappedLogin extends React.Component<Property, State> {
     else return "Unknown Error";
   };
 
-  private redirect = () => {
-    return <Redirect to="/" />;
-  };
-
   private renderLoginForm = () => {
     return <>{this.renderInputs()}</>;
   };
@@ -189,47 +216,50 @@ class WrappedLogin extends React.Component<Property, State> {
   private renderInputs = () => {
     return (
       <>
-        <div className="form-outline form-white mb-4">
-          <input
-            className="form-label form-control form-control-lg"
-            type="text"
-            name="username"
+        <form onSubmit={this.handleOnClick}>
+          {" "}
+          <div className="form-outline form-white mb-4">
+            <input
+              className="form-label form-control form-control-lg"
+              type="text"
+              name="username"
+              disabled={this.state.loggingIn}
+              value={this.state.username}
+              onChange={this.handleUsernameChange}
+              placeholder="Username"
+            />
+          </div>
+          <div className="form-outline form-white mb-4">
+            <input
+              className="form-label form-control form-control-lg"
+              type="password"
+              name="password"
+              disabled={this.state.loggingIn}
+              value={this.state.password}
+              onChange={this.handlePasswordChange}
+              placeholder="Password"
+            />
+          </div>
+          <p className="small mb-3 pb-lg-2">
+            <a className="text-white-50" href="#!">
+              Forgot password?
+            </a>
+          </p>
+          <button
+            type="submit"
+            className="btn btn-outline-light btn-lg px-5"
             disabled={this.state.loggingIn}
-            value={this.state.username}
-            onChange={this.handleUsernameChange}
-            placeholder="Username"
-          />
-        </div>
-        <div className="form-outline form-white mb-4">
-          <input
-            className="form-label form-control form-control-lg"
-            type="password"
-            name="password"
-            disabled={this.state.loggingIn}
-            value={this.state.password}
-            onChange={this.handlePasswordChange}
-            placeholder="Password"
-          />
-        </div>
-        <p className="small mb-3 pb-lg-2">
-          <a className="text-white-50" href="#!">
-            Forgot password?
-          </a>
-        </p>
-        <button
-          className="btn btn-outline-light btn-lg px-5"
-          disabled={this.state.loggingIn}
-          onClick={this.handleOnClick}
-        >
-          Login
-        </button>{" "}
+            // onClick={this.handleOnClick}
+          >
+            Login
+          </button>{" "}
+        </form>
       </>
     );
   };
 
   componentWillUnmount() {
-    // console.log("login kill");
-    // this.isMounted = false;
+    this.mounted = false;
   }
 }
 

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.orcus.hha_report_manager.security.beans.HTTPRequestUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,16 +36,29 @@ public class EmployeeController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private HTTPRequestUser httpRequestUser;
+
+    @GetMapping("/employee")
+    public ResponseEntity<Employee> getEmployee(){
+        return new ResponseEntity<>(httpRequestUser.getEmployee(), HttpStatus.OK);
+    }
+
     @GetMapping("/employees")
-    public ResponseEntity<List<Employee>> getAllEmployees(@RequestParam(required = false) String title) {
+    public ResponseEntity<List<Employee>> getAllEmployees(@RequestParam(required = false) String department, String username) {
         try {
             List<Employee> employees = new ArrayList<Employee>();
-
-            if (title == null)
+            if (department == null && username == null)
                 employeeRepository.findAll().forEach(employees::add);
-            else
-                employeeRepository.findByDepartmentContains(title).forEach(employees::add);
-
+            else if (username == null && department != null) {
+                employeeRepository.findByDepartmentContains(department).forEach(employees::add);
+            }
+            else if (username != null && department == null){
+                employeeRepository.findByUsername(username).forEach(employees::add);
+            }
+            else if(department != null && username != null){
+                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            }
             if (employees.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
@@ -80,26 +94,63 @@ public class EmployeeController {
         }
     }
 
+    @PutMapping("/employee")
+    public ResponseEntity<Employee> updateEmployee(@RequestBody Employee newEmployee){
+        var oldEmployee = httpRequestUser.getEmployee();
+        var updatedEmployee = updateEmployee(newEmployee, oldEmployee);
+        return new ResponseEntity<>(employeeRepository.save(updatedEmployee), HttpStatus.OK);
+    }
+
     @PutMapping("/employees/{id}")
     public ResponseEntity<Employee> updateEmployee(@PathVariable("id") long id, @RequestBody Employee employee) {
         Optional<Employee> employeeData = employeeRepository.findById(id);
 
         if (employeeData.isPresent()) {
             Employee employeeToChange = employeeData.get();
-            if(Objects.nonNull(employee.getFirstName())){
-                employeeToChange.setFirstName(employee.getFirstName());
+            var updatedEmployee = updateEmployee(employee, employeeToChange);
+            return new ResponseEntity<>(employeeRepository.save(updatedEmployee), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    /**
+     * Update oldEmployee is newEmployee's values except id and username.
+     * Null values are skipped.
+     * */
+    private Employee updateEmployee(Employee newEmployee, Employee oldEmployee) {
+        if(Objects.nonNull(newEmployee.getFirstName())){
+            oldEmployee.setFirstName(newEmployee.getFirstName());
+        }
+        if(Objects.nonNull(newEmployee.getLastName())){
+            oldEmployee.setLastName(newEmployee.getLastName());
+        }
+        if(Objects.nonNull(newEmployee.getDepartment())){
+            oldEmployee.setDepartment(newEmployee.getDepartment());
+        }
+        if(Objects.nonNull(newEmployee.getScore())){
+            oldEmployee.setScore(newEmployee.getScore());
+        }
+        if(Objects.nonNull(newEmployee.isDepartmentHead())){
+            oldEmployee.setDepartmentHead(newEmployee.isDepartmentHead());
+        }
+        return oldEmployee;
+    }
+
+    @PutMapping("/employees/{id}/score")
+    public ResponseEntity<Employee> incrementEmployeeScore(@PathVariable("id") long id, @RequestParam(required = false) Integer amount) {
+        Optional<Employee> employeeData = employeeRepository.findById(id);
+
+        if (employeeData.isPresent()) {
+            Employee employeeToChange = employeeData.get();
+            if(employeeToChange.getScore() == null){
+                employeeToChange.setScore(0);
             }
-            if(Objects.nonNull(employee.getLastName())){
-                employeeToChange.setLastName(employee.getLastName());
+            if(amount != null){
+                employeeToChange.setScore(employeeToChange.getScore() + amount);
             }
-            if(Objects.nonNull(employee.getDepartment())){
-                employeeToChange.setDepartment(employee.getDepartment());
-            }
-            if(Objects.nonNull(employee.getScore())){
-                employeeToChange.setScore(employee.getScore());
-            }
-            if(Objects.nonNull(employee.isDepartmentHead())){
-                employeeToChange.setDepartmentHead(employee.isDepartmentHead());
+            else {
+                employeeToChange.setScore(employeeToChange.getScore() + 1);
             }
             return new ResponseEntity<>(employeeRepository.save(employeeToChange), HttpStatus.OK);
         } else {

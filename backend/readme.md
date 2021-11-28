@@ -59,6 +59,24 @@ Returns:
   "blurb": "Placeholder information!"
 }
 ```
+
+**Get Department**
+`GET` `.../api/department`
+
+Get the token's owner department.
+
+Requires: Authentication token in request
+
+Returns:
+`200`
+```json
+{
+  "id": 1,
+  "name": "NICU",
+  "blurb": "some blurb"
+}
+```
+
 **Get Departments**
 `GET` `.../api/departments`
 
@@ -132,6 +150,27 @@ Or: `404` if Department {id} does not exist.
 #
 ### Employees
 
+
+**Create Employee** `GET` `.../api/employee`
+
+Get token's owner
+
+Requires: Authentication token in request.
+
+Returns:
+```json
+{
+  "id": 1,
+  "username": "dev",
+  "firstName": "John",
+  "lastName": "Doe",
+  "department": "NICU",
+  "score": null,
+  "admin": false,
+  "departmentHead": true
+}
+```
+
 **Create Employee** `POST` `.../api/employees`
 
 Requires:
@@ -166,7 +205,7 @@ Returns:
 
 **Get all Employees** `GET` `.../api/employees`
 
-Optional filter parameters: `username`
+Optional filter parameters: `department`, `username`
 
 
 Returns:
@@ -235,6 +274,35 @@ Returns:
 ```
 Or: `404` if Employee {id} does not exist.
 
+**Increment Employee Score by ID** `PUT` `.../api/employees/{id}/score`
+
+A simple endpoint which increments an Employee's score by `1`, or by an optional `amount`.
+
+Optional request parameters:
+
+`amount`
+
+Requires:
+
+`Nothing.`
+
+Returns:
+
+```json
+{
+    "id": {id},
+    "username": "user",
+    "firstName": "John",
+    "lastName": "Smith",
+    "department": "Placeholder",
+    "score": (previous score + 1 or + amount),
+    "admin": false,
+    "departmentHead": false
+}
+```
+
+Or: `404` if Employee {id} does not exist.
+
 **Delete Employee by ID** `DELETE` `.../api/employees/{id}`
 
 Returns:
@@ -246,16 +314,16 @@ Returns:
 
 **Create new Message** `POST` `.../api/messages`
 
+Uses the token's owner info.
+
 Requires:
 ```json
 {
-    "username": "user",
-    "firstName": "John",
-    "lastName": "Smith",
     "department": "Placeholder",
     "content": "Hello!"
 }
 ```
+
 
 Returns:
 
@@ -354,17 +422,17 @@ Returns: `204` Or: `404` if Message {id} does not exist.
 
 **Add a Reply to a Message** `POST` `.../api/messages/{messageid}/replies`
 
+Uses the token's owner info.
+
 Requires:
 
 ```json
 {
-    "username": "user2",
-    "firstName": "Smith",
-    "lastName": "John",
     "department": "Placeholder",
     "content": "Hi, John!"
 }
 ```
+
 
 Returns:
 
@@ -436,13 +504,11 @@ Returns: `204` Or: `404` if Reply {replyid} does not exist.
 
 **Create Report** `POST` `.../api/reports`
 
-Requires:
+Create a report with the submitter being the token's owner. 
+
 ```json
 {
     "department": "Placeholder",
-    "submitterUsername": "user",
-    "submitterFirstName": "John",
-    "submitterLastName": "Smith",
     "complete": false,
     "saved": false,
     "submitted": false,

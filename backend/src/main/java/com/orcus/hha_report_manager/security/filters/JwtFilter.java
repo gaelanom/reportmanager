@@ -1,10 +1,9 @@
 package com.orcus.hha_report_manager.security.filters;
 
+import com.orcus.hha_report_manager.security.beans.HTTPRequestUser;
 import com.orcus.hha_report_manager.security.SignedJwt;
-import org.hibernate.annotations.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,6 +27,9 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    private HTTPRequestUser httpRequestUser;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
@@ -45,6 +47,7 @@ public class JwtFilter extends OncePerRequestFilter {
                         userDetails, userDetails.getPassword(), userDetails.getAuthorities());
                 token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(token);
+                httpRequestUser.setUsername(username);
             }
         } catch (Exception e) {
             //Todo: handle exceptions?

@@ -9,7 +9,7 @@ public class Department {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private long id = -1;
 
     @Column(name = "name")
     private String name;
