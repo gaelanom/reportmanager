@@ -36,17 +36,14 @@ public class NewReport {
     @JoinColumn(name = "newReport_id", referencedColumnName = "id")
     private List<Question> questions;
 
-    @ElementCollection (fetch = FetchType.EAGER)
-    @CollectionTable(name = "groupings", joinColumns = @JoinColumn(name = "newReport_id", referencedColumnName = "id"))
-    @MapKeyColumn(name = "groupName")
-    @Column(name = "groupOrder")
-    private Map<String, String> groupings;
+    @Column(name = "groupings")
+    private String groupings;
 
     public NewReport(){
 
     }
 
-    public NewReport(String name, String departmentName, Integer departmentId, Month month, String creator, String lastContributor, List<Question> questions, Map<String, String> groupings) {
+    public NewReport(String name, String departmentName, Integer departmentId, Month month, String creator, String lastContributor, List<Question> questions, String groupings) {
         this.name = name;
         this.departmentName = departmentName;
         this.departmentId = departmentId;
@@ -117,11 +114,11 @@ public class NewReport {
         this.questions = questions;
     }
 
-    public Map<String, String> getGroupings() {
+    public String getGroupings() {
         return groupings;
     }
 
-    public void setGroupings(Map<String, String> groupings) {
+    public void setGroupings(String groupings) {
         this.groupings = groupings;
     }
 }
