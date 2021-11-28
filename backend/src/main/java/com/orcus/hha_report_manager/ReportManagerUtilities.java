@@ -10,10 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ReportUtility {
+public class ReportManagerUtilities {
 
     private static final String DEFAULT_DEPARTMENT_NAME = "HHA";
     private static final String DEFAULT_GROUPINGS = "MSPP:1";
+    private static final String DEFAULT_CREATOR_USERNAME = "unknown";
 
     public NewReport checkForAndReplaceNullReportFields(NewReport report){
         Month currentMonth;
@@ -38,6 +39,13 @@ public class ReportUtility {
         }
         else {
             reportName = departmentName + " " + currentMonth;
+        }
+        String createdBy;
+        if(Objects.nonNull(report.getCreatedBy())){
+            createdBy = report.getCreatedBy();
+        }
+        else {
+            createdBy = DEFAULT_CREATOR_USERNAME;
         }
         List<Question> questions;
         if(Objects.nonNull(report.getQuestions())){
@@ -80,5 +88,31 @@ public class ReportUtility {
         }
         reportToChange.setEditedAt(Instant.now().toEpochMilli());
         return reportToChange;
+    }
+
+    public Question replaceNonNullQuestionFields(Question question, Question questionToUpdate) {
+        if(Objects.nonNull(question.getDepartmentId())){
+            questionToUpdate.setQuestion(question.getDepartmentId());
+        }
+        if(Objects.nonNull(question.getGroup())){
+            questionToUpdate.setGroup(question.getGroup());
+        }
+        if(Objects.nonNull(question.getOrder())){
+            questionToUpdate.setOrder(question.getOrder());
+        }
+        if(Objects.nonNull(question.getQuestion())){
+            questionToUpdate.setQuestion(question.getQuestion());
+        }
+        if(Objects.nonNull(question.getAnswer())){
+            questionToUpdate.setAnswer(question.getAnswer());
+        }
+        if(Objects.nonNull(question.getType())){
+            questionToUpdate.setType(question.getType());
+        }
+        if(Objects.nonNull(question.getChoices())){
+            questionToUpdate.setChoices(question.getChoices());
+        }
+        questionToUpdate.setEditedAt(Instant.now().toEpochMilli());
+        return questionToUpdate;
     }
 }

@@ -1,11 +1,13 @@
 package com.orcus.hha_report_manager.controller;
 
+import com.orcus.hha_report_manager.ReportManagerUtilities;
 import com.orcus.hha_report_manager.model.MultipleChoiceQuestion;
 import com.orcus.hha_report_manager.model.NewReport;
 import com.orcus.hha_report_manager.model.Question;
 import com.orcus.hha_report_manager.model.Report;
 import com.orcus.hha_report_manager.repository.NewReportRepository;
 import com.orcus.hha_report_manager.repository.QuestionRepository;
+import com.orcus.hha_report_manager.security.beans.HTTPRequestUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,8 @@ import java.util.*;
 @RestController
 @RequestMapping("/api")
 public class QuestionController {
+
+    ReportManagerUtilities reportManagerUtilities = new ReportManagerUtilities();
 
     @Autowired
     NewReportRepository newReportRepository;
@@ -57,29 +61,7 @@ public class QuestionController {
     public ResponseEntity<Question> editQuestion(@PathVariable("id") long id, @RequestBody Question question) {
         Optional<Question> questionData = questionRepository.findById(id);
         if (questionData.isPresent()) {
-            Question questionToUpdate = questionData.get();
-            if(Objects.nonNull(question.getDepartmentId())){
-                questionToUpdate.setQuestion(question.getDepartmentId());
-            }
-            if(Objects.nonNull(question.getGroup())){
-                questionToUpdate.setGroup(question.getGroup());
-            }
-            if(Objects.nonNull(question.getOrder())){
-                questionToUpdate.setOrder(question.getOrder());
-            }
-            if(Objects.nonNull(question.getQuestion())){
-                questionToUpdate.setQuestion(question.getQuestion());
-            }
-            if(Objects.nonNull(question.getAnswer())){
-                questionToUpdate.setAnswer(question.getAnswer());
-            }
-            if(Objects.nonNull(question.getType())){
-                questionToUpdate.setType(question.getType());
-            }
-            if(Objects.nonNull(question.getChoices())){
-                questionToUpdate.setChoices(question.getChoices());
-            }
-            questionToUpdate.setEditedAt(Instant.now().toEpochMilli());
+            Question questionToUpdate = reportManagerUtilities.replaceNonNullQuestionFields(question, questionData.get());
             return new ResponseEntity<>(questionRepository.save(questionToUpdate), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

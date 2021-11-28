@@ -1,19 +1,16 @@
 package com.orcus.hha_report_manager.controller;
 
-import com.orcus.hha_report_manager.ReportUtility;
+import com.orcus.hha_report_manager.ReportManagerUtilities;
 import com.orcus.hha_report_manager.model.*;
 import com.orcus.hha_report_manager.repository.*;
+import com.orcus.hha_report_manager.security.beans.HTTPRequestUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -21,13 +18,16 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class NewReportController {
 
-    ReportUtility reportUtility;
+    ReportManagerUtilities reportManagerUtilities = new ReportManagerUtilities();
 
     @Autowired
     NewReportRepository newReportRepository;
 
     @Autowired
     QuestionRepository questionRepository;
+
+    @Autowired
+    private HTTPRequestUser httpRequestUser;
 
     @GetMapping("/newreports")
     public ResponseEntity<List<NewReport>> getAllNewReports(@RequestParam(required = false) Integer departmentId, String departmentName){
@@ -64,10 +64,11 @@ public class NewReportController {
 
     @PostMapping("/newreports")
     public ResponseEntity<NewReport> createNewReport(@RequestBody NewReport report) {
+        report.setCreatedBy(httpRequestUser.getEmployee().getUsername());
         try {
             NewReport newNewReport;
             newNewReport = newReportRepository
-                    .save(reportUtility.checkForAndReplaceNullReportFields(report));
+                    .save(reportManagerUtilities.checkForAndReplaceNullReportFields(report));
             return new ResponseEntity<>(newNewReport, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -77,10 +78,11 @@ public class NewReportController {
 
     @PutMapping("/newreports/{id}")
     public ResponseEntity<NewReport> updateNewReportDetails(@PathVariable("id") long id, @RequestBody NewReport report) {
+        report.setEditedBy(httpRequestUser.getEmployee().getUsername());
         Optional<NewReport> reportData = newReportRepository.findById(id);
 
         if (reportData.isPresent()) {
-            NewReport finishedReport = reportUtility.replaceNonNullReportFields(report, reportData.get());
+            NewReport finishedReport = reportManagerUtilities.replaceNonNullReportFields(report, reportData.get());
             return new ResponseEntity<>(newReportRepository.save(finishedReport), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
