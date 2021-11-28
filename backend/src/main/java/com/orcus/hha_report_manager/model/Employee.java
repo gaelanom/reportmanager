@@ -11,7 +11,7 @@ public class Employee {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private long id = -1;
 
     @Column(name = "username", unique = true)
     private String username;
@@ -25,6 +25,7 @@ public class Employee {
     @Column(name = "lastname")
     private String lastName;
 
+    //Todo: should be foreign key.
     @Column(name = "department")
     private String department;
 

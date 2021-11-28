@@ -4,6 +4,7 @@ import com.orcus.hha_report_manager.model.Message;
 import com.orcus.hha_report_manager.model.Reply;
 import com.orcus.hha_report_manager.repository.MessageRepository;
 import com.orcus.hha_report_manager.repository.ReplyRepository;
+import com.orcus.hha_report_manager.security.beans.HTTPRequestUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,8 @@ public class MessageController {
     @Autowired
     ReplyRepository replyRepository;
 
+    @Autowired
+    private HTTPRequestUser httpRequestUser;
 
     @GetMapping("/messages")
     public ResponseEntity<List<Message>> getAllMessages(@RequestParam(required = false) String department, String username) {
@@ -63,6 +66,11 @@ public class MessageController {
 
     @PostMapping("/messages")
     public ResponseEntity<Message> createMessage(@RequestBody Message message) {
+        var employee = httpRequestUser.getEmployee();
+        message.setUsername(employee.getUsername());
+        message.setFirstName(employee.getFirstName());
+        message.setLastName(employee.getLastName());
+
         try {
             Message newMessage = messageRepository
                     .save(new Message(message.getUsername(), message.getFirstName(), message.getLastName(), message.getDepartment(), LocalDateTime.now(), message.getContent()));
@@ -78,15 +86,6 @@ public class MessageController {
 
         if (messageData.isPresent()) {
             Message messageToChange = messageData.get();
-            if(Objects.nonNull(message.getUsername())){
-                messageToChange.setUsername(message.getUsername());
-            }
-            if(Objects.nonNull(message.getFirstName())){
-                messageToChange.setFirstName(message.getFirstName());
-            }
-            if(Objects.nonNull(message.getLastName())){
-                messageToChange.setLastName(message.getLastName());
-            }
             if(Objects.nonNull(message.getDepartment())){
                 messageToChange.setDepartment(message.getDepartment());
             }
@@ -131,6 +130,10 @@ public class MessageController {
         Optional<Message> messageData = messageRepository.findById(id);
         reply.setTimestamp(LocalDateTime.now());
         if (messageData.isPresent()) {
+            var employee = httpRequestUser.getEmployee();
+            reply.setUsername(employee.getUsername());
+            reply.setFirstName(employee.getFirstName());
+            reply.setLastName(employee.getLastName());
             Message parent = messageData.get();
             parent.getReplies().add(reply);
             return new ResponseEntity<>(messageRepository.save(parent), HttpStatus.OK);
@@ -145,15 +148,6 @@ public class MessageController {
 
         if (replyData.isPresent()) {
             Reply replyToChange = replyData.get();
-            if(Objects.nonNull(reply.getUsername())){
-                replyToChange.setUsername(reply.getUsername());
-            }
-            if(Objects.nonNull(reply.getFirstName())){
-                replyToChange.setFirstName(reply.getFirstName());
-            }
-            if(Objects.nonNull(reply.getLastName())){
-                replyToChange.setLastName(reply.getLastName());
-            }
             if(Objects.nonNull(reply.getDepartment())){
                 replyToChange.setDepartment(reply.getDepartment());
             }

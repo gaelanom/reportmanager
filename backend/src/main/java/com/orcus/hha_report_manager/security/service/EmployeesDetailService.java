@@ -25,14 +25,14 @@ public class EmployeesDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
         var found = employeeRepository.findByUsername(username);
         if (found.isEmpty())
             throw new UsernameNotFoundException(username + " not found");
         var employeeFound = found.get(0);
-        return new User(employeeFound.getUsername(), employeeFound.accessPassword(),
-                true, true, true, true,
-                getUserAuthorities(employeeFound));
+        var name = employeeFound.getUsername();
+        var pw = employeeFound.accessPassword();
+        var roles = getUserAuthorities(employeeFound);
+        return new User(name, pw, true, true, true, true, roles);
     }
 
     private List<SimpleGrantedAuthority> getUserAuthorities(Employee employee) {

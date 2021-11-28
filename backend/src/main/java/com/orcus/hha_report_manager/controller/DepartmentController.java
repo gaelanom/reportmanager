@@ -1,9 +1,8 @@
 package com.orcus.hha_report_manager.controller;
 
-import com.orcus.hha_report_manager.model.Employee;
+import com.orcus.hha_report_manager.security.beans.HTTPRequestUser;
 import com.orcus.hha_report_manager.model.Department;
 import com.orcus.hha_report_manager.repository.DepartmentRepository;
-import com.orcus.hha_report_manager.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,15 @@ import java.util.Optional;
 public class DepartmentController {
 
     @Autowired
-    DepartmentRepository departmentRepository;
+    private DepartmentRepository departmentRepository;
+
+    @Autowired
+    private HTTPRequestUser httpRequestUser;
+
+    @GetMapping("/department")
+    public ResponseEntity<Department> getDepartment() {
+        return new ResponseEntity<>(httpRequestUser.getDepartment(), HttpStatus.OK);
+    }
 
     @GetMapping("/departments")
     public ResponseEntity<List<Department>> getAllDepartments(@RequestParam(required = false) String name) {
@@ -70,10 +77,10 @@ public class DepartmentController {
 
         if (departmentData.isPresent()) {
             Department departmentToChange = departmentData.get();
-            if(Objects.nonNull(department.getName())){
+            if (Objects.nonNull(department.getName())) {
                 departmentToChange.setName(department.getName());
             }
-            if(Objects.nonNull(department.getBlurb())) {
+            if (Objects.nonNull(department.getBlurb())) {
                 departmentToChange.setBlurb(department.getBlurb());
             }
             return new ResponseEntity<>(departmentRepository.save(departmentToChange), HttpStatus.OK);

@@ -43,13 +43,13 @@ public class SignedJwt {
     }
 
     public static String make(UserDetails userDetails) {
-        //todo: fill out required claims.
+        //todo: add data to be contained in token.
         var claims = new HashMap<String, Object>();
         return make(userDetails.getUsername(), claims);
     }
 
     private static String make(String subject, HashMap<String, Object> claims) {
-        //Todo: refactor this
+        //Todo: some form of token timout control. Need a persistent key.
         var createdDate = new Date(System.currentTimeMillis());
         var expiryDate = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10);
 
