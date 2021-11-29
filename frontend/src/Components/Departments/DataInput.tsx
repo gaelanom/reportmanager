@@ -432,6 +432,7 @@ class DataInput extends React.Component<any, any> {
         super(props)
         const curr_month: string = monthNames[new Date().getMonth()]
         this.getData(curr_month);
+        this.getData = this.getData.bind(this)
     }
 
     private getData(curr_month: string) {
