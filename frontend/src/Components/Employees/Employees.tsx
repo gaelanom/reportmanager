@@ -33,18 +33,33 @@ export default class Employees extends React.Component <any, any> {
 
     render() {
 
+        let employeesData = [...this.state.employees]
+
         return (
             <div className="card mx-auto w-75 my-5">
                 <h1 className="card-header card-title text-center display-4">All Employees</h1>
                 <div className="card-body">
-                    <ul className="list-group">
-                        {this.state.employees.map(function(d: any, idx: number){
-                            return (
-                                <li className="list-group-item text-center display-6" key={idx}>
-                                    ID: {d.id} Name: {d.firstName} LastName: {d.lastName} Department: {d.department} Department Head: {d.departmentHead}
-                                </li>)
-                        })}
-                    </ul>
+                    <table className="table table-hover table-responsive">
+                        <thead>
+                            <tr>
+                            <th scope="col">First Name</th>
+                            <th scope="col">Last Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {employeesData.map(function(d: any, idx: number) {
+                                // necessary to get rid of the default / incorrect data
+                                if (d.firstName && d.lastName) {
+                                    return (
+                                        <tr>
+                                            <th scope="row">{d.firstName}</th>
+                                            <td>{d.lastName}</td>
+                                        </tr>
+                                    )
+                                }
+                            })}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         )
