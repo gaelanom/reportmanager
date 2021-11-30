@@ -100,6 +100,7 @@ export default class Employees extends React.Component <any, any> {
     render() {
 
         let employeesData = [...this.state.employees]
+        employeesData.sort((a: any, b: any) => b.score - a.score)
 
         return (
             <>
@@ -112,6 +113,7 @@ export default class Employees extends React.Component <any, any> {
                             <tr>
                             <th scope="col">First Name</th>
                             <th scope="col">Last Name</th>
+                            <th scope="col">Score</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -122,6 +124,7 @@ export default class Employees extends React.Component <any, any> {
                                         <tr>
                                             <th scope="row">{d.firstName}</th>
                                             <td>{d.lastName}</td>
+                                            <td>{d.score}</td>
                                         </tr>
                                     )
                                 }
