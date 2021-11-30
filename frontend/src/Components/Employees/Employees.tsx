@@ -149,7 +149,7 @@ export default class Employees extends React.Component <any, any> {
                         </div>
                         <div className="mb-3">
                             <label htmlFor="employee-password-input" className="form-label">Password</label>
-                            <input className="form-control" id="employee-password-input" onChange={this.handlePasswordOnChange.bind(this)} />
+                            <input className="form-control" id="employee-password-input" type="password" onChange={this.handlePasswordOnChange.bind(this)} />
                         </div>
                         <div className="mb-3">
                             <label htmlFor="employee-firstname-input" className="form-label">First Name</label>
