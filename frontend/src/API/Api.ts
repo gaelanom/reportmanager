@@ -6,5 +6,5 @@ import * as Message from "./message";
  * All API calls should be defined here for on line all import.
  */
 
-export default { Employess, Authorization, Departments, Message };
+export default { Employees, Authorization, Departments, Message };
 
