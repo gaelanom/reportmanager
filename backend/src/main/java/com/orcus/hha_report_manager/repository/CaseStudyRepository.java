@@ -12,4 +12,8 @@ public interface CaseStudyRepository extends JpaRepository<CaseStudy, Long> {
     List<CaseStudy> findByStoryContains(String story);
 
     List<CaseStudy> findBySummaryContains(String summary);
+
+    List<CaseStudy> findByDepartmentId(long id);
+
+    List<CaseStudy> findByDepartmentName(String departmentName);
 }

@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.time.Instant;
 
 @Entity
-@Table(name = "case studies")
+@Table(name = "caseStudies")
 public class CaseStudy {
 
     @Id

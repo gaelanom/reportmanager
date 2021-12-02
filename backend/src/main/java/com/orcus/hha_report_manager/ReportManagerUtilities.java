@@ -135,7 +135,7 @@ public class ReportManagerUtilities {
         }
 
         String story = DEFAULT_STORY;
-        if(Objects.nonNull(caseStudy.getStory()){
+        if(Objects.nonNull(caseStudy.getStory())){
             story = caseStudy.getStory();
         }
 

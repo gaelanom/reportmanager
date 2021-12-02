@@ -12,9 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -30,16 +28,20 @@ public class CaseStudyController {
     private HTTPRequestUser httpRequestUser;
 
     @GetMapping("/casestudies")
-    public ResponseEntity<List<CaseStudy>> getAllCaseStudies(@RequestParam(required = false) Integer departmentId, String departmentName){
+    public ResponseEntity<Set<CaseStudy>> getAllCaseStudies(@RequestParam(required = false) Integer departmentId, String departmentName, String keyword){
         try {
-            List<CaseStudy> caseStudies = new ArrayList<>();
+            Set<CaseStudy> caseStudies = new HashSet<>();
 
-            if (departmentId == null && departmentName == null)
+            if (departmentId == null && departmentName == null && keyword == null)
                 caseStudyRepository.findAll().forEach(caseStudies::add);
-            else if (departmentId != null && departmentName == null)
+            else if (departmentId != null && departmentName == null && keyword == null)
                 caseStudyRepository.findByDepartmentId(departmentId).forEach(caseStudies::add);
-            else if (departmentName != null && departmentId == null)
-                caseStudyRepository.findByDepartmentNameContains(departmentName).forEach(caseStudies::add);
+            else if (departmentName != null && departmentId == null && keyword == null)
+                caseStudyRepository.findByDepartmentName(departmentName).forEach(caseStudies::add);
+            else if(keyword != null){
+                caseStudyRepository.findByStoryContains(keyword).forEach(caseStudies::add);
+                caseStudyRepository.findBySummaryContains(keyword).forEach(caseStudies::add);
+            }
             else if (departmentName != null && departmentName != null)
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             if (caseStudies.isEmpty()) {
@@ -62,7 +64,7 @@ public class CaseStudyController {
         }
     }
 
-    @PostMapping("/casestudy")
+    @PostMapping("/casestudies")
     public ResponseEntity<CaseStudy> createNewCaseStudy(@RequestBody CaseStudy caseStudy) {
         caseStudy.setAuthor(httpRequestUser.getEmployee().getUsername());
         try {
@@ -101,7 +103,7 @@ public class CaseStudyController {
     @DeleteMapping("/casestudies")
     public ResponseEntity<HttpStatus> deleteAllCaseStudies() {
         try {
-            caseStudyRepositoryRepository.deleteAll();
+            caseStudyRepository.deleteAll();
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
