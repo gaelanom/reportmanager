@@ -148,7 +148,33 @@ class DepartmentHomePageTemplate extends React.Component<any, any> {
               </div>
             </div>
           </div>
+
+          {/* Temp export page */}
+          <div className="col">
+            <div className="card h-100">
+              <div className="card-body">
+                <h5 className="card-title">
+                  <p className="card-text">Export tmp page</p>
+                  <Link
+                    to={{
+                      pathname: `/departments/${id}/exportPage`,
+                    }}
+                  >
+                    <img
+                      src={BioMechanical}
+                      className="card-img-top img-responsive"
+                      onClick={this.state.BioMechImageClick}
+                    />
+                  </Link>
+                </h5>
+                <p className="card-text">No Messages</p>
+              </div>
+            </div>
+          </div>
         </div>
+
+                    
+
       </>
     );
   }

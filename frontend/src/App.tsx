@@ -9,6 +9,7 @@ import DepartmentHomePageTemplate from "./Components/Departments/DepartmentHomeP
 import DataInput from "./Components/Departments/DataInput";
 import Messages from "./Components/Messages/Messages";
 import Leaderboard from "./Components/Leaderboard/Leaderboard";
+import TmpExport from "./Components/Departments/TmpExport";
 import Api from "./API/Api";
 
 import {
@@ -62,6 +63,11 @@ class App extends React.Component<any, any> {
             </Route>
 
             <Route path="/departments/:departmentID/datainput" component={DataInput} />
+
+            {/* temp export page */}
+            <Route path="/departments/:departmentID/exportPage">
+              <TmpExport />
+            </Route>
               
             <Route exact path="/departments">
               <Departments />
