@@ -2,6 +2,7 @@ package com.orcus.hha_report_manager;
 
 import com.orcus.hha_report_manager.model.NewReport;
 import com.orcus.hha_report_manager.model.Question;
+import com.orcus.hha_report_manager.model.Template;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -114,5 +115,18 @@ public class ReportManagerUtilities {
         }
         questionToUpdate.setEditedAt(Instant.now().toEpochMilli());
         return questionToUpdate;
+    }
+
+    public Template replaceNonNullTemplateFields(Template template, Template templateToUpdate) {
+        if(Objects.nonNull(template.getDepartmentId())){
+            templateToUpdate.setDepartmentId(template.getDepartmentId());
+        }
+        if(Objects.nonNull(template.getTemplateName())){
+            templateToUpdate.setTemplateName(template.getTemplateName());
+        }
+        if(Objects.nonNull(template.getReportJSON())){
+            templateToUpdate.setReportJSON(template.getReportJSON());
+        }
+        return templateToUpdate;
     }
 }
