@@ -9,7 +9,7 @@ import { json2csv } from "json-2-csv";
 class TmpExport extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
-    this.json2csvCallback = this.json2csvCallback.bind(this);
+    // this.json2csvCallback = this.json2csvCallback.bind(this);
 
     this.state = {
       reports: [],
@@ -27,26 +27,24 @@ class TmpExport extends React.Component<any, any> {
 
   }
 
-  json2csvCallback = (err: any, csv: any) => {
-    if (err) throw err;
-    if(csv){
-      // csvdata = csv;
-      // this.state.csv_data = csv;
-      this.setState({
-        csv_data: csv
-      })
-      // console.log(this.state.csv_data);
-      // console.log(csvdata);
-      return csv;
-    }
-  }
+  // json2csvCallback = (err: any, csv: any) => {
+  //   if (err) throw err;
+  //   if(csv){
+  //     csvdata = csv;
+  //     this.state.csv_data = csv;
+  //     this.setState({
+  //       csv_data: csv
+  //     })
+  //     console.log(this.state.csv_data);
+  //     console.log(csvdata);
+  //     return csv;
+  //   }
+  // }
 
   render() {
     let reportsData = [...this.state.reports]
-
-    // let csvdata: any;
+    let csvdata: any;
     
-
     return (
       <div className="card mx-auto w-75 my-5">
           <h1 className="card-header card-title text-center display-4">All reports</h1>
@@ -65,22 +63,21 @@ class TmpExport extends React.Component<any, any> {
               </thead>
               <tbody>
                   {reportsData.map(function(d: any, idx: number) {
-                      // necessary to get rid of the default / incorrect data 
-                      // {id, name, departmentName, departmentId, month, createdAt, editedAt, createdBy, editedBy, questions, groupings}
+                      // Report = {id, name, departmentName, departmentId, month, createdAt, editedAt, createdBy, editedBy, questions, groupings}
                       
                       if (d.name && d.departmentName ) {
                         
-                        // let json2csvCallback = function(err: any, csv: any) {
-                          // if (err) throw err;
-                          // if(csv){
-                            // csvdata = csv;
+                        let json2csvCallback = function(err: any, csv: any) {
+                          if (err) throw err;
+                          if(csv){
+                            csvdata = csv;
                             // this.setState({
                             //   csv_data: csv
                             // })
                             // console.log(this.state.csv_data);
-                            // console.log(csvdata);
-                          // }
-                        // }
+                            console.log(csvdata); // empty right now
+                          }
+                        }
 
                         json2csv(d, this.json2csvCallback);
                         
@@ -98,7 +95,8 @@ class TmpExport extends React.Component<any, any> {
                                     <button>Download</button>
                                   </td>
                                   <td>
-                                    {this.state.csv_data}
+                                    {/* Testing purpose, just want to print it out */}
+                                    {csvdata}
                                   </td>
                               </tr>
                           )
