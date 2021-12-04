@@ -79,10 +79,10 @@ class TmpExport extends React.Component<any, any> {
                           }
                         }
 
-                        json2csv(d, this.json2csvCallback);
+                        json2csv(d, json2csvCallback);
                         
                         // console.log(csvdata);
-                        console.log(this.state.csv_data);
+                        // console.log(this.state.csv_data);
                         // csvdata = this.state.csv_data;
                           return (
                               <tr>
