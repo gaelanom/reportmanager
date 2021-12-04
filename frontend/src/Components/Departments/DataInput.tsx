@@ -77,24 +77,58 @@ class Metadata extends React.Component<{name: string, value: string, callback: a
     render() {
         if (this.state.isEdit) {
             this.changedValue = this.props.value;
-            return (<TextField fullWidth variant="standard" label={this.props.name} defaultValue={this.props.value}
-                               InputProps={{
-                                   endAdornment: (
-                                       <InputAdornment position="end">
-                                           <IconButton onClick={() => {
-                                               this.setState({isEdit: false})
-                                               if (this.props.callback != null) {
-                                                   this.props.callback(this.changedValue);
-                                               }
-                                           }}>
-                                               <CheckIcon />
-                                           </IconButton>
-                                       </InputAdornment>
-                                   ),
-                               }} onChange={event => {
-                                   this.changedValue = event.target.value;
-                               }
-            }/>)
+            if (this.props.name === "Month") {
+                return (
+                    <FormControl fullWidth>
+                        <InputLabel id="month-select-label">Month</InputLabel>
+                        <Select
+                            labelId="month-select-label"
+                            id="report-month"
+                            value={this.props.value}
+                            label="Month"
+                            onChange={(event) => {
+                                this.changedValue = event.target.value;
+                                this.setState({isEdit: false})
+                                if (this.props.callback != null) {
+                                    this.props.callback(this.changedValue);
+                                }
+                            }}
+                        >
+                            <MenuItem value={"JANUARY"}>January</MenuItem>
+                            <MenuItem value={"FEBRUARY"}>February</MenuItem>
+                            <MenuItem value={"MARCH"}>March</MenuItem>
+                            <MenuItem value={"APRIL"}>April</MenuItem>
+                            <MenuItem value={"MAY"}>May</MenuItem>
+                            <MenuItem value={"JUNE"}>June</MenuItem>
+                            <MenuItem value={"JULY"}>July</MenuItem>
+                            <MenuItem value={"AUGUST"}>August</MenuItem>
+                            <MenuItem value={"SEPTEMBER"}>September</MenuItem>
+                            <MenuItem value={"OCTOBER"}>October</MenuItem>
+                            <MenuItem value={"NOVEMBER"}>November</MenuItem>
+                            <MenuItem value={"DECEMBER"}>December</MenuItem>
+                        </Select>
+                    </FormControl>
+                )
+            } else {
+                return (<TextField fullWidth variant="standard" label={this.props.name} defaultValue={this.props.value}
+                                   InputProps={{
+                                       endAdornment: (
+                                           <InputAdornment position="end">
+                                               <IconButton onClick={() => {
+                                                   this.setState({isEdit: false})
+                                                   if (this.props.callback != null) {
+                                                       this.props.callback(this.changedValue);
+                                                   }
+                                               }}>
+                                                   <CheckIcon/>
+                                               </IconButton>
+                                           </InputAdornment>
+                                       ),
+                                   }} onChange={event => {
+                    this.changedValue = event.target.value;
+                }
+                }/>)
+            }
         } else {
             return (
                 <Box
@@ -438,7 +472,7 @@ class DataInput extends React.Component<any, any> {
     private getData(curr_month: string) {
         const name = this.props.location.state.department || null
 
-        newReport(name).then((r: any) => {
+        newReport(name, curr_month).then((r: any) => {
                 this.setState({id: r.id, month: r.month, user: r.submitterUsername});
                 reportId = r.id;
             }
