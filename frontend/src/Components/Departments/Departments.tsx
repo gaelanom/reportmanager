@@ -69,33 +69,42 @@ class Departments extends React.Component<any, any> {
                 
                 <h1 className="card-header card-title text-center display-4">Departments</h1>
                 <div className="card-body">
-                <div className="d-grid gap-2 col-6 mx-auto mb-3">
-                    <button className="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#add-departments-modal">Add New Department</button>
-                </div>
-                
-                <ul className="list-group">
-                    {departments.map(function(d: any, idx: number){ 
-                         return (
-                            <li className="list-group-item text-center display-6" key={idx}>
-                                {
-                                <Link to={{
-                                    pathname: `/departments/${d.id}`,
-                                    state: {
-                                        name: d.name,
-                                        id: d.id
-                                    }
-                                }}>
-                                    {d.name}
-                                </Link> 
-                                }
+                    
+                    <button className="btn btn-primary justify-content-start" type="button" data-bs-toggle="modal" data-bs-target="#add-departments-modal">Add New Department</button>
+                    
+
+                    <table className="table">
+                        <thead>
+                            <tr>
+                                <th className="h2">Department</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {departments.map(function(d: any, idx: number) {
+                                return (
+                                    <tr>
+                                        <td>{
+                                        <Link to={{
+                                            pathname: `/departments/${d.id}`,
+                                            state: {
+                                                name: d.name,
+                                                id: d.id
+                                            }
+                                        }}>
+                                            <div className="fs-3" style={{textDecoration: "none !important"}}>{d.name}</div>
+                                        </Link>
+                                        }</td>
+
+                                        <td>
+                                            <button className="btn btn-primary" type="button" onClick={() => component.handleDelete(d.id)}>Delete</button>
+                                        </td>
+                                    </tr>
+                                )
                                 
-                                <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                                    <button className="btn btn-primary" type="button" onClick={() => component.handleDelete(d.id)}>Delete</button>
-                                </div>
-                            </li>
-                            )
-                    })}
-                </ul>
+                            })}
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
