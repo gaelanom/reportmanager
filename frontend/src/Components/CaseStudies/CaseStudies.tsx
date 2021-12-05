@@ -8,9 +8,11 @@ class CaseStudies extends React.Component<any, any> {
   }
 
   render() {
+    const department = this.props.location.state.department || null;
+    const id = this.props.location.state.id || null;
     return (
         <>
-        <div>Case Studies</div>
+        <div>Case Studies {department} {id}</div>
         </>
     )
   }

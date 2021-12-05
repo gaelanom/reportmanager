@@ -11,20 +11,6 @@ class DepartmentHomePageTemplate extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
 
-    this.state = {
-      EmployeeImageClick: () => {
-        <Link to={"/departments/:departmentID/employees"}></Link>;
-      },
-      DataImageClick: () => {
-        <Link to={"/departments/:departmentID/datainput"}></Link>;
-      },
-      CaseStudyImageClick: () => {
-        <Link to={"/departments/:departmentID/case-studies"}></Link>;
-      },
-      BioMechImageClick: () => {
-        <Link to={"/departments/:departmentID/biomech"}></Link>;
-      },
-    };
   }
 
   render() {
@@ -50,12 +36,15 @@ class DepartmentHomePageTemplate extends React.Component<any, any> {
                   <Link
                     to={{
                       pathname: `/departments/${id}/case-studies`,
+                      state: {
+                        department: name,
+                        id: id,
+                      }
                     }}
                   >
                     <img
                       src={CaseStudy}
                       className="card-img-top img-responsive"
-                      onClick={this.state.CaseStudyImageClick}
                     />
                   </Link>
                 </h5>
@@ -83,7 +72,6 @@ class DepartmentHomePageTemplate extends React.Component<any, any> {
                     <img
                       src={DataImage}
                       className="card-img-top img-responsive"
-                      onClick={this.state.DataImageClick}
                     />
                   </Link>
                 </h5>
@@ -108,7 +96,6 @@ class DepartmentHomePageTemplate extends React.Component<any, any> {
                       <img
                         src={Employees}
                         className="card-img-top img-responsive"
-                        onClick={this.state.EmployeeImageClick}
                       />
                     </Link>
                   }
@@ -129,7 +116,6 @@ class DepartmentHomePageTemplate extends React.Component<any, any> {
                     <img
                       src={BioMechanical}
                       className="card-img-top img-responsive"
-                      onClick={this.state.BioMechImageClick}
                     />
                   </Link>
                 </h5>
