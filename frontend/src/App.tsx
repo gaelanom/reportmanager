@@ -65,9 +65,7 @@ class App extends React.Component<any, any> {
             <Route path="/departments/:departmentID/datainput" component={DataInput} />
 
             {/* temp export page */}
-            <Route path="/departments/:departmentID/exportPage">
-              <TmpExport />
-            </Route>
+            <Route path="/departments/:departmentID/exportPage" component={TmpExport} />
               
             <Route exact path="/departments">
               <Departments />

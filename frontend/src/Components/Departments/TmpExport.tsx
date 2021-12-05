@@ -7,14 +7,25 @@ import { json2csv } from "json-2-csv";
 
 // Question = {id, createdAt, editedAt, departmentId, group, order, question, answer, type, choices}
 type Questions = {
-
+  id: number,
+  createdAt: number,
+  editedAt: number,
+  departmentId: string,
+  group: string,
+  order: number,
+  question: string,
+  answer: string,
+  type: string,
+  choices: string
 }
+
 
 class TmpExport extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
 
     this.state = {
+      pageId: props.id,
       reports: [],
       questions: []
     };
@@ -27,14 +38,12 @@ class TmpExport extends React.Component<any, any> {
         this.setState({
           reports: data
         })
-        let questionsList = [];
-        // console.log(this.state.reports);
+        
         this.state.reports.map((d: any, idx: number) => {
           getQuestionsByreportID(d.id).then(data2 => {
             this.setState({
               questions: data2
             })
-            // console.log(data2)
           })
         
         })
@@ -44,10 +53,14 @@ class TmpExport extends React.Component<any, any> {
 
   render() {
     let reportsData = [...this.state.reports]
+
+    let pathString = this.props.location.pathname.split('/');
+    let departmentId = pathString[2]
     
     return (
       <div className="card mx-auto w-75 my-5">
           <h1 className="card-header card-title text-center display-4">All reports</h1>
+          {/* <h1 style={{marginLeft: "1em", marginRight: "1em"}}>{ name } Department Data Input</h1> */}
           <div className="card-body">
               <table className="table table-hover table-responsive">
               <thead>
@@ -64,12 +77,38 @@ class TmpExport extends React.Component<any, any> {
               <tbody>
                   {reportsData.map(function(d: any, idx: number) {
                       // Report = {id, name, departmentName, departmentId, month, createdAt, editedAt, createdBy, editedBy, questions, groupings}
-                      
-                      if (d.name && d.departmentName && d.questions[idx] && d.id) {
+                      // Question = {id, createdAt, editedAt, departmentId, group, order, question, answer, type, choices}
+
+                      if (d.name && d.departmentName && d.questions[idx] && d.id && d.departmentId == departmentId) {
                         
+                        let reportList = [] as any;
+                        // questionList.push(["id","createdAt","editedAt","departmentId","group","order","questions","answer","type","chocies"]);
+                        // console.log(d)
+                        // let reconstructedJSON: Questions;
                         d.questions.map((q: any, idx: number) => {
-                          console.log(q)
+                          // console.log(q);
+                          let reportJSON = 
+                          {
+                            reportName: d.name,
+                            departmentName: d.departmentName,
+                            month: d.month,
+                            createdAt: q.createdAt,
+                            editedAt: q.editedAt,
+                            departmentId: q.departmentId,
+                            group: q.group,
+                            order: q.order,
+                            questions: q.question,
+                            answer: q.answer,
+                            type: q.type,
+                            chocies: q.chocies
+                          };
+                          reportList.push(reportJSON)
                         })
+                        // console.log(reportList)
+                        // let wraptoSingleJSON = [
+                        //   questionList[0]
+                        // ];
+                        // console.log(wraptoSingleJSON)
 
                           return (
                               <tr>
@@ -79,7 +118,7 @@ class TmpExport extends React.Component<any, any> {
                                   <td>{d.month}</td>
                                   <td>{d.createdBy}</td>
                                   <td>
-                                    <CSVLink data={[d]}>Download</CSVLink>
+                                    <CSVLink data={reportList} filename={d.name}>Download</CSVLink>
                                   </td>
                                   <td>
                                     {d.questions.length}
