@@ -1,20 +1,24 @@
 import React from "react";
 import "../../Departments.css";
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
-import { getReportById, getAllReports } from '../../API/reports';
-// import { CSVLink, CSVDownload } from "react-csv";
+import { getReportById, getAllReports, getQuestionsByreportID } from '../../API/reports';
+import { CSVLink, CSVDownload } from "react-csv";
 import { json2csv } from "json-2-csv";
 
+// Question = {id, createdAt, editedAt, departmentId, group, order, question, answer, type, choices}
+type Questions = {
+
+}
 
 class TmpExport extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
-    // this.json2csvCallback = this.json2csvCallback.bind(this);
 
     this.state = {
       reports: [],
-      csv_data: []
+      questions: []
     };
+    
   }
 
   componentDidMount() {
@@ -23,27 +27,23 @@ class TmpExport extends React.Component<any, any> {
         this.setState({
           reports: data
         })
+        let questionsList = [];
+        // console.log(this.state.reports);
+        this.state.reports.map((d: any, idx: number) => {
+          getQuestionsByreportID(d.id).then(data2 => {
+            this.setState({
+              questions: data2
+            })
+            // console.log(data2)
+          })
+        
+        })
     })
-
+    
   }
-
-  // json2csvCallback = (err: any, csv: any) => {
-  //   if (err) throw err;
-  //   if(csv){
-  //     csvdata = csv;
-  //     this.state.csv_data = csv;
-  //     this.setState({
-  //       csv_data: csv
-  //     })
-  //     console.log(this.state.csv_data);
-  //     console.log(csvdata);
-  //     return csv;
-  //   }
-  // }
 
   render() {
     let reportsData = [...this.state.reports]
-    let csvdata: any;
     
     return (
       <div className="card mx-auto w-75 my-5">
@@ -58,32 +58,19 @@ class TmpExport extends React.Component<any, any> {
                   <th scope="col">Month</th>
                   <th scope="col">Created By</th>
                   <th scope="col">Download</th>
-                  <th scope="col">Data</th>
+                  <th scope="col"># of Questions</th>
                   </tr>
               </thead>
               <tbody>
                   {reportsData.map(function(d: any, idx: number) {
                       // Report = {id, name, departmentName, departmentId, month, createdAt, editedAt, createdBy, editedBy, questions, groupings}
                       
-                      if (d.name && d.departmentName ) {
+                      if (d.name && d.departmentName && d.questions[idx] && d.id) {
                         
-                        let json2csvCallback = function(err: any, csv: any) {
-                          if (err) throw err;
-                          if(csv){
-                            csvdata = csv;
-                            // this.setState({
-                            //   csv_data: csv
-                            // })
-                            // console.log(this.state.csv_data);
-                            console.log(csvdata); // empty right now
-                          }
-                        }
+                        d.questions.map((q: any, idx: number) => {
+                          console.log(q)
+                        })
 
-                        json2csv(d, json2csvCallback);
-                        
-                        // console.log(csvdata);
-                        // console.log(this.state.csv_data);
-                        // csvdata = this.state.csv_data;
                           return (
                               <tr>
                                   <th scope="row">{d.name}</th>
@@ -92,14 +79,14 @@ class TmpExport extends React.Component<any, any> {
                                   <td>{d.month}</td>
                                   <td>{d.createdBy}</td>
                                   <td>
-                                    <button>Download</button>
+                                    <CSVLink data={[d]}>Download</CSVLink>
                                   </td>
                                   <td>
-                                    {/* Testing purpose, just want to print it out */}
-                                    {csvdata}
+                                    {d.questions.length}
                                   </td>
                               </tr>
                           )
+                        // })
                       }
                   })}
               </tbody>

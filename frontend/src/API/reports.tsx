@@ -23,6 +23,10 @@ export function addEmptyQuestion(id: number) {
     return axios.post(BASEURL + id + '/questions', {}).then(res => res.data)
 }
 
+export function getQuestionsByreportID(id: number) {
+    return axios.get(BASEURL + id + '/questions').then(res => res.data)
+}
+
 export function addQuestion(id: number, question: string) {
     return axios.post(BASEURL + id + '/questions', {"question":question}).then(res => res.data)
 }
