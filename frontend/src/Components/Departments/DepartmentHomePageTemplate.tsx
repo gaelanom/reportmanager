@@ -19,7 +19,7 @@ class DepartmentHomePageTemplate extends React.Component<any, any> {
         <Link to={"/departments/:departmentID/datainput"}></Link>;
       },
       CaseStudyImageClick: () => {
-        <Link to={"/departments/:departmentID/casestudyPage"}></Link>;
+        <Link to={"/departments/:departmentID/case-studies"}></Link>;
       },
       BioMechImageClick: () => {
         <Link to={"/departments/:departmentID/biomech"}></Link>;
@@ -49,7 +49,7 @@ class DepartmentHomePageTemplate extends React.Component<any, any> {
                   <p className="card-text">Case Study</p>
                   <Link
                     to={{
-                      pathname: `/departments/${id}/casestudyPage`,
+                      pathname: `/departments/${id}/case-studies`,
                     }}
                   >
                     <img

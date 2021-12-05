@@ -3,6 +3,7 @@ import "./App.css";
 import Home from "./Components/Home/Home";
 import Login from "./Components/Login/Login";
 import Employees from "./Components/Employees/Employees";
+import CaseStudies from "./Components/CaseStudies/CaseStudies";
 import Navbar from "./Components/Navbar/Navbar";
 import Departments from "./Components/Departments/Departments";
 import DepartmentHomePageTemplate from "./Components/Departments/DepartmentHomePageTemplate";
@@ -60,6 +61,8 @@ class App extends React.Component<any, any> {
             <Route path="/departments/:departmentID/employees">
               <Employees />
             </Route>
+
+            <Route path="/departments/:departmentID/case-studies" component={CaseStudies} />
 
             <Route path="/departments/:departmentID/datainput" component={DataInput} />
               
