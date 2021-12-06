@@ -1,5 +1,6 @@
 package com.orcus.hha_report_manager;
 
+import com.orcus.hha_report_manager.model.CaseStudy;
 import com.orcus.hha_report_manager.model.NewReport;
 import com.orcus.hha_report_manager.model.Question;
 import com.orcus.hha_report_manager.model.Template;
@@ -16,6 +17,10 @@ public class ReportManagerUtilities {
     private static final String DEFAULT_DEPARTMENT_NAME = "HHA";
     private static final String DEFAULT_GROUPINGS = "MSPP:1";
     private static final String DEFAULT_CREATOR_USERNAME = "unknown";
+
+    private static final String DEFAULT_SUMMARY = "HHA has been doing great work!";
+    private static final String DEFAULT_STORY = "Hope Health Action’s mission is to build long-term partnerships with local communities and health systems to facilitate sustainable, innovative and life-saving health and disability care for the most vulnerable.";
+    private static final String DEFAULT_IMAGE_PATH = "missing";
 
     public NewReport checkForAndReplaceNullReportFields(NewReport report){
         Month currentMonth;
@@ -118,15 +123,63 @@ public class ReportManagerUtilities {
     }
 
     public Template replaceNonNullTemplateFields(Template template, Template templateToUpdate) {
-        if(Objects.nonNull(template.getDepartmentId())){
+        if (Objects.nonNull(template.getDepartmentId())) {
             templateToUpdate.setDepartmentId(template.getDepartmentId());
         }
-        if(Objects.nonNull(template.getTemplateName())){
+        if (Objects.nonNull(template.getTemplateName())) {
             templateToUpdate.setTemplateName(template.getTemplateName());
         }
-        if(Objects.nonNull(template.getReportJSON())){
+        if (Objects.nonNull(template.getReportJSON())) {
             templateToUpdate.setReportJSON(template.getReportJSON());
         }
         return templateToUpdate;
+    }
+    
+    public CaseStudy checkForAndReplaceNullCaseStudyFields(CaseStudy caseStudy){
+        String departmentName;
+        if(Objects.nonNull(caseStudy.getDepartmentName())){
+            departmentName = caseStudy.getDepartmentName();
+        }
+        else {
+            departmentName = DEFAULT_DEPARTMENT_NAME;
+        }
+        String summary = DEFAULT_SUMMARY;
+        if(Objects.nonNull(caseStudy.getSummary())){
+            summary = caseStudy.getSummary();
+        }
+
+        String story = DEFAULT_STORY;
+        if(Objects.nonNull(caseStudy.getStory())){
+            story = caseStudy.getStory();
+        }
+
+        String pathToImage = DEFAULT_IMAGE_PATH;
+        if(Objects.nonNull(caseStudy.getPathToImage())){
+            pathToImage = caseStudy.getPathToImage();
+        }
+
+        return new CaseStudy(caseStudy.getDepartmentId(), departmentName, caseStudy.getAuthor(), summary, story, pathToImage);
+    }
+
+    public CaseStudy replaceNonNullCaseStudyFields(CaseStudy caseStudy, CaseStudy caseStudyToChange) {
+        if(Objects.nonNull(caseStudy.getDepartmentId())){
+            caseStudyToChange.setDepartmentId(caseStudy.getDepartmentId());
+        }
+        if(Objects.nonNull(caseStudy.getDepartmentName())){
+            caseStudyToChange.setDepartmentName(caseStudy.getDepartmentName());
+        }
+        if(Objects.nonNull(caseStudy.getAuthor())){
+            caseStudyToChange.setAuthor(caseStudy.getAuthor());
+        }
+        if(Objects.nonNull(caseStudy.getSummary())){
+            caseStudyToChange.setSummary(caseStudy.getSummary());
+        }
+        if(Objects.nonNull(caseStudy.getStory())){
+            caseStudyToChange.setStory(caseStudy.getStory());
+        }
+        if(Objects.nonNull(caseStudy.getPathToImage())) {
+            caseStudyToChange.setPathToImage(caseStudy.getPathToImage());
+        }
+        return caseStudyToChange;
     }
 }
