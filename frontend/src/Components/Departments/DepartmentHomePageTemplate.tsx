@@ -6,6 +6,7 @@ import DataImage from "../../Images/Data.jpg";
 import Employees from "../../Images/Employees.jpg";
 import BioMechanical from "../../Images/BioMechanical.jpg";
 import Points from "../../Images/Points.jpg";
+import Reports from "../../Images/Reports.jpg";
 
 class DepartmentHomePageTemplate extends React.Component<any, any> {
   constructor(props: any) {
@@ -134,7 +135,31 @@ class DepartmentHomePageTemplate extends React.Component<any, any> {
               </div>
             </div>
           </div>
+
+          <div className="col">
+            <div className="card h-100">
+              <div className="card-body">
+                <h5 className="card-title">
+                  <p className="card-text">View & Download All Reports</p>
+                  <Link
+                    to={{
+                      pathname: `/departments/${id}/departmentReports`,
+                    }}
+                  >
+                    <img
+                      src={Reports}
+                      className="card-img-top img-responsive"
+                    />
+                  </Link>
+                </h5>
+                <p className="card-text">No Messages</p>
+              </div>
+            </div>
+          </div>
         </div>
+
+                    
+
       </>
     );
   }

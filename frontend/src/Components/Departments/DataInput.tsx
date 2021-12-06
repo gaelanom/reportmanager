@@ -5,6 +5,7 @@ import TextField from '@mui/material/TextField';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Divider from '@mui/material/Divider';
+import Box from '@mui/material/Box';
 import AddIcon from '@mui/icons-material/Add';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
@@ -23,6 +24,9 @@ import {newReport, getReportByDeptName,
     addMultipleChoiceQuestion, updateMultipleChoiceQuestion, updateMultipleChoiceQuestionChoice,
     deleteMultipleChoiceQuestion, answerMultipleChoiceQuestion, addWrittenQuestion,
     updateWrittenQuestion, deleteWrittenQuestion, answerWrittenQuestion} from '../../API/reports';
+
+const monthNames = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
+                    "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
 
 enum RecordType {
     written = "Written",
@@ -51,9 +55,132 @@ type EntryState = {
 type RecordState = {
     id: number;
     entryList: RecordEntry[];
+    month: string;
+    user: string;
+    submitted: boolean;
 };
 
 let reportId: number;
+
+class Metadata extends React.Component<{name: string, value: string, callback: any}, {isEdit: boolean, isShown: boolean}> {
+    private changedValue: string;
+
+    constructor(props: {name: string, value: string, callback: any}) {
+        super(props);
+        this.state = {
+            isEdit: false,
+            isShown: false
+        }
+        this.changedValue = props.value;
+    }
+
+    render() {
+        if (this.state.isEdit) {
+            this.changedValue = this.props.value;
+            if (this.props.name === "Month") {
+                return (
+                    <FormControl fullWidth>
+                        <InputLabel id="month-select-label">Month</InputLabel>
+                        <Select
+                            labelId="month-select-label"
+                            id="report-month"
+                            value={this.props.value}
+                            label="Month"
+                            onChange={(event) => {
+                                this.changedValue = event.target.value;
+                                this.setState({isEdit: false})
+                                if (this.props.callback != null) {
+                                    this.props.callback(this.changedValue);
+                                }
+                            }}
+                        >
+                            <MenuItem value={"JANUARY"}>January</MenuItem>
+                            <MenuItem value={"FEBRUARY"}>February</MenuItem>
+                            <MenuItem value={"MARCH"}>March</MenuItem>
+                            <MenuItem value={"APRIL"}>April</MenuItem>
+                            <MenuItem value={"MAY"}>May</MenuItem>
+                            <MenuItem value={"JUNE"}>June</MenuItem>
+                            <MenuItem value={"JULY"}>July</MenuItem>
+                            <MenuItem value={"AUGUST"}>August</MenuItem>
+                            <MenuItem value={"SEPTEMBER"}>September</MenuItem>
+                            <MenuItem value={"OCTOBER"}>October</MenuItem>
+                            <MenuItem value={"NOVEMBER"}>November</MenuItem>
+                            <MenuItem value={"DECEMBER"}>December</MenuItem>
+                        </Select>
+                    </FormControl>
+                )
+            } else {
+                return (<TextField fullWidth variant="standard" label={this.props.name} defaultValue={this.props.value}
+                                   InputProps={{
+                                       endAdornment: (
+                                           <InputAdornment position="end">
+                                               <IconButton onClick={() => {
+                                                   this.setState({isEdit: false})
+                                                   if (this.props.callback != null) {
+                                                       this.props.callback(this.changedValue);
+                                                   }
+                                               }}>
+                                                   <CheckIcon/>
+                                               </IconButton>
+                                           </InputAdornment>
+                                       ),
+                                   }} onChange={event => {
+                    this.changedValue = event.target.value;
+                }
+                }/>)
+            }
+        } else {
+            return (
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        alignContent: 'center',
+                        p: 1,
+                        m: 1,
+                    }}
+                    onMouseEnter={() => {
+                        this.setState({isShown: true});
+                    }}
+                    onMouseLeave={() => {
+                        this.setState({isShown: false});
+                    }}
+                >
+                    {this.props.name}: {this.props.value} <IconButton sx={{p: 0.5}} onClick={() => {
+                        this.setState({isEdit: true})
+                    }}> <EditIcon /> </IconButton>
+                </Box>
+            )
+        }
+    }
+}
+
+class MetadataArea extends React.Component<{month: string, user: string, submitted: boolean, changeMonth: any}, any> {
+
+    render() {
+        return (
+            <Grid item xs={6}>
+                <Box sx={{
+                    bgcolor: "#EAEAEA",
+                    borderRadius: 3,
+                    p: 2,
+                }}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={4}>
+                            <Metadata name={"Month"} value={this.props.month} callback={this.props.changeMonth}/>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Metadata name={"User"} value={this.props.user} callback={null}/>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Metadata name={"Submitted"} value={this.props.submitted.toString()} callback={null}/>
+                        </Grid>
+                    </Grid>
+                </Box>
+            </Grid>
+        )
+    }
+}
 
 class RecordEntry extends React.Component<Props, EntryState> {
     state: EntryState;
@@ -330,37 +457,58 @@ class DataInput extends React.Component<any, any> {
     state: RecordState = {
         entryList: [],
         id: 0,
+        month: "",
+        user: "",
+        submitted: false,
     };
 
     constructor(props: any) {
         super(props)
-        const name = this.props.location.state.name || null
-        newReport(name).then((r: any) => {
-                this.setState({id: r.id});
+        const curr_month: string = monthNames[new Date().getMonth()]
+        this.getData(curr_month);
+        this.getData = this.getData.bind(this)
+    }
+
+    private getData(curr_month: string) {
+        const name = this.props.location.state.department || null
+
+        newReport(name, curr_month).then((r: any) => {
+                this.setState({id: r.id, month: r.month, user: r.submitterUsername});
                 reportId = r.id;
             }
         ).catch(error => {
-            console.log(error.message);
-            getReportByDeptName(name).then((r: any) => {
-                let questionList: any[] = [...r.numericalQuestions, ...r.writtenQuestions, ...r.multipleChoiceQuestions];
+            getReportByDeptName(name).then((r: any[]) => {
+                let report: any;
+                r.forEach((rep: any) => {
+                    if (rep.month === curr_month) {
+                        report = rep;
+                    }
+                })
+                let questionList: any[] = [...report.numericalQuestions, ...report.writtenQuestions, ...report.multipleChoiceQuestions];
                 questionList.sort(this.compareQuestion)
                 let entryList: any[] = [];
                 questionList.forEach(e => {
-                    if (r.numericalQuestions.includes(e)) {
+                    if (report.numericalQuestions.includes(e)) {
                         let stringAns: string = "";
                         if (e.answer != null) {
                             stringAns = e.answer.toString();
                         }
                         entryList = [...entryList, this.existEntry(e.id, RecordType.numerical, e.question, stringAns)]
-                    } else if (r.writtenQuestions.includes(e)) {
+                    } else if (report.writtenQuestions.includes(e)) {
                         entryList = [...entryList, this.existEntry(e.id, RecordType.written, e.question, e.answer)]
-                    } else if (r.multipleChoiceQuestions.includes(e)) {
+                    } else if (report.multipleChoiceQuestions.includes(e)) {
                         entryList = [...entryList, this.existEntry(e.id, RecordType.MCQ, e.question, e.choice, e.choices)]
                     }
                 })
-                this.setState({id: r.id, entryList: entryList});
-                reportId = r.id;
-        })})
+                this.setState({
+                    id: report.id,
+                    entryList: entryList,
+                    month: report.month,
+                    user: report.submitterUsername
+                });
+                reportId = report.id;
+            })
+        })
     }
 
     private compareQuestion(a: { id: number; }, b: { id: number; }) {
@@ -383,10 +531,15 @@ class DataInput extends React.Component<any, any> {
     }
 
     render() {
-      const name = this.props.location.state.name || null
+      const name = this.props.location.state.department || null
         return (
             <div className="DataInput">
-                <h1 style={{marginLeft: "1em", marginRight: "1em"}}>{ name } Department Data Input</h1>
+                <Grid container spacing={2}>
+                    <Grid item xs={6}>
+                        <h1 style={{marginLeft: "1em", marginRight: "1em"}}>{ name } Department Data Input</h1>
+                    </Grid>
+                    <MetadataArea month={this.state.month} user={this.state.user} submitted={this.state.submitted} changeMonth={this.getData}/>
+                </Grid>
                 <List style={{marginLeft: "1em", marginRight: "1em"}}>
                     {this.state.entryList}
                     <ListItem>

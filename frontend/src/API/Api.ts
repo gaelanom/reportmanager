@@ -3,9 +3,11 @@ import * as Authorization from "./Authorization";
 import * as Departments from "./departments"
 import * as Message from "./message";
 import * as CaseStudies from "./casestudies";
+import * as Reports from "./reports";
+import * as NewReports from "./newReports";
 /**
  * All API calls should be defined here for on line all import.
  */
 
-export default { Employees, Authorization, Departments, Message, CaseStudies };
+export default { Employees, Authorization, Departments, Message, CaseStudies, Reports, NewReports };
 
