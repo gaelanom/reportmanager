@@ -1,6 +1,7 @@
 import { ConstructionOutlined, TenMpOutlined } from "@mui/icons-material";
 import React from "react";
 import Api from "../../API/Api";
+import Study from "../../Images/Study.jpg";
 
 class CaseStudies extends React.Component<any, any> {
   constructor(props: any) {
@@ -85,6 +86,7 @@ class CaseStudies extends React.Component<any, any> {
         {current && caseStudies ?
           <div className="card mx-auto w-75 my-5" style={{"width": "18rem"}}>
             <h5 className="card-title text-center card-header display-4">{department} Case Studies</h5>
+            <img src={Study} className="img-fluid rounded mx-auto d-block pt-4" style={{"maxWidth": "75%"}} />
             <div className="card-body">
               <h5 className="card-title text-center">{current.summary}</h5>
               <p className="card-text fs-4">{current.story}</p>
