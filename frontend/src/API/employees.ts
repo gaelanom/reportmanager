@@ -8,3 +8,6 @@ export function getAllEmployees() {
 
 }
 
+export function createEmployee(obj: any) {
+    return axios.post(URL, obj).then((res) => res.data)
+}
