@@ -3,8 +3,8 @@ import axios from 'axios'
 const BASEURL = 'http://localhost:8080/api/newreports/'
 
 
-export function newReport(department: string) {
-    return axios.post(BASEURL, {"department":department}).then(res => res.data)
+export function newReport(department: string, month: string) {
+    return axios.post(BASEURL, {"department":department, "month": month}).then(res => res.data)
 }
 
 export function getAllReports() {
@@ -16,7 +16,7 @@ export function getReportById(id: number) {
 }
 
 export function getReportByDeptName(department: string) {
-    return axios.get(BASEURL, {params: {department: department}}).then(res => res.data[0])
+    return axios.get(BASEURL, {params: {department: department}}).then(res => res.data)
 }
 
 export function addEmptyQuestion(id: number) {
