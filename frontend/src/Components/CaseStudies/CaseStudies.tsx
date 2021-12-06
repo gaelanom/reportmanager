@@ -23,15 +23,17 @@ class CaseStudies extends React.Component<any, any> {
       })
     })
 
-    const tmp = this.state.caseStudies
-    tmp.map((d: any, idx: number) => {
-      if (d.departmentId === this.props.location.state.id) {
-        this.setState({
-          currentCaseStudy: d
-        }) 
-        return
-      }
-    })
+    const studies = this.state.caseStudies
+    if (studies) {
+      studies.map((d: any, idx: number) => {
+        if (d.departmentId === this.props.location.state.id) {
+          this.setState({
+            currentCaseStudy: d
+          }) 
+          return
+        }
+      })
+    }
   }
 
   handleSummaryOnChange = (e: any) => {
@@ -77,7 +79,7 @@ class CaseStudies extends React.Component<any, any> {
           <div className="card mx-auto w-75 my-5" style={{"width": "18rem"}}>
             <h5 className="card-title text-center card-header display-4">{department} Case Studies</h5>
             <div className="card-body">
-              <h5 className="card-title">{current.summary}</h5>
+              <h5 className="card-title text-center">{current.summary}</h5>
               <p className="card-text fs-4">{current.story}</p>
             </div>
           </div>
