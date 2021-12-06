@@ -70,7 +70,7 @@ class DepartmentReports extends React.Component<any, any> {
                   <th scope="col">Month</th>
                   <th scope="col">Created By</th>
                   <th scope="col">Download</th>
-                  <th scope="col"># of Questions</th>
+                  <th scope="col">View Data visualization</th>
                   </tr>
               </thead>
               <tbody>
@@ -78,7 +78,7 @@ class DepartmentReports extends React.Component<any, any> {
                       // Report = {id, name, departmentName, departmentId, month, createdAt, editedAt, createdBy, editedBy, questions, groupings}
                       // Question = {id, createdAt, editedAt, departmentId, group, order, question, answer, type, choices}
 
-                      if (d.name && d.departmentName && d.questions[idx] && d.id && d.departmentId == departmentId) {
+                      if (d.name && d.departmentName && d.questions && d.id && d.departmentId == departmentId) {
                         
                         let reportList = [] as any;
 
@@ -112,7 +112,13 @@ class DepartmentReports extends React.Component<any, any> {
                                     <CSVLink data={reportList} filename={d.name}>Download</CSVLink>
                                   </td>
                                   <td>
-                                    {d.questions.length}
+                                    <Link
+                                        to={{
+                                              pathname: `/visualization/${d.id}`,
+                                           }}
+                                    >
+                                       View
+                                    </Link>
                                   </td>
                               </tr>
                           )
