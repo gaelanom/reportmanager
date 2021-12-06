@@ -2141,10 +2141,10 @@
     "jest-diff" "^26.0.0"
     "pretty-format" "^26.0.0"
 
-"@types/jquery@^3.5.8":
-  "integrity" "sha512-cXk6NwqjDYg+UI9p2l3x0YmPa4m7RrXqmbK4IpVVpRJiYXU/QTo+UZrn54qfE1+9Gao4qpYqUnxm5ZCy2FTXAw=="
-  "resolved" "https://registry.npmjs.org/@types/jquery/-/jquery-3.5.8.tgz"
-  "version" "3.5.8"
+"@types/jquery@^3.5.9":
+  "integrity" "sha512-B8pDk+sH/tSv/HKdx6EQER6BfUOb2GtKs0LOmozziS4h7cbe8u/eYySfUAeTwD+J09SqV3man7AMWIA5mgzCBA=="
+  "resolved" "https://registry.npmjs.org/@types/jquery/-/jquery-3.5.9.tgz"
+  "version" "3.5.9"
   dependencies:
     "@types/sizzle" "*"
 

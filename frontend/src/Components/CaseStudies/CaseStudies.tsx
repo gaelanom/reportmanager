@@ -1,3 +1,4 @@
+import { ConstructionOutlined, TenMpOutlined } from "@mui/icons-material";
 import React from "react";
 import Api from "../../API/Api";
 
@@ -6,18 +7,30 @@ class CaseStudies extends React.Component<any, any> {
     super(props);
 
     this.state = {
-      caseStudies: null,
+      caseStudies: [],
+      currentCaseStudy: null,
       summary: "",
       story: ""
     }
 
   }
 
-  componentDidMount() {
-    Api.CaseStudies.getCaseStudyById(this.props.id).then(data => {
+  componentDidMount = async () => {
+    
+    await Api.CaseStudies.getCaseStudies().then(data => {
       this.setState({
         caseStudies: data
       })
+    })
+
+    const tmp = this.state.caseStudies
+    tmp.map((d: any, idx: number) => {
+      if (d.departmentId === this.props.location.state.id) {
+        this.setState({
+          currentCaseStudy: d
+        }) 
+        return
+      }
     })
   }
 
@@ -43,6 +56,8 @@ class CaseStudies extends React.Component<any, any> {
       "departmentName": department
     }
 
+    console.log(payload)
+
     Api.CaseStudies.addCaseStudy(payload).then((data: any) => {
       ($('#add-case-studies-modal') as any).modal('hide');
       ($('#complete-modal') as any).modal('show');
@@ -52,11 +67,21 @@ class CaseStudies extends React.Component<any, any> {
   render() {
     const department = this.props.location.state.department || null;
     const id = this.props.location.state.id || null;
-    const caseStudy = this.state.caseStudies
+    const caseStudies = this.state.caseStudies
+    const current = this.state.currentCaseStudy
+    console.log(current)
+
     return (
         <>
-        {caseStudy ?
-          <div>{caseStudy}</div> :
+        {current && caseStudies ?
+          <div className="card mx-auto w-75 my-5" style={{"width": "18rem"}}>
+            <h5 className="card-title text-center card-header display-4">{department} Case Studies</h5>
+            <div className="card-body">
+              <h5 className="card-title">{current.summary}</h5>
+              <p className="card-text fs-4">{current.story}</p>
+            </div>
+          </div>
+          :
           <div className="card mx-auto w-75 my-5" style={{"width": "18rem"}}>
             <h5 className="card-title text-center card-header display-4">{department} Case Studies</h5>
             <div className="card-body">
@@ -81,13 +106,13 @@ class CaseStudies extends React.Component<any, any> {
                     </div>
                     <div className="mb-3">
                         <label htmlFor="employee-story-input" className="form-label">Story</label>
-                        <input className="form-control" id="employee-story-input" onChange={this.handleStoryOnChange.bind(this)} />
-                    </div>
+                        <textarea className="form-control" rows={7} id="employee-story-input" onChange={this.handleStoryOnChange.bind(this)} />
                     </div>
                 </div>
                 <div className="modal-footer">
                     <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" className="btn btn-primary" onClick={this.handleSubmit.bind(this)}>Submit</button>
+                </div>
                 </div>
             </div>
         </div>
