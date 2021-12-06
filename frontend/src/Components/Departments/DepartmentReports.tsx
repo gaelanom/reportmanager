@@ -20,7 +20,7 @@ type Questions = {
 }
 
 
-class TmpExport extends React.Component<any, any> {
+class DepartmentReports extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
 
@@ -59,8 +59,7 @@ class TmpExport extends React.Component<any, any> {
     
     return (
       <div className="card mx-auto w-75 my-5">
-          <h1 className="card-header card-title text-center display-4">All reports</h1>
-          {/* <h1 style={{marginLeft: "1em", marginRight: "1em"}}>{ name } Department Data Input</h1> */}
+          <h1 className="card-header card-title text-center display-4">Reports</h1>
           <div className="card-body">
               <table className="table table-hover table-responsive">
               <thead>
@@ -82,11 +81,8 @@ class TmpExport extends React.Component<any, any> {
                       if (d.name && d.departmentName && d.questions[idx] && d.id && d.departmentId == departmentId) {
                         
                         let reportList = [] as any;
-                        // questionList.push(["id","createdAt","editedAt","departmentId","group","order","questions","answer","type","chocies"]);
-                        // console.log(d)
-                        // let reconstructedJSON: Questions;
+
                         d.questions.map((q: any, idx: number) => {
-                          // console.log(q);
                           let reportJSON = 
                           {
                             reportName: d.name,
@@ -104,11 +100,6 @@ class TmpExport extends React.Component<any, any> {
                           };
                           reportList.push(reportJSON)
                         })
-                        // console.log(reportList)
-                        // let wraptoSingleJSON = [
-                        //   questionList[0]
-                        // ];
-                        // console.log(wraptoSingleJSON)
 
                           return (
                               <tr>
@@ -125,7 +116,6 @@ class TmpExport extends React.Component<any, any> {
                                   </td>
                               </tr>
                           )
-                        // })
                       }
                   })}
               </tbody>
@@ -136,4 +126,4 @@ class TmpExport extends React.Component<any, any> {
   }
 }
 
-export default TmpExport;
+export default DepartmentReports;
