@@ -13,3 +13,7 @@ export function addCaseStudy(payload: any) {
 export function getCaseStudyById(id: string) {
     return axios.get(BASE_URL + id).then((res) => res.data)
 }
+
+export function deleteCaseStudies() {
+    return axios.delete(BASE_URL)
+}

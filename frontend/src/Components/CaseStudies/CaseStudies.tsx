@@ -63,7 +63,14 @@ class CaseStudies extends React.Component<any, any> {
     Api.CaseStudies.addCaseStudy(payload).then((data: any) => {
       ($('#add-case-studies-modal') as any).modal('hide');
       ($('#complete-modal') as any).modal('show');
-    }).catch((error) => console.log(error));
+      // normally we would just alert with the error message from server,
+      // but backend currently doesn't return a useful error message, only status codes
+    }).catch((error) => alert("Sorry, please shorten your story"));
+  }
+
+  handleOnClick = () => {
+    Api.CaseStudies.deleteCaseStudies()
+    alert("Deleted Case Study!")
   }
 
   render() {
@@ -81,6 +88,7 @@ class CaseStudies extends React.Component<any, any> {
             <div className="card-body">
               <h5 className="card-title text-center">{current.summary}</h5>
               <p className="card-text fs-4">{current.story}</p>
+              <a className="btn btn-primary" type="button" onClick={this.handleOnClick.bind(this)}>Delete Case Study</a>
             </div>
           </div>
           :
