@@ -1,9 +1,14 @@
 import axios from 'axios'
 
-const BASEURL = 'http://localhost:8080/api/reports/'
+const BASEURL = 'http://localhost:8080/api/newreports/'
+
 
 export function newReport(department: string) {
     return axios.post(BASEURL, {"department":department}).then(res => res.data)
+}
+
+export function getAllReports() {
+    return axios.get(BASEURL).then(res => res.data)
 }
 
 export function getReportById(id: number) {
@@ -16,6 +21,10 @@ export function getReportByDeptName(department: string) {
 
 export function addEmptyQuestion(id: number) {
     return axios.post(BASEURL + id + '/questions', {}).then(res => res.data)
+}
+
+export function getQuestionsByreportID(id: number) {
+    return axios.get(BASEURL + id + '/questions').then(res => res.data)
 }
 
 export function addQuestion(id: number, question: string) {

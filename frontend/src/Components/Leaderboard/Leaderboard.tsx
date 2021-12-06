@@ -7,7 +7,7 @@ class Leaderboard extends React.Component <any, any>  {
         super(props)
 
         this.state = {
-          employees: []
+          employees: [],
         };
       }
 
