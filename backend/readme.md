@@ -2,7 +2,7 @@
 
 Welcome to the `readme` for the API for the HHA Report Manager, created by Team Orcus for CMPT373 with Brian Fraser in Fall 2021!
 
-This API was primarily designed and written by Gaelan O'Shea-McKay, with authenticate and token support by Alex Le.
+This API was primarily designed and written by Gaelan O'Shea-McKay, with authentication and token support by Alex Le.
 
 Below are the various API endpoints used by the project, and what kind of contents they might expect!
 
